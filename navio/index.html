@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/main.css">
+
+    <title>Navio Test</title>
+
+  </head>
+  <body>
+
+    <!-- Feature Selection panel -->
+    <div id="feature-selection">
+      <div>
+        <div style="float: left;">
+          <h3>Features</h3>  
+        </div>
+        <div style="float: right;">
+          <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#newFeatureGroup">New group</button>
+        </div>
+        <div style="clear: left;"></div>
+      </div>
+      <div id="no-group" class="feature-group">
+        <div class="header">No group</div>
+        <div class="content"></div>
+      </div>
+    </div>
+
+    <div id="navio"></div>
+
+    <!-- Third-party libraries -->
+    <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/navio/dist/navio.min.js"></script>
+    
+    <!-- Scripts -->
+    <script type="text/javascript" src="./js/main.js"></script>
+
+  </body>
+</html>

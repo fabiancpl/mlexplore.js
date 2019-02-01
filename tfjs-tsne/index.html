@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <title>Tensorflow.js t-SNE</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <!-- Custom stylesheets -->
+    <link rel="stylesheet" type="text/css" href="./css/main.css">
+
+  </head>
+  <body>
+
+    <div class="container-fluid">
+      
+      <div class="row">
+        
+        <div class="col-md-12">
+          
+          <h1>Tensorflow.js t-SNE</h1>
+
+        </div>
+
+      </div>
+
+      <div class="row">
+        
+        <div class="col-md-12">
+          
+          <button onclick="run( 1 )">Run 1</button>
+          <button onclick="run( 2 )">Run 2</button>
+          <button onclick="run( 3 )">Run 3</button>
+          <input id="iterate" type="checkbox" disabled> Show iterations<br />
+          Iterations: <input id="iterations" type=number>
+          Perplexity: <input id="perplexity" type=number>
+
+        </div>
+
+      </div>
+
+      <div class="row">
+        
+        <div class="col-md-12">
+          
+          <div id="projections"></div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Libraries -->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.14.1/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tsne"></script>
+
+    <script src="./js/main.js"></script>
+
+  </body>
+</html>
