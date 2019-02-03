@@ -1,6 +1,6 @@
 #feature-selection {
   float: left;
-  width: 250px;
+  width: 270px;
   border: 1px solid gray;
   margin: 10px;
   padding: 8px;
@@ -8,7 +8,7 @@
 
 #feature-selection .feature-group {
   border: 1px solid gray;
-  margin: 10px;
+  margin: 5px 0px 10px 0px;
   padding: 8px;
   border-radius: 3px;
 }
@@ -21,15 +21,31 @@
   padding: 0 5px 0 5px;
 }
 
-#feature-selection .feature-group div.content {
-  margin-top: 3px;
-}
-
 #feature-selection .feature-group button {
   font-size: 12px;
   border-radius: 15px;
   padding: 0px 10px 2px 10px;
   margin: 0px 3px 0px 3px;
+}
+
+#feature-selection .feature-group button.btn-categorical {
+  color: #fff;
+  background-color: #fd7e14;
+  border-color: #fd7e14;
+}
+
+#feature-selection .feature-group button span  {
+  padding-left: 15px;
+}
+
+#feature-selection .feature-group button .custom-control-input  {
+  margin: 4px 0px 0px 0px;
+  z-index: 0;
+  opacity: 1;
+}
+
+#feature-selection .feature-group button i  {
+  padding-left: 5px;
 }
 
 #navio {

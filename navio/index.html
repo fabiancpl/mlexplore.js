@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link rel="stylesheet" href="./css/main.css">
 
     <title>Navio Test</title>
@@ -21,19 +22,47 @@
           <h3>Features</h3>  
         </div>
         <div style="float: right;">
-          <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#newFeatureGroup">New group</button>
+          <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#newFeatureGroup">New group</button>
         </div>
         <div style="clear: left;"></div>
       </div>
-      <div id="no-group" class="feature-group">
+      <div id="no-group" class="feature-group" ondrop="drop(event)" ondragover="allowDrop(event)">
         <div class="header">No group</div>
-        <div class="content"></div>
       </div>
     </div>
 
     <div id="navio"></div>
 
+    <!-- New Feature Group Modal -->
+    <div class="modal fade" id="newFeatureGroup" tabindex="-1" role="dialog" aria-labelledby="newFeatureGroup" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">New Feature Group</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="recipient-name" class="col-form-label">Group name:</label>
+                <input type="text" class="form-control" id="group-name" required>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" onclick="createFeatureGroup()" class="btn btn-success">Create</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Third-party libraries -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script type="text/javascript" src="https://unpkg.com/navio/dist/navio.min.js"></script>
