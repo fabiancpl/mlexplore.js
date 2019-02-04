@@ -58,13 +58,15 @@ function initFeatureSelection() {
       .attr( 'checked', 'checked' )
       .on( 'change', ( feature ) => {
         
+        // Verify new checkbox status and update visible attribute
         chk = d3.select( '#' + feature.name + '-chk' ).property( 'checked' );
+        feature.visible = chk;
 
+        // Update feature visualization
         d3.select( '#' + feature.name )
           .attr( 'class', d => 'btn ' + ( ( chk === false ) ? 'btn-secondary' : ( ( d.type === 'categorical' ) ? 'btn-categorical' : 'btn-primary' ) ) )
           .property( 'disabled', !chk );
-        
-        //TODO: Re-enable feature
+
         //TODO: Update Navio
 
       } );
@@ -75,7 +77,7 @@ function initFeatureSelection() {
 
   featButtons
     .append( 'i' )
-    .attr( 'class', 'fas fa-sliders-h' );
+    .attr( 'class', 'fas fa-cog' );
 
 }
 
@@ -109,6 +111,7 @@ d3.csv( './data/animals.csv' ).then( function( data ) {
   visibleData = data;
 
   // Get features from data and identify type
+  // TODO: Method for select feature type
   features = []
   keys = Object.keys( data[ 0 ] );
   keys.forEach( ( k ) => {
@@ -116,7 +119,7 @@ d3.csv( './data/animals.csv' ).then( function( data ) {
     if( k === 'legs' ) {
       type = 'sequential';
     }
-    features.push( { 'name' : k, 'type' : type } );
+    features.push( { 'name' : k, 'type' : type, 'visible' : true } );
   } )
 
   
