@@ -1,9 +1,40 @@
-#feature-selection {
-  float: left;
-  width: 270px;
+/* Load data panel */ 
+
+.btn-file {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-file input[type=file] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 100px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  outline: none;   
+  cursor: inherit;
+  display: block;
+}
+
+#load-data {
+  width: 300px;
   border: 1px solid gray;
   margin: 10px;
   padding: 8px;
+  border-radius: 3px;
+}
+
+/* Feature selection panel */
+#feature-selection {
+  width: 300px;
+  border: 1px solid gray;
+  margin: 10px;
+  padding: 8px;
+  border-radius: 3px;
 }
 
 #feature-selection .feature-group {
@@ -28,12 +59,6 @@
   margin: 0px 3px 0px 3px;
 }
 
-#feature-selection .feature-group button.btn-categorical {
-  color: #fff;
-  background-color: #fd7e14;
-  border-color: #fd7e14;
-}
-
 #feature-selection .feature-group button span  {
   padding-left: 15px;
 }
@@ -48,6 +73,31 @@
   padding-left: 5px;
 }
 
+div.feature-glyph { 
+  position: absolute;     
+  text-align: center;     
+  width: 150px; 
+  height: 150px;       
+  padding: 3px;       
+  font: 12px;    
+  background: white; 
+  border: 1px solid gray;    
+  border-radius: 3px;     
+  pointer-events: none;     
+}
+
+/* Navio panel */
+
 #navio {
   float: left;
+}
+
+/* Projection panel */
+
+#projection {
+  float: left;
+  border: 1px solid gray;
+  margin: 10px;
+  padding: 8px;
+  border-radius: 3px;
 }
