@@ -1,6 +1,6 @@
 
 /* Hyper-parameters algorithm */
-var ITERATIONS = 1000,
+var ITERATIONS = 5000,
   PERPLEXITY = 30,
   EPSILON = 200
   DIMENSIONS = 2;
@@ -13,9 +13,11 @@ function project( data ) {
   data.forEach( d => {
     
     row = [];
-    proj_features.forEach( k => {
-      row.push( +d[ k ] );
+    config.features.forEach( feature => {
+      if( feature.project )
+        row.push( +d[ feature.name ] );
     } );
+    
     arrayData.push( row );
   } );
 

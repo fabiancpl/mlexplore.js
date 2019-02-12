@@ -1,0 +1,94 @@
+{
+  "features" : [
+    {
+      "name": "animal_name", 
+      "type": "categorical", 
+      "project": false
+    },
+    {
+      "name": "hair", 
+      "type": "categorical",
+      "project": true
+    },
+    {
+      "name": "feathers",
+      "type": "categorical", 
+      "project": true
+    },
+    {
+      "name": "eggs",
+      "type": "categorical", 
+      "project": true
+    },
+    {
+      "name": "milk",
+      "type": "categorical",
+      "project": true
+    },
+    {
+      "name": "airborne", 
+      "type": "categorical", 
+      "project": true
+    },
+    {
+      "name": "aquatic", 
+      "type": "categorical", 
+      "project": true
+    },
+    {
+      "name": "predator", 
+      "type": "categorical", 
+      "project": true
+    },
+    {
+      "name": "toothed", 
+      "type": "categorical", 
+      "project": true
+    },
+    {
+      "name": "backbone", 
+      "type": "categorical", 
+      "project": true
+    },
+    {
+      "name": "breathes", 
+      "type": "categorical", 
+      "project": true
+    },
+    {
+      "name": "venomous", 
+      "type": "categorical", 
+      "project": true
+    },
+    {
+      "name": "fins", 
+      "type": "categorical", 
+      "project": true
+    },
+    {
+      "name": "legs", 
+      "type": "sequential", 
+      "project": true
+    },
+    {
+      "name": "tail", 
+      "type": "categorical", 
+      "project": true
+    },
+    {
+      "name": "domestic", 
+      "type": "categorical", 
+      "project": true
+    },
+    {
+      "name": "catsize",
+      "type": "categorical", 
+      "project": true
+    },
+    {
+      "name": "class", 
+      "type": "categorical", 
+      "project": false
+    }
+  ]
+}

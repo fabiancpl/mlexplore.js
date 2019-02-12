@@ -9,6 +9,7 @@ var proj_svg, proj_g,
   proj_colorScale;
 
 var data,
+  config,
   visibleData,
   features,
   proj_features;
@@ -20,7 +21,7 @@ function initNavio() {
 
   nv = navio( d3.select( '#navio' ), nv_height );
 
-  features.forEach( ( f ) => {
+  config.features.forEach( ( f ) => {
     if( f.type === 'sequential' ){
       nv.addSequentialAttrib( f.name );
     } else {
@@ -55,65 +56,51 @@ var featureGlyph = d3.select( 'body' )
 
 function buildFeatureGlyph( feature ) {
 
-  console.log( feature );
-
   featureGlyph
     .html( '' )
     .style( 'left', ( d3.event.pageX + 20 ) + 'px' )   
     .style( 'top', ( d3.event.pageY + 20 ) + 'px' );
 
-  data_sym = [
-    {
-      "x" : "a",
-      "y" : 5,
-    },
-    {
-      "x" : "b",
-      "y" : 10,
-    },
-    {
-      "x" : "c",
-      "y" : 15,
-    },
-  ];
+  var nestedFeature = d3.nest()
+    .key( ( d ) => d[ feature.name ] )
+    .rollup( ( v ) => v.length )
+    .entries( data );
+
+  console.log( nestedFeature );
 
   var svgGlyph = featureGlyph.append( 'svg' )
     .attr( 'width', 140 )
     .attr( 'height', 140 );
 
-    var g = svgGlyph.append("g")
-      .attr( 'transform', 'translate(5,5)' );
+  var g = svgGlyph.append( 'g' )
+    .attr( 'transform', 'translate(5,5)' );
 
-  var xScale = d3.scaleBand().rangeRound( [ 0, 140 ] ).padding( 0.1 ),
-    yScale = d3.scaleLinear().rangeRound( [ 140, 0 ] );
+  var xScale = d3.scaleBand().rangeRound( [ 0, 130 ] ).padding( 0.1 ),
+    yScale = d3.scaleLinear().rangeRound( [ 130, 0 ] )
+    colorScale = d3.scaleOrdinal( d3.schemeCategory10 );
   
-  xScale.domain( data_sym.map( function( d ) { return d.x; }));
-  yScale.domain( [ 0, d3.max( data_sym, function( d ) { return d.y; })]);
+  xScale.domain( nestedFeature.map( ( d ) => d.key ) );
+  yScale.domain( [ 0, d3.max( nestedFeature, ( d ) => d.value ) ] );
 
-  g.append("g")
-            .attr("class", "axis axis--x")
-            .attr("transform", "translate(0," + 140 + ")")
-            .call(d3.axisBottom(xScale));
+  /*g.append( 'g' )
+    .attr( 'class', 'axis axis-x' )
+    .attr( 'transform', 'translate(0,' + 130 + ')' )
+    .call( d3.axisBottom( xScale ) );
 
-        g.append("g")
-            .attr("class", "axis axis--y")
-            .call(d3.axisLeft(yScale))
-          .append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", 6)
-            .attr("dy", "0.71em")
-            .attr("text-anchor", "end")
-            .text("Frequency");
+  g.append( 'g' )
+    .attr( 'class', 'axis axis-y' )
+    .call( d3.axisLeft( yScale ) );*/
 
-g.selectAll(".bar")
-          .data(data_sym)
-          .enter().append("rect")
-            .attr("class", "bar")
-            .attr("x", function(d) { return xScale(d.x); })
-            .attr("y", function(d) { return yScale(d.y); })
-            .attr("width", xScale.bandwidth())
-            .attr("height", function(d) { return 140 - yScale(d.y); });
-
+  g.selectAll( '.bar' )
+    .data( nestedFeature )
+    .enter()
+    .append( 'rect' )
+    .attr( 'class', 'bar' )
+    .attr( 'x', ( d ) => xScale( d.key ) )
+    .attr( 'y', ( d ) => yScale( d.value ) )
+    .attr( 'width', xScale.bandwidth() )
+    .attr( 'height', ( d ) => 130 - yScale( d.value ) )
+    .style( 'fill', d => colorScale( d.key) );
 
 }
 
@@ -121,11 +108,12 @@ function initFeatureSelection() {
 
   var featButtons = d3.select( '#feature-selection #no-group' )
     .selectAll( 'button' )
-    .data( features )
+    .data( config.features )
     .enter()
       .append( 'button' )
         .attr( 'id', d => d.name )
-        .attr( 'class', d => 'btn btn-secondary' )
+        .attr( 'class', d => 'btn ' + ( ( !d.project ) ? 'btn-light' : 'btn-secondary' ) )
+        .property( 'disabled', d => !d.project )
         .attr( 'draggable', true )
         .attr( 'ondragstart', 'drag(event)' )
         .on( 'mouseover', ( feature ) => {
@@ -148,7 +136,7 @@ function initFeatureSelection() {
       .attr( 'id', d => d.name + '-chk' )
       .attr( 'type', 'checkbox' )
       .attr( 'class', 'custom-control-input' )
-      .attr( 'checked', 'checked' )
+      .property( 'checked', d => d.project )
       .on( 'change', ( feature ) => {
         
         // Verify new checkbox status and update visible attribute
@@ -161,6 +149,10 @@ function initFeatureSelection() {
           .property( 'disabled', !chk );
 
         //TODO: Update Navio
+
+        // Update the projection
+        updateProjection( visibleData );
+        
 
       } );
 
@@ -217,23 +209,22 @@ function createFeatureGroup() {
 
 function loadData( url ) {
 
-  //d3.csv( './data/animals.csv' ).then( function( data ) {
-  d3.csv( url ).then( function( data ) {
+  d3.csv( url ).then( ( data ) => {
+
+    console.log( 'Dataset loaded!' );
 
     this.data = data;
-    visibleData = data;
+    visibleData = data;    
 
     // Get features from data and identify type
-    // TODO: Method for select feature type
-    features = []
-    keys = Object.keys( data[ 0 ] );
-    keys.forEach( ( k ) => {
-      type = 'categorical';
-      if( k === 'legs' ) {
-        type = 'sequential';
-      }
-      features.push( { 'name' : k, 'type' : type, 'visible' : true } );
-    } )
+    if( config === undefined ) {
+      config = {};
+      config.features = [];
+      keys = Object.keys( data[ 0 ] );
+      keys.forEach( ( k ) => {
+        config.features.push( { 'name' : k, 'type' : 'categorical', 'project' : true } );
+      } );
+    }
     
     // Create feature selection elements
     initFeatureSelection();
@@ -242,22 +233,37 @@ function loadData( url ) {
     initNavio();
     nv.data( this.data );
 
-    nv.updateCallback( () => visibleData = nv.getVisible() );
+    nv.updateCallback( () => {
+      visibleData = nv.getVisible();
 
-    // Initialize projection panel
-    initProjection()
-
-    proj_features = [ 'hair', 'feathers', 'eggs', 'milk', 'airborne', 'aquatic', 'predator', 'toothed', 'backbone', 'breathes', 'venomous', 'fins', 'legs', 'tail', 'domestic', 'catsize' ];
-
-    projection = project( data );
-    
-    projection.forEach( ( d, i ) => {
-      data[ i ][ 'x' ] = d[ 0 ];
-      data[ i ][ 'y' ] = d[ 1 ];
+      // Update the projection
+      updateProjection( visibleData );
     } );
 
-    drawProjection();
+    // Update the projection
+    updateProjection( visibleData );
 
+  } );
+
+}
+
+function loadConfig( url, filename ) {
+
+  var configname = filename.split( '.' );
+  configname[ configname.length - 1 ] = '.json';
+  configname = configname.join( '' );
+
+  d3.json( './config/' + configname ).then( ( config ) => {
+
+    console.log( 'Configuration founded!' );
+
+    this.config = config;
+    loadData( url ); 
+
+  } ).catch( ( error ) => {
+    console.log( 'Configuration not found!' );
+    console.log( error );
+    loadData( url );
   } );
 
 }
@@ -311,6 +317,22 @@ function drawProjection() {
 
 }
 
+function updateProjection() {
+
+  // Initialize projection panel
+  initProjection();
+
+  projection = project( visibleData );
+  
+  projection.forEach( ( d, i ) => {
+    data[ i ][ 'x' ] = d[ 0 ];
+    data[ i ][ 'y' ] = d[ 1 ];
+  } );
+
+  drawProjection();
+
+}
+
 // Event handler to load data by user
 d3.select( '#file-input' )
   .on( 'change', function() {
@@ -318,12 +340,11 @@ d3.select( '#file-input' )
     var file = d3.event.target.files[ 0 ];
     if ( !file ) return;
     d3.select( '#file-name' ).html( file.name );
-    console.log( file.name );
-
+    
     var reader = new FileReader();
     reader.onloadend = function( evt ) {
       var dataUrl = evt.target.result;
-      loadData( dataUrl );
+      loadConfig( dataUrl, file.name );
     };
     reader.readAsDataURL( file );
 
