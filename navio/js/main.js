@@ -43,9 +43,23 @@ function drag( event ) {
 function drop( event ) {
   event.preventDefault();
   var elementId = event.dataTransfer.getData( 'text' );
-  console.log( event.target.tagName );
-  if( event.target.tagName === 'DIV' )
+  if( event.target.tagName === 'DIV' ) {
     event.target.appendChild( document.getElementById( elementId ) );
+
+    // Move features between groups in the config object
+    config.featureGroups.forEach( group => {
+      if( group.groupId === event.target.id ) {
+        if( !group.features.includes( elementId ) )
+          group.features.push( elementId );  
+      } else {
+        if( group.features.includes( elementId ) ) {
+          var index = group.features.indexOf( elementId );
+          if (index > -1) group.features.splice( index, 1 );
+        }
+      }
+    } );
+  }
+  
 }
 
 // Define the div for the tooltip
@@ -106,6 +120,9 @@ function buildFeatureGlyph( feature ) {
 
 function initFeatureSelection() {
 
+  d3.select( '#feature-selection' )
+    .attr( 'class', null );
+
   var featButtons = d3.select( '#feature-selection #no-group' )
     .selectAll( 'button' )
     .data( config.features )
@@ -139,9 +156,9 @@ function initFeatureSelection() {
       .property( 'checked', d => d.project )
       .on( 'change', ( feature ) => {
         
-        // Verify new checkbox status and update visible attribute
+        // Verify new checkbox status and update project attribute
         chk = d3.select( '#' + feature.name + '-chk' ).property( 'checked' );
-        feature.visible = chk;
+        feature.project = chk;
 
         // Update feature visualization
         d3.select( '#' + feature.name )
@@ -200,7 +217,67 @@ function createFeatureGroup() {
 
     featureGroup.append( 'div' )
       .attr( 'class', 'header' )
-      .html( groupName );
+      .append( 'input' )
+        .attr( 'id', d => groupId + '-chk' )
+        .attr( 'type', 'checkbox' )
+        .attr( 'class', 'custom-control-input' )
+        .property( 'checked', true )
+        .on( 'change', function() {
+
+          // Verify new checkbox status
+          chk = d3.select( '#' + this.id ).property( 'checked' );
+          
+          group = config.featureGroups.find( x => x.groupId === this.id.replace( '-chk', '' ) );
+          
+          group.features.forEach( feature => {
+            config.features.find( x => x.name === feature ).project = chk;
+
+            // Update feature visualization
+            d3.select( '#' + feature )
+              .attr( 'class', d => 'btn ' + ( ( chk === false ) ? 'btn-light' : 'btn-secondary' ) )
+              .property( 'disabled', !chk );
+
+            d3.select( '#' + feature + '-chk' )
+              .property( 'checked', chk );
+
+          } );
+
+          //TODO: Update Navio
+
+          // Update the projection
+          updateProjection( visibleData );
+          
+
+        } );
+
+      featureGroup.select( '.header' )
+        .append( 'i' )
+          .attr( 'id', groupId + '-del' )
+          .attr( 'class', 'fas fa-times' )
+          .on( 'click', function() {
+
+            var groupId = this.id.replace( '-del', '' );
+
+            // Move features to no-group panel
+            config.featureGroups.find( x => x.groupId === groupId ).features.forEach( feature => {
+              document.getElementById( 'no-group' ).appendChild(
+                document.getElementById( feature )
+              );
+            } );
+
+            // Delete element from config and DOM
+            config.featureGroups = config.featureGroups.filter( x => x.groupId !== groupId );
+            d3.select( '#' + groupId ).remove();
+
+          } );
+
+      featureGroup.select( '.header' )
+        .append( 'span' )
+          .html( groupName );
+
+      if( config.featureGroups === undefined ) config.featureGroups = [];
+      config.featureGroups.push( { 'groupId' : groupId, 'groupName' : groupName, 'features' : [] } );
+
 
     $( '#newFeatureGroup' ).modal( 'hide' );
   }
@@ -228,6 +305,9 @@ function loadData( url ) {
     
     // Create feature selection elements
     initFeatureSelection();
+
+    d3.select( '#encode-color' )
+      .attr( 'class', null ); 
 
     // Initialize and put data in Navio
     initNavio();
@@ -270,7 +350,9 @@ function loadConfig( url, filename ) {
 
 function initProjection() {
 
-  d3.select( '#projection' ).html( '' );
+  d3.select( '#projection' )
+    .attr( 'class', null )
+    .html( '' );
 
   // Define projection scales
   proj_xScale = d3.scaleLinear()

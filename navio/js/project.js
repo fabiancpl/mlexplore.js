@@ -1,6 +1,6 @@
 
 /* Hyper-parameters algorithm */
-var ITERATIONS = 5000,
+var ITERATIONS = 1000,
   PERPLEXITY = 30,
   EPSILON = 200
   DIMENSIONS = 2;
@@ -20,7 +20,7 @@ function project( data ) {
     
     arrayData.push( row );
   } );
-
+  
   // Build hyper-parameters object
   var params = {}
   params.epsilon = EPSILON; 

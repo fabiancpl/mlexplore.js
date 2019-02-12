@@ -28,7 +28,7 @@
       </div>
         
       <!-- Feature Selection panel -->
-      <div id="feature-selection">
+      <div id="feature-selection" class="hide">
         <div>
           <div style="float: left;">
             <h3>Features</h3>  
@@ -42,12 +42,23 @@
           <div class="header">No group</div>
         </div>
       </div>
+
+      <!-- Load Data panel -->
+      <div id="encode-color" class="hide">
+
+        <h3>Encode Color</h3> 
+        
+        <select>
+          <option value="volvo" selected>class</option>
+        </select>
+
+      </div>
       
     </div>
 
     <div id="navio"></div>
 
-    <div id="projection"></div>
+    <div id="projection" class="hide"></div>
 
     <!-- New Feature Group Modal -->
     <div class="modal fade" id="newFeatureGroup" tabindex="-1" role="dialog" aria-labelledby="newFeatureGroup" aria-hidden="true">

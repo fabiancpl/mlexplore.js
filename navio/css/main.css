@@ -1,3 +1,7 @@
+.hide {
+  display: none;
+}
+
 /* Load data panel */ 
 
 .btn-file {
@@ -52,6 +56,22 @@
   padding: 0 5px 0 5px;
 }
 
+#feature-selection .feature-group .header input  {
+  z-index: 0;
+  opacity: 1;
+  cursor: pointer;
+}
+
+#feature-selection .feature-group .header i {
+  padding-left: 15px;
+  color: red;
+  cursor: pointer;
+}
+
+#feature-selection .feature-group .header span {
+  padding-left: 5px;
+}
+
 #feature-selection .feature-group button {
   font-size: 12px;
   border-radius: 15px;
@@ -67,6 +87,7 @@
   margin: 4px 0px 0px 0px;
   z-index: 0;
   opacity: 1;
+  cursor: pointer;
 }
 
 #feature-selection .feature-group button i  {
@@ -84,6 +105,14 @@ div.feature-glyph {
   border: 1px solid gray;    
   border-radius: 3px;     
   pointer-events: none;     
+}
+
+#encode-color {
+  width: 300px;
+  border: 1px solid gray;
+  margin: 10px;
+  padding: 8px;
+  border-radius: 3px;
 }
 
 /* Navio panel */
