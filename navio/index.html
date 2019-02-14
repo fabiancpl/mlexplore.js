@@ -10,55 +10,104 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link rel="stylesheet" href="./css/main.css">
 
-    <title>Navio Test</title>
+    <title>Interactive and Interpretable t-SNE</title>
 
   </head>
   <body>
 
-    <h1 style="text-align: center;">Interacting and Interpreting t-SNE</h1>
-
-    <div style="float: left;">
+    <div class="container-fluid">
       
-      <!-- Load Data panel -->
-      <div id="load-data">
-
-        <span class="btn btn-success btn-sm btn-file">Load data <input id="file-input" type="file"></span>
-        <span id="file-name">No data</span>
-
-      </div>
+      <div class="row">
         
-      <!-- Feature Selection panel -->
-      <div id="feature-selection" class="hide">
-        <div>
-          <div style="float: left;">
-            <h3>Features</h3>  
-          </div>
-          <div style="float: right;">
-            <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#newFeatureGroup">New group</button>
-          </div>
-          <div style="clear: left;"></div>
-        </div>
-        <div id="no-group" class="feature-group" ondrop="drop(event)" ondragover="allowDrop(event)">
-          <div class="header">No group</div>
-        </div>
-      </div>
+        <div class="col-md-12">
+          
+          <h1 style="text-align: center;">Interacting and Interpreting t-SNE</h1>
 
-      <!-- Load Data panel -->
-      <div id="encode-color" class="hide">
-
-        <h3>Encode Color</h3> 
-        
-        <select>
-          <option value="volvo" selected>class</option>
-        </select>
+        </div>
 
       </div>
       
-    </div>
+      <div class="row">
 
-    <div id="navio"></div>
+        <div class="col-md-2">
+        
+          <div class="row">
+            
+            <div class="col-md-12">
+              
+              <!-- Load Data panel -->
+              <div id="load-data">
 
-    <div id="projection" class="hide"></div>
+                <span class="btn btn-success btn-sm btn-file">Load data <input id="file-input" type="file"></span>
+                <span id="file-name">No data</span>
+
+              </div>
+
+            </div>
+
+            <div class="col-md-12">
+              
+              <!-- Feature Selection panel -->
+              <div id="feature-selection" class="hide">
+                <div>
+                  <div style="float: left;">
+                    <h3>Attributes</h3>  
+                  </div>
+                  <div style="float: right;">
+                    <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#newFeatureGroup">New group</button>
+                  </div>
+                  <div style="clear: left;"></div>
+                </div>
+                <div id="no-group" class="feature-group" ondrop="drop(event)" ondragover="allowDrop(event)">
+                  <div class="header">No group</div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="col-md-12">
+                
+              <!-- Load Data panel -->
+              <div id="encode-color" class="hide">
+
+                <h3>Encode Color</h3> 
+                
+                <select>
+                  <option value="volvo" selected>class</option>
+                </select>
+
+              </div>
+
+            </div>
+
+            <div class="col-md-12" style="overflow-x: scroll;">
+              
+              <div id="navio"></div>
+
+            </div>
+
+          </div>
+        
+        </div>
+
+        <div class="col-md-5">
+          
+          <button type="button" class="btn btn-success btn-sm" onclick="updateProjection( visibleData )">Run Projection</button>
+          <button type="button" class="btn btn-success btn-sm" onclick="cluster()">Run CLustering</button>
+
+          <div id="projection" class="hide"></div>
+        
+        </div>
+
+        <div class="col-md-5">
+        
+          One of three columns
+        
+        </div>
+      
+      </div>
+
+    </div>    
 
     <!-- New Feature Group Modal -->
     <div class="modal fade" id="newFeatureGroup" tabindex="-1" role="dialog" aria-labelledby="newFeatureGroup" aria-hidden="true">
@@ -99,8 +148,10 @@
     <script src="./libs/tsne.js"></script>
     
     <!-- Scripts -->
+    <script type="text/javascript" src="./js/components/non-visual/project.js"></script>
+    <script type="text/javascript" src="./js/components/non-visual/cluster.js"></script>
+    <script type="text/javascript" src="./js/components/visual/projectionChart.js"></script>
     <script type="text/javascript" src="./js/main.js"></script>
-    <script type="text/javascript" src="./js/project.js"></script>
 
   </body>
 </html>

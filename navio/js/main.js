@@ -1,33 +1,37 @@
 
-const proj_width = 500,
-  proj_height = 400,
-  proj_padding = 20
-  proj_r = 3;
-
-var proj_svg, proj_g, 
-  proj_xScale, proj_yScale, 
-  proj_colorScale;
-
 var data,
   config,
-  visibleData,
-  features,
-  proj_features;
+  visibleData;
 
 var nv,
   nv_height = 500;
 
-function initNavio() {
+function updateNavio() {
+
+  visibleData = data; 
+
+  d3.select( '#navio' ).html( '' );
 
   nv = navio( d3.select( '#navio' ), nv_height );
 
-  config.features.forEach( ( f ) => {
-    if( f.type === 'sequential' ){
-      nv.addSequentialAttrib( f.name );
-    } else {
-      nv.addCategoricalAttrib( f.name );
+  config.features.forEach( f => {
+    if( f.project === true || f.class === true ) {
+      if( f.type === 'sequential' ){
+        nv.addSequentialAttrib( f.name );
+      } else {
+        nv.addCategoricalAttrib( f.name );
+      }
     }
     
+  } );
+
+  nv.data( this.data );
+
+  nv.updateCallback( () => {
+    visibleData = nv.getVisible();
+
+    // Update the projection
+    updateProjection();
   } );
 
 }
@@ -132,7 +136,7 @@ function initFeatureSelection() {
         .attr( 'class', d => 'btn ' + ( ( !d.project ) ? 'btn-light' : 'btn-secondary' ) )
         .property( 'disabled', d => !d.project )
         .attr( 'draggable', true )
-        .attr( 'ondragstart', 'drag(event)' )
+        .attr( 'ondragstart', 'drag(event)' )/*
         .on( 'mouseover', ( feature ) => {
 
           featureGlyph.transition()    
@@ -146,7 +150,7 @@ function initFeatureSelection() {
           featureGlyph.transition()    
             .duration( 500 )    
             .style( 'opacity', 0 ); 
-        } );
+        } )*/;
 
   featButtons
     .append( 'input' )
@@ -165,10 +169,11 @@ function initFeatureSelection() {
           .attr( 'class', d => 'btn ' + ( ( chk === false ) ? 'btn-light' : 'btn-secondary' ) )
           .property( 'disabled', !chk );
 
-        //TODO: Update Navio
+        // Update Navio
+        updateNavio();
 
         // Update the projection
-        updateProjection( visibleData );
+        updateProjection();
         
 
       } );
@@ -245,7 +250,7 @@ function createFeatureGroup() {
           //TODO: Update Navio
 
           // Update the projection
-          updateProjection( visibleData );
+          updateProjection();
           
 
         } );
@@ -286,12 +291,11 @@ function createFeatureGroup() {
 
 function loadData( url ) {
 
-  d3.csv( url ).then( ( data ) => {
+  d3.csv( url, d3.autoType ).then( ( data ) => {
 
     console.log( 'Dataset loaded!' );
 
-    this.data = data;
-    visibleData = data;    
+    this.data = data;   
 
     // Get features from data and identify type
     if( config === undefined ) {
@@ -310,18 +314,10 @@ function loadData( url ) {
       .attr( 'class', null ); 
 
     // Initialize and put data in Navio
-    initNavio();
-    nv.data( this.data );
-
-    nv.updateCallback( () => {
-      visibleData = nv.getVisible();
-
-      // Update the projection
-      updateProjection( visibleData );
-    } );
+    updateNavio();
 
     // Update the projection
-    updateProjection( visibleData );
+    updateProjection();
 
   } );
 
@@ -348,70 +344,24 @@ function loadConfig( url, filename ) {
 
 }
 
-function initProjection() {
+function updateProjection() {
+
+  projection = project( visibleData, config );
+  
+  projection.forEach( ( d, i ) => {
+    visibleData[ i ][ 'x' ] = d[ 0 ];
+    visibleData[ i ][ 'y' ] = d[ 1 ];
+  } );
+
+  var chart = projectionChart()
+    .x( ( d ) => d.x )
+    .y( ( d ) => d.y  )
+    .z( ( d ) => d.class  );
 
   d3.select( '#projection' )
     .attr( 'class', null )
-    .html( '' );
-
-  // Define projection scales
-  proj_xScale = d3.scaleLinear()
-    .range( [ proj_padding, proj_width - proj_padding ] );
-    
-  proj_yScale = d3.scaleLinear()
-    .range( [ proj_height - proj_padding, proj_padding ] );
-
-  // Define color scale
-  proj_colorScale = d3.scaleOrdinal( d3.schemeCategory10 )
-    .domain( d3.map( data, d => d.class ) );
-
-  // Create SVG
-  proj_svg = d3.select( '#projection' )
-    .append( 'svg' )
-      .attr( 'width', proj_width )
-      .attr( 'height', proj_height )
-
-  proj_g = proj_svg.append( 'g' );
-
-}
-
-function drawProjection() {
-
-  proj_xScale
-    .domain( [ d3.min( data, d => d.x ), d3.max( data, d => d.x ) ] );
-    
-  proj_yScale
-    .domain( [ d3.min( data, d => d.y ), d3.max( data, d => d.y ) ] );
-
-  proj_svg.append( 'text' )
-    .attr( 'x', proj_padding )
-    .attr( 'y', proj_padding )
-    .text( 'Iterations: ' + ITERATIONS + '\nPerplexity: ' + PERPLEXITY );
-
-  proj_g.selectAll( 'circle' )
-    .data( data )
-    .enter()
-      .append( 'circle' )
-      .attr( 'cx', d => proj_xScale( d.x ) )
-      .attr( 'cy', d => proj_yScale( d.y ) )
-      .attr( 'r', proj_r )
-      .attr( 'fill', d => proj_colorScale( d.class ) );
-
-}
-
-function updateProjection() {
-
-  // Initialize projection panel
-  initProjection();
-
-  projection = project( visibleData );
-  
-  projection.forEach( ( d, i ) => {
-    data[ i ][ 'x' ] = d[ 0 ];
-    data[ i ][ 'y' ] = d[ 1 ];
-  } );
-
-  drawProjection();
+    .datum( visibleData )
+    .call( chart );
 
 }
 

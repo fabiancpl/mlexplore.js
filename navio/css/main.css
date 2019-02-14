@@ -4,6 +4,14 @@
 
 /* Load data panel */ 
 
+#load-data {
+  width: 100%;
+  border: 1px solid gray;
+  margin: 5px 0px 5px 0px;
+  padding: 8px;
+  border-radius: 3px;
+}
+
 .btn-file {
   position: relative;
   overflow: hidden;
@@ -24,19 +32,11 @@
   display: block;
 }
 
-#load-data {
-  width: 300px;
-  border: 1px solid gray;
-  margin: 10px;
-  padding: 8px;
-  border-radius: 3px;
-}
-
 /* Feature selection panel */
 #feature-selection {
-  width: 300px;
+  width: 100%;
   border: 1px solid gray;
-  margin: 10px;
+  margin: 5px 0px 5px 0px;
   padding: 8px;
   border-radius: 3px;
 }
@@ -107,18 +107,14 @@ div.feature-glyph {
   pointer-events: none;     
 }
 
+/* Encode Color panel */
+
 #encode-color {
-  width: 300px;
+  width: 100%;
   border: 1px solid gray;
-  margin: 10px;
+  margin: 5px 0px 5px 0px;
   padding: 8px;
   border-radius: 3px;
-}
-
-/* Navio panel */
-
-#navio {
-  float: left;
 }
 
 /* Projection panel */
@@ -126,7 +122,7 @@ div.feature-glyph {
 #projection {
   float: left;
   border: 1px solid gray;
-  margin: 10px;
+  margin: 5px 0px 5px 0px;
   padding: 8px;
   border-radius: 3px;
 }

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+  <head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <title>Navio Test</title>
+
+  </head>
+  <body>
+  
+    <!-- Placeholder for the widget -->
+    <div id="navio"></div>
+
+
+    <!-- NAVIO Step 0: Load the libraries -->
+    <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/navio/dist/navio.min.js"></script>
+
+    <script>
+      // NAVIO  Step 1.  Create a Navio passing a d3 selection to place it and an optional height
+      var nv = navio(d3.select("#navio"), 600);
+
+      // NAVIO Step 2. Add the Categorical and Sequential attributes you want to use
+      var catColumns = [ 'animal_name', 'hair', 'feathers', 'eggs', 'milk', 'airborne', 'aquatic', 'predator', 'toothed', 'backbone', 'breathes', 'venomous', 'fins', 'tail', 'domestic', 'catsize', 'class' ];
+      var seqColumns = [ 'legs' ];
+      catColumns.forEach((c) => nv.addCategoricalAttrib(c));
+      seqColumns.forEach((c) => nv.addSequentialAttrib(c));
+
+      // NAVIO Step 3. Load your data!
+      d3.csv( './data/animals.csv' ).then( ( data ) => {
+        nv.data( data );
+      } );
+
+    </script>
+  </body>
+</html>
