@@ -1,7 +1,8 @@
 
 var data,
   config,
-  visibleData;
+  visibleData,
+  color_feature;
 
 var nv,
   nv_height = 500;
@@ -289,6 +290,49 @@ function createFeatureGroup() {
 
 }
 
+function updateEncodeColor() {
+
+  // Get features enabled for colored
+  classFeatures = config.features.filter( d => d.class );
+  
+  if( classFeatures !== undefined ) {
+    color_feature = classFeatures[ 0 ].name;
+    classFeatures = [ { "name": "No color" } ].concat( classFeatures );
+  } else {
+    classFeatures = [ { "name": "No color" } ];
+  }
+  
+  d3.select( '#encode-color' )
+    .attr( 'class', null );
+
+  d3.select( '#encode-color-combo' )
+    .html( '' );
+
+  d3.select( '#encode-color-combo' )
+    .on( 'change', _ => {
+      selectValue = d3.select( '#encode-color-combo' ).property( 'value' );
+      var chart = projectionChart()
+        .x( ( d ) => d.x )
+        .y( ( d ) => d.y  )
+        .z( ( d ) => d[ selectValue ]  );
+
+      d3.select( '#projection' )
+        .attr( 'class', null )
+        .datum( visibleData )
+        .call( chart );
+    } );
+
+  var options = d3.select( '#encode-color-combo' )
+    .selectAll( 'option' )
+      .data( classFeatures )
+      .enter()
+      .append( 'option' )
+        .attr( 'value', d => d.name )
+        .property( 'selected', d => ( d.name === color_feature ) ? true : false )
+        .html( d => d.name );
+
+}
+
 function loadData( url ) {
 
   d3.csv( url, d3.autoType ).then( ( data ) => {
@@ -307,11 +351,11 @@ function loadData( url ) {
       } );
     }
     
-    // Create feature selection elements
+    // Initialize Feature Selection panel
     initFeatureSelection();
 
-    d3.select( '#encode-color' )
-      .attr( 'class', null ); 
+    // Initialize Encode Color panel
+    updateEncodeColor();
 
     // Initialize and put data in Navio
     updateNavio();
@@ -346,7 +390,7 @@ function loadConfig( url, filename ) {
 
 function updateProjection() {
 
-  projection = project( visibleData, config );
+  var projection = project( visibleData, config );
   
   projection.forEach( ( d, i ) => {
     visibleData[ i ][ 'x' ] = d[ 0 ];
@@ -356,12 +400,49 @@ function updateProjection() {
   var chart = projectionChart()
     .x( ( d ) => d.x )
     .y( ( d ) => d.y  )
-    .z( ( d ) => d.class  );
+    .z( ( d ) => d[ color_feature ]  );
 
   d3.select( '#projection' )
     .attr( 'class', null )
     .datum( visibleData )
     .call( chart );
+
+}
+
+function updateCluster() {
+
+  var clusters = cluster( visibleData, config );
+
+  color_feature = 'cluster';
+
+  clusters.forEach( ( d, i ) => {
+    visibleData[ i ][ color_feature ] = d;
+  } );
+
+  if( config.features.find( d => d.name === color_feature ) === undefined )
+    config.features.push( {
+      "name": "cluster", 
+      "type": "categorical", 
+      "project": false,
+      "class": true
+    } );
+
+  updateEncodeColor();
+  //updateNavio();
+
+  var chart = projectionChart()
+    .x( ( d ) => d.x )
+    .y( ( d ) => d.y  )
+    .z( ( d ) => d.cluster  );
+
+  d3.select( '#projection' )
+    .attr( 'class', null )
+    .datum( visibleData )
+    .call( chart );
+
+  var options = d3.select( '#encode-color-combo' )
+    .selectAll( 'option' )
+      .property( 'selected', d => ( d.name === color_feature ) ? true : false );
 
 }
 

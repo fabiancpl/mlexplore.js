@@ -16,6 +16,8 @@ function projectionChart() {
     yScale = d3.scaleLinear(),
     zScale = d3.scaleOrdinal( d3.schemeCategory10 );
 
+  var points;
+
   function chart( selection ) {
     
   	selection.each( function( data ) {
@@ -50,8 +52,8 @@ function projectionChart() {
         .range( [ iHeight, 0 ] )
         .domain( [ d3.min( data, yValue ), d3.max( data, yValue ) ] );   
 
-      var points = g.selectAll( '.circle' )
-        .data( function (d) { return d; } );
+      points = g.selectAll( '.circle' )
+        .data( d => d );
       
       points
         .enter()

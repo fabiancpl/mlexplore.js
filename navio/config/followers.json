@@ -1,0 +1,39 @@
+{
+  "features" : [
+    {
+      "name": "screen_name", 
+      "type": "categorical", 
+      "project": false
+    },
+    {
+      "name": "created_since", 
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "favourites_count",
+      "type": "sequential", 
+      "project": true
+    },
+    {
+      "name": "followers_count",
+      "type": "sequential", 
+      "project": true
+    },
+    {
+      "name": "friends_count",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "listed_count", 
+      "type": "sequential", 
+      "project": true
+    },
+    {
+      "name": "statuses_count", 
+      "type": "sequential", 
+      "project": true
+    }
+  ]
+}
