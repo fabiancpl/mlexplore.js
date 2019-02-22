@@ -94,6 +94,7 @@
           
           <button type="button" class="btn btn-success btn-sm" onclick="updateProjection( visibleData )">Run Projection</button>
           <button type="button" class="btn btn-success btn-sm" onclick="updateCluster( visibleData )">Run Clustering</button>
+          <button type="button" class="btn btn-success btn-sm" onclick="exportProjection()">Export Projection</button>
 
           <div id="projection" class="hide"></div>
         
@@ -143,14 +144,21 @@
     <!-- D3.js -->
     <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <!-- navio.js -->
     <script type="text/javascript" src="./libs/navio.js"></script>
     <!-- t-SNE.js -->
     <script src="./libs/tsne.js"></script>
+
+    <script src="./libs/saveSvgAsPng.js"></script>
     
     <!-- Scripts -->
     <script type="text/javascript" src="./js/components/non-visual/project.js"></script>
     <script type="text/javascript" src="./js/components/non-visual/cluster.js"></script>
     <script type="text/javascript" src="./js/components/visual/projectionChart.js"></script>
+    <script type="text/javascript" src="./js/featureSelection.js"></script>
+    <script type="text/javascript" src="./js/encodeColor.js"></script>
+    <script type="text/javascript" src="./js/exportProjection.js"></script>
+    <script type="text/javascript" src="./js/navio.js"></script>
     <script type="text/javascript" src="./js/main.js"></script>
 
   </body>

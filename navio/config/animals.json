@@ -89,7 +89,7 @@
       "name": "class", 
       "type": "categorical", 
       "project": false,
-      "class": true
+      "color": true
     }
   ]
 }

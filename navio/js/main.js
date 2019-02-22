@@ -1,347 +1,78 @@
 
 var data,
   config,
+  autoRun = true,
   visibleData,
   color_feature;
 
-var nv,
-  nv_height = 500;
+function updateCluster() {
 
-function updateNavio() {
+  // Call function to run clustering model
+  var clusters = cluster( visibleData, config );
 
-  visibleData = data; 
+  // Set the new feature to be encoded by color
+  color_feature = 'cluster';
 
-  d3.select( '#navio' ).html( '' );
-
-  nv = navio( d3.select( '#navio' ), nv_height );
-
-  config.features.forEach( f => {
-    if( f.project === true || f.class === true ) {
-      if( f.type === 'sequential' ){
-        nv.addSequentialAttrib( f.name );
-      } else {
-        nv.addCategoricalAttrib( f.name );
-      }
-    }
-    
+  // Update the dataset with the clustering model results
+  clusters.forEach( ( d, i ) => {
+    visibleData[ i ][ color_feature ] = d;
   } );
 
-  nv.data( this.data );
-
-  nv.updateCallback( () => {
-    visibleData = nv.getVisible();
-
-    // Update the projection
-    updateProjection();
-  } );
-
-}
-
-function allowDrop( event ) {
-  event.preventDefault();
-}
-
-function drag( event ) {
-  event.dataTransfer.setData( 'text', event.target.id );
-}
-
-function drop( event ) {
-  event.preventDefault();
-  var elementId = event.dataTransfer.getData( 'text' );
-  if( event.target.tagName === 'DIV' ) {
-    event.target.appendChild( document.getElementById( elementId ) );
-
-    // Move features between groups in the config object
-    config.featureGroups.forEach( group => {
-      if( group.groupId === event.target.id ) {
-        if( !group.features.includes( elementId ) )
-          group.features.push( elementId );  
-      } else {
-        if( group.features.includes( elementId ) ) {
-          var index = group.features.indexOf( elementId );
-          if (index > -1) group.features.splice( index, 1 );
-        }
-      }
-    } );
-  }
-  
-}
-
-// Define the div for the tooltip
-var featureGlyph = d3.select( 'body' )
-  .append( 'div' ) 
-    .attr( 'class', 'feature-glyph' )       
-    .style( 'opacity', 0 );
-
-function buildFeatureGlyph( feature ) {
-
-  featureGlyph
-    .html( '' )
-    .style( 'left', ( d3.event.pageX + 20 ) + 'px' )   
-    .style( 'top', ( d3.event.pageY + 20 ) + 'px' );
-
-  var nestedFeature = d3.nest()
-    .key( ( d ) => d[ feature.name ] )
-    .rollup( ( v ) => v.length )
-    .entries( data );
-
-  console.log( nestedFeature );
-
-  var svgGlyph = featureGlyph.append( 'svg' )
-    .attr( 'width', 140 )
-    .attr( 'height', 140 );
-
-  var g = svgGlyph.append( 'g' )
-    .attr( 'transform', 'translate(5,5)' );
-
-  var xScale = d3.scaleBand().rangeRound( [ 0, 130 ] ).padding( 0.1 ),
-    yScale = d3.scaleLinear().rangeRound( [ 130, 0 ] )
-    colorScale = d3.scaleOrdinal( d3.schemeCategory10 );
-  
-  xScale.domain( nestedFeature.map( ( d ) => d.key ) );
-  yScale.domain( [ 0, d3.max( nestedFeature, ( d ) => d.value ) ] );
-
-  /*g.append( 'g' )
-    .attr( 'class', 'axis axis-x' )
-    .attr( 'transform', 'translate(0,' + 130 + ')' )
-    .call( d3.axisBottom( xScale ) );
-
-  g.append( 'g' )
-    .attr( 'class', 'axis axis-y' )
-    .call( d3.axisLeft( yScale ) );*/
-
-  g.selectAll( '.bar' )
-    .data( nestedFeature )
-    .enter()
-    .append( 'rect' )
-    .attr( 'class', 'bar' )
-    .attr( 'x', ( d ) => xScale( d.key ) )
-    .attr( 'y', ( d ) => yScale( d.value ) )
-    .attr( 'width', xScale.bandwidth() )
-    .attr( 'height', ( d ) => 130 - yScale( d.value ) )
-    .style( 'fill', d => colorScale( d.key) );
-
-}
-
-function initFeatureSelection() {
-
-  d3.select( '#feature-selection' )
-    .attr( 'class', null );
-
-  var featButtons = d3.select( '#feature-selection #no-group' )
-    .selectAll( 'button' )
-    .data( config.features )
-    .enter()
-      .append( 'button' )
-        .attr( 'id', d => d.name )
-        .attr( 'class', d => 'btn ' + ( ( !d.project ) ? 'btn-light' : 'btn-secondary' ) )
-        .property( 'disabled', d => !d.project )
-        .attr( 'draggable', true )
-        .attr( 'ondragstart', 'drag(event)' )/*
-        .on( 'mouseover', ( feature ) => {
-
-          featureGlyph.transition()    
-            .duration( 500 )    
-            .style( 'opacity', 1 );
-
-          buildFeatureGlyph( feature );          
-              
-        } )          
-        .on( 'mouseout', () => {   
-          featureGlyph.transition()    
-            .duration( 500 )    
-            .style( 'opacity', 0 ); 
-        } )*/;
-
-  featButtons
-    .append( 'input' )
-      .attr( 'id', d => d.name + '-chk' )
-      .attr( 'type', 'checkbox' )
-      .attr( 'class', 'custom-control-input' )
-      .property( 'checked', d => d.project )
-      .on( 'change', ( feature ) => {
-        
-        // Verify new checkbox status and update project attribute
-        chk = d3.select( '#' + feature.name + '-chk' ).property( 'checked' );
-        feature.project = chk;
-
-        // Update feature visualization
-        d3.select( '#' + feature.name )
-          .attr( 'class', d => 'btn ' + ( ( chk === false ) ? 'btn-light' : 'btn-secondary' ) )
-          .property( 'disabled', !chk );
-
-        // Update Navio
-        updateNavio();
-
-        // Update the projection
-        updateProjection();
-        
-
-      } );
-
-  featButtons
-    .append( 'span' )
-    .text( d => d.name );
-
-  featButtons
-    .append( 'i' )
-    .attr( 'id', d => d.name + '-type' )
-    .attr( 'class', 'text-warning' )
-    .html( d => ( ( d.type === 'categorical' ) ? '<b>A</b>' : '<b>#</b>' ) );
-    /*.on( 'click', ( feature ) => {
-      
-      // TODO: Change type in original dataset
-
-      // Modifying feature property
-      if( feature.type === 'categorical' ) {
-        feature.type = 'sequential';
-      } else {
-        feature.type = 'categorical';
-      }
-
-      // Modifying feature visual aspect in list
-      d3.select( '#' + feature.name + '-type' )
-        .html( d => ( ( d.type === 'categorical' ) ? '<b>A</b>' : '<b>#</b>' ) );
-    } );*/
-
-}
-
-function createFeatureGroup() {
-
-  if( $( '#group-name' ).val() !== '' ) {
-    console.log( 'New feature group: ' + $( '#group-name' ).val() );
-
-    var groupName = $( '#group-name' ).val();
-    var groupId = groupName.toLowerCase().replace( ' ', '-' );
-
-    // Create DOM element
-    var featureGroup = d3.select( '#feature-selection' ).append( 'div' )
-      .attr( 'id', groupId )
-      .attr( 'class', 'feature-group' )
-      .attr( 'ondrop', 'drop(event)' )
-      .attr( 'ondragover', 'allowDrop(event)' );
-
-    featureGroup.append( 'div' )
-      .attr( 'class', 'header' )
-      .append( 'input' )
-        .attr( 'id', d => groupId + '-chk' )
-        .attr( 'type', 'checkbox' )
-        .attr( 'class', 'custom-control-input' )
-        .property( 'checked', true )
-        .on( 'change', function() {
-
-          // Verify new checkbox status
-          chk = d3.select( '#' + this.id ).property( 'checked' );
-          
-          group = config.featureGroups.find( x => x.groupId === this.id.replace( '-chk', '' ) );
-          
-          group.features.forEach( feature => {
-            config.features.find( x => x.name === feature ).project = chk;
-
-            // Update feature visualization
-            d3.select( '#' + feature )
-              .attr( 'class', d => 'btn ' + ( ( chk === false ) ? 'btn-light' : 'btn-secondary' ) )
-              .property( 'disabled', !chk );
-
-            d3.select( '#' + feature + '-chk' )
-              .property( 'checked', chk );
-
-          } );
-
-          //TODO: Update Navio
-
-          // Update the projection
-          updateProjection();
-          
-
-        } );
-
-      featureGroup.select( '.header' )
-        .append( 'i' )
-          .attr( 'id', groupId + '-del' )
-          .attr( 'class', 'fas fa-times' )
-          .on( 'click', function() {
-
-            var groupId = this.id.replace( '-del', '' );
-
-            // Move features to no-group panel
-            config.featureGroups.find( x => x.groupId === groupId ).features.forEach( feature => {
-              document.getElementById( 'no-group' ).appendChild(
-                document.getElementById( feature )
-              );
-            } );
-
-            // Delete element from config and DOM
-            config.featureGroups = config.featureGroups.filter( x => x.groupId !== groupId );
-            d3.select( '#' + groupId ).remove();
-
-          } );
-
-      featureGroup.select( '.header' )
-        .append( 'span' )
-          .html( groupName );
-
-      if( config.featureGroups === undefined ) config.featureGroups = [];
-      config.featureGroups.push( { 'groupId' : groupId, 'groupName' : groupName, 'features' : [] } );
-
-
-    $( '#newFeatureGroup' ).modal( 'hide' );
-  }
-
-}
-
-function updateEncodeColor() {
-
-  // Get features enabled for colored
-  classFeatures = config.features.filter( d => d.class );
-  
-  if( classFeatures !== undefined ) {
-    color_feature = classFeatures[ 0 ].name;
-    classFeatures = [ { "name": "No color" } ].concat( classFeatures );
-  } else {
-    classFeatures = [ { "name": "No color" } ];
-  }
-  
-  d3.select( '#encode-color' )
-    .attr( 'class', null );
-
-  d3.select( '#encode-color-combo' )
-    .html( '' );
-
-  d3.select( '#encode-color-combo' )
-    .on( 'change', _ => {
-      selectValue = d3.select( '#encode-color-combo' ).property( 'value' );
-      var chart = projectionChart()
-        .x( ( d ) => d.x )
-        .y( ( d ) => d.y  )
-        .z( ( d ) => d[ selectValue ]  );
-
-      d3.select( '#projection' )
-        .attr( 'class', null )
-        .datum( visibleData )
-        .call( chart );
+  // Create the new feature in the configuration 
+  if( config.features.find( d => d.name === color_feature ) === undefined )
+    config.features.push( {
+      "name": "cluster", 
+      "type": "categorical", 
+      "project": false
     } );
 
-  var options = d3.select( '#encode-color-combo' )
-    .selectAll( 'option' )
-      .data( classFeatures )
-      .enter()
-      .append( 'option' )
-        .attr( 'value', d => d.name )
-        .property( 'selected', d => ( d.name === color_feature ) ? true : false )
-        .html( d => d.name );
+  // Update Encode Color and Projection panels
+  updateEncodeColor();
+  updateProjection( run_model = false );
 
 }
 
+// Project the data calling re-train model if specified
+function updateProjection( run_model = true ) {
+
+  if( run_model ) {
+
+    var projection = project( visibleData, config );
+  
+    projection.forEach( ( d, i ) => {
+      visibleData[ i ][ 'x' ] = d[ 0 ];
+      visibleData[ i ][ 'y' ] = d[ 1 ];
+    } );
+
+  }
+
+  var chart = projectionChart()
+    .x( ( d ) => d.x )
+    .y( ( d ) => d.y  )
+    .z( ( d ) => d[ color_feature ]  );
+
+  d3.select( '#projection' )
+    .attr( 'class', null )
+    .datum( visibleData )
+    .call( chart );
+
+}
+
+// Load the dataset requested by the user
 function loadData( url ) {
 
+  // Load the dataset in D3 format
   d3.csv( url, d3.autoType ).then( ( data ) => {
 
     console.log( 'Dataset loaded!' );
 
-    this.data = data;   
+    // Save the dataset for global access
+    this.data = data;
+    visibleData = data;
 
-    // Get features from data and identify type
+
+    // If configuration file was not found,
+    // Get features from data and assign by default type
     if( config === undefined ) {
       config = {};
       config.features = [];
@@ -367,93 +98,51 @@ function loadData( url ) {
 
 }
 
+// Find a configuration file previously saved and try to load it
+// The name of the configuration file it is expected to be the same and its format must be json
 function loadConfig( url, filename ) {
 
+  // Build the name of the configuration file
   var configname = filename.split( '.' );
   configname[ configname.length - 1 ] = '.json';
   configname = configname.join( '' );
 
+  // Load the the configuration file
   d3.json( './config/' + configname ).then( ( config ) => {
 
     console.log( 'Configuration founded!' );
 
+    // Save the configuration for global access
     this.config = config;
+    
+    // Load the dataset
     loadData( url ); 
 
+    // Find features for color encoding
+    var color_features = config.features.filter( d => d.color === true );
+    color_feature = color_features[ 0 ].name;
+
   } ).catch( ( error ) => {
+
     console.log( 'Configuration not found!' );
-    console.log( error );
+    
+    // Load the dataset
     loadData( url );
+
   } );
 
 }
 
-function updateProjection() {
-
-  var projection = project( visibleData, config );
-  
-  projection.forEach( ( d, i ) => {
-    visibleData[ i ][ 'x' ] = d[ 0 ];
-    visibleData[ i ][ 'y' ] = d[ 1 ];
-  } );
-
-  var chart = projectionChart()
-    .x( ( d ) => d.x )
-    .y( ( d ) => d.y  )
-    .z( ( d ) => d[ color_feature ]  );
-
-  d3.select( '#projection' )
-    .attr( 'class', null )
-    .datum( visibleData )
-    .call( chart );
-
-}
-
-function updateCluster() {
-
-  var clusters = cluster( visibleData, config );
-
-  color_feature = 'cluster';
-
-  clusters.forEach( ( d, i ) => {
-    visibleData[ i ][ color_feature ] = d;
-  } );
-
-  if( config.features.find( d => d.name === color_feature ) === undefined )
-    config.features.push( {
-      "name": "cluster", 
-      "type": "categorical", 
-      "project": false,
-      "class": true
-    } );
-
-  updateEncodeColor();
-  //updateNavio();
-
-  var chart = projectionChart()
-    .x( ( d ) => d.x )
-    .y( ( d ) => d.y  )
-    .z( ( d ) => d.cluster  );
-
-  d3.select( '#projection' )
-    .attr( 'class', null )
-    .datum( visibleData )
-    .call( chart );
-
-  var options = d3.select( '#encode-color-combo' )
-    .selectAll( 'option' )
-      .property( 'selected', d => ( d.name === color_feature ) ? true : false );
-
-}
-
-// Event handler to load data by user
+// Event handler for loading a dataset by the user
 d3.select( '#file-input' )
   .on( 'change', function() {
 
+    // Get the file name
     var file = d3.event.target.files[ 0 ];
     if ( !file ) return;
     d3.select( '#file-name' ).html( file.name );
     
+    // Get the path of the file and call the function for load it
     var reader = new FileReader();
     reader.onloadend = function( evt ) {
       var dataUrl = evt.target.result;
