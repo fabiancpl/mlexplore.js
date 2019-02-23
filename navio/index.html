@@ -92,8 +92,18 @@
 
         <div class="col-md-5">
           
-          <button type="button" class="btn btn-success btn-sm" onclick="updateProjection( visibleData )">Run Projection</button>
+          <div>
+            Iterations: <input id="hparam-iterations" type="range" min="500" max="2000" step="100"><span id="hparam-iterations-span"></span>
+            Perplexity: <input id="hparam-perplexity" type="range" min="5" max="50" step="1"><span id="hparam-perplexity-span"></span>
+            <button type="button" class="btn btn-success btn-sm" onclick="updateProjection( visibleData )">Run Projection</button>
+          </div>
+          
+          <div>
+          Number of clusters: <input id="hparam-clusters" type="range" min="2" max="10" step="1"><span id="hparam-clusters-span"></span>
+          <input id="runClusteringOnProjection" type="checkbox"> Run on projected data<br>
           <button type="button" class="btn btn-success btn-sm" onclick="updateCluster( visibleData )">Run Clustering</button>
+          </div>
+
           <div id="projection" class="hide"></div>
         
         </div>

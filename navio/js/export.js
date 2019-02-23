@@ -4,14 +4,6 @@ function exportConfiguration() {
 
   console.log( 'Exporting configuration as JSON!' );
 
-  function download( content, fileName, contentType ) {
-    var a = document.createElement( 'a' );
-    var file = new Blob( [ content ], { type: contentType } );
-    a.href = URL.createObjectURL( file );
-    a.download = fileName;
-    a.click();
-  }
-  
   download( JSON.stringify( config, null, 2 ), fileName + '-config.json', 'text/plain' ); 
 
 }
@@ -21,6 +13,25 @@ function exportConfiguration() {
 function exportData() {
 
   console.log( 'Exporting data as CSV!' );
+
+  var string = '';
+
+  // Add the header of the CSV
+  config.features.forEach( feature => string += feature.name + ',' );
+  string = string.substring( 0, string.length - 1 ) + '\n';
+
+  // Add the content of the CSV
+  visibleData.forEach( row => {
+
+    string_row = '';
+    config.features.forEach( feature => {
+      string_row += row[ feature.name ] + ',';
+    } );
+    string += string_row.substring( 0, string_row.length - 1 ) + '\n';
+
+  } );
+
+  download( string, fileName + '.csv', 'text/plain' ); 
 
 }
 
@@ -33,4 +44,12 @@ function exportProjection() {
 
   saveSvgAsPng( projection, "projection.png" );
 
+}
+
+function download( content, fileName, contentType ) {
+  var a = document.createElement( 'a' );
+  var file = new Blob( [ content ], { type: contentType } );
+  a.href = URL.createObjectURL( file );
+  a.download = fileName;
+  a.click();
 }

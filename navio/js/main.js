@@ -4,25 +4,39 @@ var fileName,
   config,
   autoRun = true,
   visibleData,
-  color_feature;
+  colorFeature;
+
+function getProjectionFeatures() {
+
+  var features = config.features.filter( f => f.project === true );
+  var featureNames = []; 
+
+  features.forEach( f => featureNames.push( f.name ) );
+
+  return featureNames;
+
+}
 
 function updateCluster() {
 
+  // Verify the state of the input for run the clustering on projected data
+  var run_on_projection = d3.select( '#runClusteringOnProjection' ).property( 'checked' );
+
   // Call function to run clustering model
-  var clustering = cluster( visibleData, config );
+  var clustering = cluster( visibleData, run_on_projection );
 
   // Set the new feature to be encoded by color
-  color_feature = 'cluster';
+  colorFeature = 'cluster';
 
   // Update the dataset with the clustering model results
   clustering[ 'results' ].forEach( ( d, i ) => {
-    visibleData[ i ][ color_feature ] = d;
+    visibleData[ i ][ colorFeature ] = d;
   } );
 
   config[ 'models' ][ 'clustering' ] = clustering[ 'hyper-parameters' ];
 
   // Create the new feature in the configuration 
-  if( config.features.find( d => d.name === color_feature ) === undefined )
+  if( config.features.find( d => d.name === colorFeature ) === undefined )
     config.features.push( {
       "name": "cluster", 
       "type": "categorical", 
@@ -40,7 +54,7 @@ function updateProjection( run_model = true ) {
 
   if( run_model ) {
 
-    var projection = project( visibleData, config );
+    var projection = project( visibleData );
   
     projection[ 'results' ].forEach( ( d, i ) => {
       visibleData[ i ][ 'x' ] = d[ 0 ];
@@ -67,7 +81,7 @@ function updateProjection( run_model = true ) {
   var chart = projectionChart()
     .x( ( d ) => d.x )
     .y( ( d ) => d.y  )
-    .z( ( d ) => d[ color_feature ]  );
+    .z( ( d ) => d[ colorFeature ]  );
 
   d3.select( '#projection' )
     .attr( 'class', null )
@@ -135,8 +149,8 @@ function loadConfig( url ) {
     loadData( url ); 
 
     // Find features for color encoding
-    var color_features = config.features.filter( d => d.color === true );
-    color_feature = color_features[ 0 ].name;
+    var colorFeatures = config.features.filter( d => d.color === true );
+    colorFeature = colorFeatures[ 0 ].name;
 
   } ).catch( ( error ) => {
 
@@ -173,3 +187,35 @@ d3.select( '#file-input' )
     reader.readAsDataURL( file );
 
   } );
+
+/* Hyper-parameters event handlers */
+
+d3.select( '#hparam-perplexity' )
+  .property( 'value', PERPLEXITY )
+  .on( 'input', function() {
+    d3.select( '#hparam-perplexity-span' ).html( this.value );
+    PERPLEXITY = this.value;
+  } );
+
+d3.select( '#hparam-perplexity-span' )
+  .html( PERPLEXITY );
+
+d3.select( '#hparam-iterations' )
+  .property( 'value', ITERATIONS )
+  .on( 'input', function() {
+    d3.select( '#hparam-iterations-span' ).html( this.value );
+    ITERATIONS = this.value;
+  } );
+
+d3.select( '#hparam-iterations-span' )
+  .html( ITERATIONS );
+
+d3.select( '#hparam-clusters' )
+  .property( 'value', CLUSTERS )
+  .on( 'input', function() {
+    d3.select( '#hparam-clusters-span' ).html( this.value );
+    CLUSTERS = this.value;
+  } );
+
+d3.select( '#hparam-clusters-span' )
+  .html( CLUSTERS );

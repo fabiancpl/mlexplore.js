@@ -120,7 +120,6 @@ div.feature-glyph {
 /* Projection panel */
 
 #projection {
-  float: left;
   border: 1px solid gray;
   margin: 5px 0px 5px 0px;
   padding: 8px;

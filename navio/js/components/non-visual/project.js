@@ -1,13 +1,13 @@
 
-function project( data, config ) {
+/* Hyper-parameters algorithm */
+var ITERATIONS = 1000,
+  PERPLEXITY = 30,
+  EPSILON = 200
+  DIMENSIONS = 2;
 
-  /* Hyper-parameters algorithm */
-  var ITERATIONS = 1000,
-    PERPLEXITY = 30,
-    EPSILON = 200
-    DIMENSIONS = 2;
+function project( data ) {
 
-  var features = getProjectioFeatures();
+  var features = getProjectionFeatures();
 
   // Build hyper-parameters object
   var params = {}

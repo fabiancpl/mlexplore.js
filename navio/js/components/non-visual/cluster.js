@@ -1,18 +1,18 @@
 
-function cluster( data, config, run_on_projection = false ) {
+/* Hyper-parameters algorithm */
+var CLUSTERS = 3;
 
-  /* Hyper-parameters algorithm */
-  var CLUSTERS = 3;
+function cluster( data, run_on_projection = false ) {
 
   var features;
   if( run_on_projection ) {
     features = [ 'x', 'y' ];
   } else {
-    features = getProjectioFeatures();
+    features = getProjectionFeatures();
   }
 
   console.info( 'Clustering data!' );
-  console.info( CLUSTERS );
+  console.info( 'Number of clusters: ' + CLUSTERS );
   console.info( 'Attributes: ' + features );
   console.info( 'Númber of Items: ' + visibleData.length );
 
@@ -44,16 +44,5 @@ function cluster( data, config, run_on_projection = false ) {
       }
     };
   }
-
-}
-
-function getProjectioFeatures() {
-
-  var features = config.features.filter( f => f.project === true );
-  var featureNames = []; 
-
-  features.forEach( f => featureNames.push( f.name ) );
-
-  return featureNames;
 
 }
