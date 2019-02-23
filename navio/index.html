@@ -94,15 +94,15 @@
           
           <button type="button" class="btn btn-success btn-sm" onclick="updateProjection( visibleData )">Run Projection</button>
           <button type="button" class="btn btn-success btn-sm" onclick="updateCluster( visibleData )">Run Clustering</button>
-          <button type="button" class="btn btn-success btn-sm" onclick="exportProjection()">Export Projection</button>
-
           <div id="projection" class="hide"></div>
         
         </div>
 
         <div class="col-md-5">
         
-          One of three columns
+          <button type="button" class="btn btn-success btn-sm" onclick="exportConfiguration()">Export Configuration</button>
+          <button type="button" class="btn btn-success btn-sm" onclick="exportData()">Export Data</button>
+          <button type="button" class="btn btn-success btn-sm" onclick="exportProjection()">Export Projection</button>
         
         </div>
       
@@ -137,18 +137,13 @@
     </div>
 
     <!-- Third-party libraries -->
-    <!-- Bootstrap -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
-    <!-- D3.js -->
     <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-    <!-- navio.js -->
     <script type="text/javascript" src="./libs/navio.js"></script>
-    <!-- t-SNE.js -->
     <script src="./libs/tsne.js"></script>
-
     <script src="./libs/saveSvgAsPng.js"></script>
     
     <!-- Scripts -->
@@ -157,8 +152,8 @@
     <script type="text/javascript" src="./js/components/visual/projectionChart.js"></script>
     <script type="text/javascript" src="./js/featureSelection.js"></script>
     <script type="text/javascript" src="./js/encodeColor.js"></script>
-    <script type="text/javascript" src="./js/exportProjection.js"></script>
     <script type="text/javascript" src="./js/navio.js"></script>
+    <script type="text/javascript" src="./js/export.js"></script>
     <script type="text/javascript" src="./js/main.js"></script>
 
   </body>

@@ -1,5 +1,6 @@
 
-var data,
+var fileName,
+  data,
   config,
   autoRun = true,
   visibleData,
@@ -8,15 +9,17 @@ var data,
 function updateCluster() {
 
   // Call function to run clustering model
-  var clusters = cluster( visibleData, config );
+  var clustering = cluster( visibleData, config );
 
   // Set the new feature to be encoded by color
   color_feature = 'cluster';
 
   // Update the dataset with the clustering model results
-  clusters.forEach( ( d, i ) => {
+  clustering[ 'results' ].forEach( ( d, i ) => {
     visibleData[ i ][ color_feature ] = d;
   } );
+
+  config[ 'models' ][ 'clustering' ] = clustering[ 'hyper-parameters' ];
 
   // Create the new feature in the configuration 
   if( config.features.find( d => d.name === color_feature ) === undefined )
@@ -39,10 +42,25 @@ function updateProjection( run_model = true ) {
 
     var projection = project( visibleData, config );
   
-    projection.forEach( ( d, i ) => {
+    projection[ 'results' ].forEach( ( d, i ) => {
       visibleData[ i ][ 'x' ] = d[ 0 ];
       visibleData[ i ][ 'y' ] = d[ 1 ];
     } );
+
+    if( config[ 'models' ] === undefined ) config[ 'models' ] = {};
+    config[ 'models' ][ 'projection' ] = projection[ 'hyper-parameters' ];
+
+    // Create the new feature in the configuration 
+    if( config.features.find( d => d.name === 'x' ) === undefined )
+      config.features.push( {
+        "name": "x", 
+        "type": "sequential", 
+        "project": false
+      }, {
+        "name": "y", 
+        "type": "sequential", 
+        "project": false
+      } );
 
   }
 
@@ -100,15 +118,13 @@ function loadData( url ) {
 
 // Find a configuration file previously saved and try to load it
 // The name of the configuration file it is expected to be the same and its format must be json
-function loadConfig( url, filename ) {
+function loadConfig( url ) {
 
   // Build the name of the configuration file
-  var configname = filename.split( '.' );
-  configname[ configname.length - 1 ] = '.json';
-  configname = configname.join( '' );
+  configName = fileName + '-config.json';
 
   // Load the the configuration file
-  d3.json( './config/' + configname ).then( ( config ) => {
+  d3.json( './config/' + configName ).then( ( config ) => {
 
     console.log( 'Configuration founded!' );
 
@@ -140,13 +156,19 @@ d3.select( '#file-input' )
     // Get the file name
     var file = d3.event.target.files[ 0 ];
     if ( !file ) return;
-    d3.select( '#file-name' ).html( file.name );
+
+    // Extract the name of the dataset
+    fileName = file.name;
+    fileName = fileName.split( '.' );
+    fileName = fileName[ 0 ];
+
+    d3.select( '#file-name' ).html( fileName );
     
     // Get the path of the file and call the function for load it
     var reader = new FileReader();
     reader.onloadend = function( evt ) {
       var dataUrl = evt.target.result;
-      loadConfig( dataUrl, file.name );
+      loadConfig( dataUrl );
     };
     reader.readAsDataURL( file );
 

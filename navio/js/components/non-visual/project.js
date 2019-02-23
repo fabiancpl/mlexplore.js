@@ -7,6 +7,8 @@ function project( data, config ) {
     EPSILON = 200
     DIMENSIONS = 2;
 
+  var features = getProjectioFeatures();
+
   // Build hyper-parameters object
   var params = {}
   params.epsilon = EPSILON; 
@@ -15,17 +17,16 @@ function project( data, config ) {
 
   console.info( 'Projecting data in ' + ITERATIONS + ' iterations!' );
   console.info( params );
-  console.info( 'Attributes: ' + config.features.filter( f => f.project === true ).length );
-  console.info( 'Items: ' + data.filter( d => d.visible === true ).length );
+  console.info( 'Attributes: ' + features );
+  console.info( 'Númber of Items: ' + visibleData.length );
 
   // Transform data to multi-dimensional array
   var arrayData = [];
   data.forEach( d => {
     
     row = [];
-    config.features.forEach( feature => {
-      if( feature.project )
-        row.push( +d[ feature.name ] );
+    features.forEach( feature => {
+      row.push( +d[ feature ] );
     } );
     arrayData.push( row );
   } );
@@ -41,6 +42,11 @@ function project( data, config ) {
 
   console.info( 'Projection finished!' );
 
-  return tsne.getSolution();
+  params.iterations = ITERATIONS;
+
+  return { 
+    "results" : tsne.getSolution(),
+    "hyper-parameters" : params
+  };
 
 }

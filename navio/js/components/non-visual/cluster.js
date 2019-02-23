@@ -1,22 +1,28 @@
 
-function cluster( data, config ) {
+function cluster( data, config, run_on_projection = false ) {
 
   /* Hyper-parameters algorithm */
   var CLUSTERS = 3;
 
+  var features;
+  if( run_on_projection ) {
+    features = [ 'x', 'y' ];
+  } else {
+    features = getProjectioFeatures();
+  }
+
   console.info( 'Clustering data!' );
   console.info( CLUSTERS );
-  console.info( 'Attributes: ' + config.features.filter( f => f.project === true ).length );
-  console.info( 'Items: ' + data.filter( d => d.visible === true ).length );
+  console.info( 'Attributes: ' + features );
+  console.info( 'Númber of Items: ' + visibleData.length );
 
   // Transform data to multi-dimensional array
   var featuredData = [];
   data.forEach( d => {
     
     datum = {};
-    config.features.forEach( feature => {
-      if( feature.project )
-        datum[ feature.name ] = +d[ feature.name ];
+    features.forEach( feature => {
+      datum[ feature ] = +d[ feature ];
     } );
     featuredData.push( datum );
   } );
@@ -31,7 +37,23 @@ function cluster( data, config ) {
   console.info( 'Clustering finished!' );
 
   if( Http.status === 200 ) {
-     return Http.responseText.split( ' ' );
+    return { 
+      "results" : Http.responseText.split( ' ' ),
+      "hyper-parameters" : {
+        "clusters" : CLUSTERS
+      }
+    };
   }
+
+}
+
+function getProjectioFeatures() {
+
+  var features = config.features.filter( f => f.project === true );
+  var featureNames = []; 
+
+  features.forEach( f => featureNames.push( f.name ) );
+
+  return featureNames;
 
 }
