@@ -34,6 +34,9 @@ function updateNavio() {
 
     // Update the projection
     updateProjection();
+
+    // Update the detail table
+    updateTable()
   } );
 
 }

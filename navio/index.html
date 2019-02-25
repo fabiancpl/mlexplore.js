@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.13.5/dist/bootstrap-table.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link rel="stylesheet" href="./css/main.css">
 
@@ -92,20 +93,38 @@
 
         <div class="col-md-5">
           
-          <div>
-            Iterations: <input id="hparam-iterations" type="range" min="500" max="2000" step="100"><span id="hparam-iterations-span"></span>
-            Perplexity: <input id="hparam-perplexity" type="range" min="5" max="50" step="1"><span id="hparam-perplexity-span"></span>
-            <button type="button" class="btn btn-success btn-sm" onclick="updateProjection( visibleData )">Run Projection</button>
-          </div>
-          
-          <div>
-          Number of clusters: <input id="hparam-clusters" type="range" min="2" max="10" step="1"><span id="hparam-clusters-span"></span>
-          <input id="runClusteringOnProjection" type="checkbox"> Run on projected data<br>
-          <button type="button" class="btn btn-success btn-sm" onclick="updateCluster( visibleData )">Run Clustering</button>
+          <div class="row">
+            
+            <div class="col-md-12">
+              
+              <div>
+                Iterations: <input id="hparam-iterations" type="range" min="500" max="2000" step="100"><span id="hparam-iterations-span"></span>
+                Perplexity: <input id="hparam-perplexity" type="range" min="5" max="50" step="1"><span id="hparam-perplexity-span"></span>
+                <button type="button" class="btn btn-success btn-sm" onclick="updateProjection( visibleData )">Run Projection</button>
+              </div>
+              
+              <div>
+              Number of clusters: <input id="hparam-clusters" type="range" min="2" max="10" step="1"><span id="hparam-clusters-span"></span>
+              <input id="runClusteringOnProjection" type="checkbox"> Run on projected data<br>
+              <button type="button" class="btn btn-success btn-sm" onclick="updateCluster( visibleData )">Run Clustering</button>
+              </div>
+
+              <div id="projection" class="hide"></div>
+            
+            </div>
+
           </div>
 
-          <div id="projection" class="hide"></div>
-        
+          <div class="row">
+            
+            <div class="col-md-12">
+              
+              <div id="table-details"></div>
+
+            </div>
+
+          </div>
+
         </div>
 
         <div class="col-md-5">
@@ -152,6 +171,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.13.5/dist/bootstrap-table.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js"></script>
     <script type="text/javascript" src="./libs/navio.js"></script>
     <script src="./libs/tsne.js"></script>
     <script src="./libs/saveSvgAsPng.js"></script>
@@ -163,6 +184,7 @@
     <script type="text/javascript" src="./js/featureSelection.js"></script>
     <script type="text/javascript" src="./js/encodeColor.js"></script>
     <script type="text/javascript" src="./js/navio.js"></script>
+    <script type="text/javascript" src="./js/tableDetails.js"></script>
     <script type="text/javascript" src="./js/export.js"></script>
     <script type="text/javascript" src="./js/main.js"></script>
 

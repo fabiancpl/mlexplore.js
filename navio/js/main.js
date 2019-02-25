@@ -126,6 +126,9 @@ function loadData( url ) {
     // Update the projection
     updateProjection();
 
+    // Update the table details
+    updateTable();
+
   } );
 
 }

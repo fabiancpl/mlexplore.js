@@ -125,3 +125,15 @@ div.feature-glyph {
   padding: 8px;
   border-radius: 3px;
 }
+
+/* Tooltip */
+
+div.tooltip { 
+  position: absolute;     
+  min-width: 100px;          
+  min-height: 100px;
+  background: white; 
+  border: 1px solid gray;    
+  border-radius: 3px;
+  padding: 5px 15px;
+}

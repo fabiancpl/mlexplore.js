@@ -16,13 +16,16 @@ function projectionChart() {
     yScale = d3.scaleLinear(),
     zScale = d3.scaleOrdinal( d3.schemeCategory10 );
 
-  var points;
+  var points,
+    tooltip = d3.select( 'body' ).append( 'div' )
+      .attr( 'class', 'tooltip' )
+      .style( 'opacity', 0 );
 
   function chart( selection ) {
     
   	selection.each( function( data ) {
 
-      // Select the svg element, if it exists.
+      // Select the svg element, if it exists
       var svg = d3.select( this ).selectAll( 'svg' )
         .data( [ data ] );
 
@@ -33,21 +36,21 @@ function projectionChart() {
       iWidth = width - margin.left - margin.right;
       iHeight = height - margin.top - margin.bottom;
 
-      // Update the outer dimensions.
+      // Update the outer dimensions
       svg.merge( svgEnter )
         .attr( 'width', width )
         .attr( 'height', height );
 
-      // Update the inner dimensions.
+      // Update the inner dimensions
       var g = svg.merge( svgEnter ).select( 'g' )
         .attr( 'transform', 'translate(' + margin.left + ',' + margin.top + ')' );
 
-      // Update the x scale.
+      // Update the x scale
       xScale
         .range( [ 0, iWidth ] )
         .domain( [ d3.min( data, xValue ), d3.max( data, xValue ) ] );
 
-      // Update the y scale.
+      // Update the y scale
       yScale
         .range( [ iHeight, 0 ] )
         .domain( [ d3.min( data, yValue ), d3.max( data, yValue ) ] );   
@@ -63,7 +66,21 @@ function projectionChart() {
           .attr( 'cx', X )
           .attr( 'cy', Y )
           .attr( 'r', 3 )
-          .attr( 'fill', Z );
+          .attr( 'fill', Z )
+          .on( 'mouseover', d => {
+
+            tooltip
+              .html( drawTooltip( d ) )
+              .style( 'opacity', 1 )
+              .style( 'left', ( d3.event.pageX + 15 ) + 'px' )
+              .style( 'top', ( d3.event.pageY ) + 'px' );
+
+          } ).on( 'mouseout', d => {
+
+            tooltip
+              .style( 'opacity', 0 );
+
+          } );
 
       points.exit().remove();
 
@@ -121,6 +138,27 @@ function projectionChart() {
     zValue = _;
     return chart;
   };
+
+  function drawTooltip( d ) {
+
+    delete d[ 'visible' ];
+    //delete d[ '__seqId' ];
+    delete d[ '__i' ];
+    delete d[ 'x' ];
+    delete d[ 'y' ];
+
+    keys = Object.keys( d );
+    string = '';
+
+
+
+    keys.forEach( k => {
+      string += '<b>' + k + ':</b> ' + d[ k ] + '<br />';
+    } );
+
+    return string;
+
+  }
 
   return chart;
 
