@@ -17,7 +17,7 @@ function updateEncodeColor() {
       .html( '' );
 
     // Set the feature used to encode color
-    if( colorFeature === undefined ) colorFeature = colorFeatures[ 0 ].name;
+    if( colorFeature === undefined && colorFeatures.lenght > 0 ) colorFeature = colorFeatures[ 0 ].name;
 
     // Set event for handling combobox change
     d3.select( '#encode-color-combo' )

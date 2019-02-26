@@ -16,22 +16,29 @@ function projectionChart() {
     yScale = d3.scaleLinear(),
     zScale = d3.scaleOrdinal( d3.schemeCategory10 );
 
-  var points,
+  var svgEnter, svg, 
+    gEnter, g,
+    points,
     tooltip = d3.select( 'body' ).append( 'div' )
       .attr( 'class', 'tooltip' )
       .style( 'opacity', 0 );
+
+  var zoom = d3.zoom()
+    .scaleExtent( [ 1, 20 ] )
+    .translateExtent( [ [ 0, 0 ], [ iWidth, iHeight ] ] )
+    .on( 'zoom', zoomed );
 
   function chart( selection ) {
     
   	selection.each( function( data ) {
 
       // Select the svg element, if it exists
-      var svg = d3.select( this ).selectAll( 'svg' )
+      svg = d3.select( this ).selectAll( 'svg' )
         .data( [ data ] );
 
       // Otherwise, create the skeletal chart
-      var svgEnter = svg.enter().append( 'svg' );
-      var gEnter = svgEnter.append( 'g' );
+      svgEnter = svg.enter().append( 'svg' );
+      gEnter = svgEnter.append( 'g' );
 
       iWidth = width - margin.left - margin.right;
       iHeight = height - margin.top - margin.bottom;
@@ -42,7 +49,7 @@ function projectionChart() {
         .attr( 'height', height );
 
       // Update the inner dimensions
-      var g = svg.merge( svgEnter ).select( 'g' )
+      g = svg.merge( svgEnter ).select( 'g' )
         .attr( 'transform', 'translate(' + margin.left + ',' + margin.top + ')' );
 
       // Update the x scale
