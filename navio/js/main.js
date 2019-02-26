@@ -129,6 +129,8 @@ function loadData( url ) {
     // Update the table details
     updateTable();
 
+    updateTicks();
+
   } );
 
 }

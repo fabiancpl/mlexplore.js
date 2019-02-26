@@ -128,10 +128,28 @@
         </div>
 
         <div class="col-md-5">
-        
-          <button type="button" class="btn btn-success btn-sm" onclick="exportConfiguration()">Export Configuration</button>
-          <button type="button" class="btn btn-success btn-sm" onclick="exportData()">Export Data</button>
-          <button type="button" class="btn btn-success btn-sm" onclick="exportProjection()">Export Projection</button>
+          
+          <div class="row">
+            
+            <div class="col-md-12">
+              
+              <div id="ticks-group"></div>
+
+            </div>
+
+          </div>
+
+          <div class="row">
+              
+            <div class="col-md-12">
+              
+              <button type="button" class="btn btn-success btn-sm" onclick="exportConfiguration()">Export Configuration</button>
+              <button type="button" class="btn btn-success btn-sm" onclick="exportData()">Export Data</button>
+              <button type="button" class="btn btn-success btn-sm" onclick="exportProjection()">Export Projection</button>
+
+            </div>
+
+          </div>
         
         </div>
       
@@ -173,6 +191,11 @@
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://unpkg.com/bootstrap-table@1.13.5/dist/bootstrap-table.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/vega@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@3"></script>
+    
     <script type="text/javascript" src="./libs/navio.js"></script>
     <script src="./libs/tsne.js"></script>
     <script src="./libs/saveSvgAsPng.js"></script>
@@ -185,6 +208,7 @@
     <script type="text/javascript" src="./js/encodeColor.js"></script>
     <script type="text/javascript" src="./js/navio.js"></script>
     <script type="text/javascript" src="./js/tableDetails.js"></script>
+    <script type="text/javascript" src="./js/ticks.js"></script>
     <script type="text/javascript" src="./js/export.js"></script>
     <script type="text/javascript" src="./js/main.js"></script>
 
