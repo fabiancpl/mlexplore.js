@@ -1,7 +1,12 @@
 
-var fileName,
-  data,
+var dataFileURL,
+  configFileURL,
+  datasetName;
+
+var data,
   config,
+  projectionConfigTemp,
+  clusteringConfigTemp,
   autoRun = true,
   visibleData,
   colorFeature;
@@ -91,10 +96,10 @@ function updateProjection( run_model = true ) {
 }
 
 // Load the dataset requested by the user
-function loadData( url ) {
+function loadData() {
 
   // Load the dataset in D3 format
-  d3.csv( url, d3.autoType ).then( ( data ) => {
+  d3.csv( dataFileURL, d3.autoType ).then( ( data ) => {
 
     console.log( 'Dataset loaded!' );
 
@@ -102,17 +107,9 @@ function loadData( url ) {
     this.data = data;
     visibleData = data;
 
-
-    // If configuration file was not found,
-    // Get features from data and assign by default type
-    if( config === undefined ) {
-      config = {};
-      config.features = [];
-      keys = Object.keys( data[ 0 ] );
-      keys.forEach( ( k ) => {
-        config.features.push( { 'name' : k, 'type' : 'categorical', 'project' : true } );
-      } );
-    }
+    // If a configuration file was not loaded
+    if( config === undefined ) createConfig();
+    setHyperParameters();
     
     // Initialize Feature Selection panel
     initFeatureSelection();
@@ -131,96 +128,158 @@ function loadData( url ) {
 
     updateTicks();
 
-  } );
-
-}
-
-// Find a configuration file previously saved and try to load it
-// The name of the configuration file it is expected to be the same and its format must be json
-function loadConfig( url ) {
-
-  // Build the name of the configuration file
-  configName = fileName + '-config.json';
-
-  // Load the the configuration file
-  d3.json( './config/' + configName ).then( ( config ) => {
-
-    console.log( 'Configuration founded!' );
-
-    // Save the configuration for global access
-    this.config = config;
-    
-    // Load the dataset
-    loadData( url ); 
-
-    // Find features for color encoding
-    var colorFeatures = config.features.filter( d => d.color === true );
-    colorFeature = colorFeatures[ 0 ].name;
-
-  } ).catch( ( error ) => {
-
-    console.log( 'Configuration not found!' );
-    
-    // Load the dataset
-    loadData( url );
+    // Hide the modal
+    $( '#loadDataModal' ).modal( 'hide' );
+    d3.select( '#data-description' ).html( ' ' + datasetName + ' dataset' );
 
   } );
 
 }
 
-// Event handler for loading a dataset by the user
-d3.select( '#file-input' )
+function setHyperParameters() {
+
+  d3.select( '#hparam-perplexity' )
+    .property( 'value', config.models.projection.perplexity )
+    .on( 'input', function() {
+      d3.select( '#hparam-perplexity-span' ).html( this.value );
+    } );
+
+  d3.select( '#hparam-perplexity-span' )
+    .html( config.models.projection.perplexity );
+
+  d3.select( '#hparam-iterations' )
+    .property( 'value', config.models.projection.iterations )
+    .on( 'input', function() {
+      d3.select( '#hparam-iterations-span' ).html( +this.value );
+    } );
+
+  d3.select( '#hparam-iterations-span' )
+    .html( config.models.projection.iterations );
+
+  d3.select( '#hparam-epsilon' )
+    .property( 'value', config.models.projection.epsilon )
+    .on( 'input', function() {
+      d3.select( '#hparam-epsilon-span' ).html( +this.value );
+    } );
+
+  d3.select( '#hparam-epsilon-span' )
+    .html( config.models.projection.epsilon );
+
+  if( config.models.clustering !== undefined ) {
+
+    d3.select( '#hparam-clusters' )
+      .property( 'value', config.models.clustering.clusters )
+      .on( 'input', function() {
+        d3.select( '#hparam-clusters-span' ).html( +this.value );
+      } );
+
+    d3.select( '#hparam-clusters-span' )
+      .html( config.models.clustering.clusters );
+
+  }
+
+}
+
+function createConfig() {
+
+  config = {};
+
+  config.features = [];
+  keys = Object.keys( data[ 0 ] );
+  keys.forEach( ( k ) => {
+    var type = ( typeof data[ 0 ][ k ] === 'number' ) ? 'sequential' : 'categorical';
+    var project = ( type === 'sequential' ) ? true : false;
+    config.features.push( { 'name' : k, 'type' : type, 'project' : project } );
+  } );
+
+  config.models = {
+    "projection" : {
+      "iterations" : 1000,
+      "perplexity" : 25,
+      "epsilon" : 200,
+    }
+  };
+
+}
+
+// Load the configuration file
+function loadConfig() {
+
+  if( configFileURL !== undefined ) {
+
+     // Load the the configuration file
+    d3.json( configFileURL ).then( ( config ) => {
+
+      console.log( 'Configuration loaded!' );
+
+      // Save the configuration for global access
+      this.config = config;
+
+      // Find features for color encoding
+      var colorFeatures = config.features.filter( d => d.color );
+      if( colorFeatures !== undefined && colorFeatures.lenght > 0 )
+        colorFeature = colorFeatures[ 0 ].name;
+
+      // Read hyper-parameters of models
+      d3.select( '#hparam-perplexity-span' ).html( config.models.projection.perplexity );
+
+    } ).catch( ( error ) => {
+
+      console.log( 'Error loading the configuration file!' );
+
+    } );
+
+  }
+
+  // Load the dataset
+  loadData();
+
+}
+
+function loadDataAndConfig() {
+
+  // Try to load first the config file to avoid async issues 
+  if( dataFileURL !== undefined ) loadConfig();
+
+}
+
+/* Load data handlers */
+
+d3.select( '#data-input' )
   .on( 'change', function() {
 
     // Get the file name
-    var file = d3.event.target.files[ 0 ];
-    if ( !file ) return;
+    var dataFile = d3.event.target.files[ 0 ];
+    if ( !dataFile ) return;
 
     // Extract the name of the dataset
-    fileName = file.name;
-    fileName = fileName.split( '.' );
-    fileName = fileName[ 0 ];
+    datasetName = dataFile.name.split( '.' )[ 0 ];
 
-    d3.select( '#file-name' ).html( fileName );
+    d3.select( '#data-name' ).html( dataFile.name );
     
     // Get the path of the file and call the function for load it
     var reader = new FileReader();
     reader.onloadend = function( evt ) {
-      var dataUrl = evt.target.result;
-      loadConfig( dataUrl );
+      dataFileURL = evt.target.result;
     };
-    reader.readAsDataURL( file );
+    reader.readAsDataURL( dataFile );
 
   } );
 
-/* Hyper-parameters event handlers */
+  d3.select( '#config-input' )
+  .on( 'change', function() {
 
-d3.select( '#hparam-perplexity' )
-  .property( 'value', PERPLEXITY )
-  .on( 'input', function() {
-    d3.select( '#hparam-perplexity-span' ).html( this.value );
-    PERPLEXITY = this.value;
+    // Get the file name
+    var configFile = d3.event.target.files[ 0 ];
+    if ( !configFile ) return;
+
+    d3.select( '#config-name' ).html( configFile.name );
+    
+    // Get the path of the file and call the function for load it
+    var reader = new FileReader();
+    reader.onloadend = function( evt ) {
+      configFileURL = evt.target.result;
+    };
+    reader.readAsDataURL( configFile );
+
   } );
-
-d3.select( '#hparam-perplexity-span' )
-  .html( PERPLEXITY );
-
-d3.select( '#hparam-iterations' )
-  .property( 'value', ITERATIONS )
-  .on( 'input', function() {
-    d3.select( '#hparam-iterations-span' ).html( this.value );
-    ITERATIONS = this.value;
-  } );
-
-d3.select( '#hparam-iterations-span' )
-  .html( ITERATIONS );
-
-d3.select( '#hparam-clusters' )
-  .property( 'value', CLUSTERS )
-  .on( 'input', function() {
-    d3.select( '#hparam-clusters-span' ).html( this.value );
-    CLUSTERS = this.value;
-  } );
-
-d3.select( '#hparam-clusters-span' )
-  .html( CLUSTERS );

@@ -23,11 +23,6 @@ function projectionChart() {
       .attr( 'class', 'tooltip' )
       .style( 'opacity', 0 );
 
-  var zoom = d3.zoom()
-    .scaleExtent( [ 1, 20 ] )
-    .translateExtent( [ [ 0, 0 ], [ iWidth, iHeight ] ] )
-    .on( 'zoom', zoomed );
-
   function chart( selection ) {
     
   	selection.each( function( data ) {

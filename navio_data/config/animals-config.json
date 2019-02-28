@@ -1,0 +1,102 @@
+{
+  "features": [
+    {
+      "name": "animal_name",
+      "type": "categorical",
+      "project": false
+    },
+    {
+      "name": "hair",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "feathers",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "eggs",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "milk",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "airborne",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "aquatic",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "predator",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "toothed",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "backbone",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "breathes",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "venomous",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "fins",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "legs",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "tail",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "domestic",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "catsize",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "class",
+      "type": "categorical",
+      "project": false
+    }
+  ],
+  "models": {
+    "projection": {
+      "epsilon": 200,
+      "perplexity": 50,
+      "dimensions": 2,
+      "iterations": 1000
+    }
+  }
+}

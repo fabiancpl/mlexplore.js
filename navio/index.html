@@ -39,8 +39,8 @@
               <!-- Load Data panel -->
               <div id="load-data">
 
-                <span class="btn btn-success btn-sm btn-file">Load data <input id="file-input" type="file"></span>
-                <span id="file-name">No data</span>
+                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#loadDataModal">Load Dataset</button>
+                <span id="data-description">No data</span>
 
               </div>
 
@@ -55,7 +55,7 @@
                     <h3>Attributes</h3>  
                   </div>
                   <div style="float: right;">
-                    <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#newFeatureGroup">New group</button>
+                    <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#newFeatureGroupModal">New group</button>
                   </div>
                   <div style="clear: left;"></div>
                 </div>
@@ -100,13 +100,14 @@
               <div>
                 Iterations: <input id="hparam-iterations" type="range" min="500" max="2000" step="100"><span id="hparam-iterations-span"></span>
                 Perplexity: <input id="hparam-perplexity" type="range" min="5" max="50" step="1"><span id="hparam-perplexity-span"></span>
-                <button type="button" class="btn btn-success btn-sm" onclick="updateProjection( visibleData )">Run Projection</button>
+                Epsilon: <input id="hparam-epsilon" type="range" min="10" max="1000" step="10"><span id="hparam-epsilon-span"></span>
+                <button type="button" class="btn btn-success btn-sm" onclick="updateProjection()">Run Projection</button>
               </div>
               
               <div>
               Number of clusters: <input id="hparam-clusters" type="range" min="2" max="10" step="1"><span id="hparam-clusters-span"></span>
-              <input id="runClusteringOnProjection" type="checkbox"> Run on projected data<br>
-              <button type="button" class="btn btn-success btn-sm" onclick="updateCluster( visibleData )">Run Clustering</button>
+              <input id="runClusteringOnProjection" type="checkbox"> Run on projected data
+              <button type="button" class="btn btn-success btn-sm" onclick="updateCluster()">Run Clustering</button>
               </div>
 
               <div id="projection" class="hide"></div>
@@ -156,6 +157,41 @@
       </div>
 
     </div>    
+
+    <!-- Load Data Modal -->
+    <div class="modal fade" id="loadDataModal" tabindex="-1" role="dialog" aria-labelledby="loadDataModal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Load Dataset</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            
+            <div class="row">
+              <div class="col-md-12">
+                <span class="btn btn-success btn-sm btn-file">Load Dataset<input id="data-input" type="file"></span>
+                <span id="data-name">No dataset</span>  
+              </div>
+            </div>
+            <br />
+            <div class="row">
+              <div class="col-md-12">
+                <span class="btn btn-success btn-sm btn-file">Load Config<input id="config-input" type="file"></span>
+                <span id="config-name">No config</span>
+              </div>
+            </div>            
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" onclick="loadDataAndConfig()" class="btn btn-success">Load</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- New Feature Group Modal -->
     <div class="modal fade" id="newFeatureGroup" tabindex="-1" role="dialog" aria-labelledby="newFeatureGroup" aria-hidden="true">

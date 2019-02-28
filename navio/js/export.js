@@ -4,7 +4,10 @@ function exportConfiguration() {
 
   console.log( 'Exporting configuration as JSON!' );
 
-  download( JSON.stringify( config, null, 2 ), fileName + '-config.json', 'text/plain' ); 
+  var configCopy = Object.assign( {}, config );
+  configCopy[ 'features' ] = configCopy[ 'features' ].filter( f => ![ 'x', 'y', 'cluster' ].includes( f.name ) );
+
+  download( JSON.stringify( configCopy, null, 2 ), datasetName + '-config.json', 'text/plain' ); 
 
 }
 

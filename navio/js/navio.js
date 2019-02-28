@@ -15,13 +15,13 @@ function updateNavio() {
 
   // Set features by type
   config.features.forEach( f => {
-    if( f.project === true || f.name === colorFeature ) {
+    //if( f.project === true || f.name === colorFeature ) {
       if( f.type === 'sequential' ){
         nv.addSequentialAttrib( f.name );
       } else {
         nv.addCategoricalAttrib( f.name );
       }
-    }
+    //}
     
   } );
 

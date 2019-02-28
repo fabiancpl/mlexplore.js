@@ -1,21 +1,15 @@
 
-/* Hyper-parameters algorithm */
-var ITERATIONS = 1000,
-  PERPLEXITY = 30,
-  EPSILON = 200
-  DIMENSIONS = 2;
-
 function project( data ) {
 
   var features = getProjectionFeatures();
 
   // Build hyper-parameters object
   var params = {}
-  params.epsilon = EPSILON; 
-  params.perplexity = PERPLEXITY;
-  params.dim = DIMENSIONS;
+  params.epsilon = config.models.projection.epsilon; 
+  params.perplexity = config.models.projection.perplexity;
+  params.dim = 2;
 
-  console.info( 'Projecting data in ' + ITERATIONS + ' iterations!' );
+  console.info( 'Projecting data in ' + config.models.projection.iterations + ' iterations!' );
   console.info( params );
   console.info( 'Attributes: ' + features );
   console.info( 'Númber of Items: ' + visibleData.length );
@@ -36,17 +30,14 @@ function project( data ) {
   tsne.initDataRaw( arrayData );
 
   // Run t-SNE iterations
-  for( var k = 0; k < ITERATIONS; k++ ) {
+  for( var k = 0; k < config.models.projection.iterations; k++ ) {
     tsne.step();
   }
 
   console.info( 'Projection finished!' );
 
-  params.iterations = ITERATIONS;
-
   return { 
-    "results" : tsne.getSolution(),
-    "hyper-parameters" : params
+    "results" : tsne.getSolution()
   };
 
 }
