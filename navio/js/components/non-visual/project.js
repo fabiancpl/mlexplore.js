@@ -5,11 +5,11 @@ function project( data ) {
 
   // Build hyper-parameters object
   var params = {}
-  params.epsilon = config.models.projection.epsilon; 
-  params.perplexity = config.models.projection.perplexity;
+  params.epsilon = projectionConfigTemp.epsilon; 
+  params.perplexity = projectionConfigTemp.perplexity;
   params.dim = 2;
 
-  console.info( 'Projecting data in ' + config.models.projection.iterations + ' iterations!' );
+  console.info( 'Projecting data in ' + projectionConfigTemp.iterations + ' iterations!' );
   console.info( params );
   console.info( 'Attributes: ' + features );
   console.info( 'Númber of Items: ' + visibleData.length );
@@ -30,14 +30,19 @@ function project( data ) {
   tsne.initDataRaw( arrayData );
 
   // Run t-SNE iterations
-  for( var k = 0; k < config.models.projection.iterations; k++ ) {
+  for( var k = 0; k < projectionConfigTemp.iterations; k++ ) {
     tsne.step();
   }
 
   console.info( 'Projection finished!' );
 
   return { 
-    "results" : tsne.getSolution()
+    "results" : tsne.getSolution(),
+    "config" : {
+      "perplexity" : projectionConfigTemp.perplexity,
+      "epsilon" : projectionConfigTemp.epsilon,
+      "iterations" : projectionConfigTemp.iterations
+    }
   };
 
 }

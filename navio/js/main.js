@@ -13,10 +13,23 @@ var data,
 
 function getProjectionFeatures() {
 
-  var features = config.features.filter( f => f.project === true );
+  var features = config.features.filter( f => f.project );
   var featureNames = []; 
 
   features.forEach( f => featureNames.push( f.name ) );
+
+  return featureNames;
+
+}
+
+function getColoredFeatures() {
+
+  var features = config.features.filter( f => !f.project );
+  var featureNames = []; 
+
+  features.forEach( f => {
+    if( ![ 'x', 'y' ].includes( f.name ) ) featureNames.push( f.name );
+  } );
 
   return featureNames;
 
@@ -38,36 +51,48 @@ function updateCluster() {
     visibleData[ i ][ colorFeature ] = d;
   } );
 
-  config[ 'models' ][ 'clustering' ] = clustering[ 'hyper-parameters' ];
+  config[ 'models' ][ 'clustering' ] = clustering[ 'config' ];
+
+  // Clean the config for the color
+  config.features.filter( f => !f.project ).forEach( f => delete f.color );
 
   // Create the new feature in the configuration 
-  if( config.features.find( d => d.name === colorFeature ) === undefined )
+  if( config.features.find( d => d.name === colorFeature ) === undefined ) {
     config.features.push( {
       "name": "cluster", 
       "type": "categorical", 
-      "project": false
+      "project": false,
+      "color" : true
     } );
+  } else {
+    config.features.find( d => d.name === colorFeature ).color = true;
+  }
 
   // Update Encode Color and Projection panels
   updateEncodeColor();
   updateProjection( run_model = false );
+  updateNavio();
+  updateTable();
 
 }
 
 // Project the data calling re-train model if specified
 function updateProjection( run_model = true ) {
 
+  d3.select( '#projection-panel' )
+    .attr( 'class', null );
+
   if( run_model ) {
 
     var projection = project( visibleData );
-  
+
     projection[ 'results' ].forEach( ( d, i ) => {
       visibleData[ i ][ 'x' ] = d[ 0 ];
       visibleData[ i ][ 'y' ] = d[ 1 ];
     } );
 
     if( config[ 'models' ] === undefined ) config[ 'models' ] = {};
-    config[ 'models' ][ 'projection' ] = projection[ 'hyper-parameters' ];
+    config[ 'models' ][ 'projection' ] = projection[ 'config' ];
 
     // Create the new feature in the configuration 
     if( config.features.find( d => d.name === 'x' ) === undefined )
@@ -89,7 +114,6 @@ function updateProjection( run_model = true ) {
     .z( ( d ) => d[ colorFeature ]  );
 
   d3.select( '#projection' )
-    .attr( 'class', null )
     .datum( visibleData )
     .call( chart );
 
@@ -109,6 +133,7 @@ function loadData() {
 
     // If a configuration file was not loaded
     if( config === undefined ) createConfig();
+
     setHyperParameters();
     
     // Initialize Feature Selection panel
@@ -126,7 +151,12 @@ function loadData() {
     // Update the table details
     updateTable();
 
+    // Update the ticks panel
     updateTicks();
+
+    // Show the export panel
+    d3.select( '#export-panel' )
+    .attr( 'class', null );
 
     // Hide the modal
     $( '#loadDataModal' ).modal( 'hide' );
@@ -139,44 +169,44 @@ function loadData() {
 function setHyperParameters() {
 
   d3.select( '#hparam-perplexity' )
-    .property( 'value', config.models.projection.perplexity )
+    .property( 'value', projectionConfigTemp.perplexity )
     .on( 'input', function() {
-      d3.select( '#hparam-perplexity-span' ).html( this.value );
+      d3.select( '#hparam-perplexity-span' ).html( +this.value );
+      projectionConfigTemp.perplexity = +this.value;
     } );
 
   d3.select( '#hparam-perplexity-span' )
-    .html( config.models.projection.perplexity );
+    .html( projectionConfigTemp.perplexity );
 
   d3.select( '#hparam-iterations' )
-    .property( 'value', config.models.projection.iterations )
+    .property( 'value', projectionConfigTemp.iterations )
     .on( 'input', function() {
       d3.select( '#hparam-iterations-span' ).html( +this.value );
+      projectionConfigTemp.iterations = +this.value;
     } );
 
   d3.select( '#hparam-iterations-span' )
-    .html( config.models.projection.iterations );
+    .html( projectionConfigTemp.iterations );
 
   d3.select( '#hparam-epsilon' )
-    .property( 'value', config.models.projection.epsilon )
+    .property( 'value', projectionConfigTemp.epsilon )
     .on( 'input', function() {
       d3.select( '#hparam-epsilon-span' ).html( +this.value );
+      projectionConfigTemp.epsilon = +this.value;
     } );
 
   d3.select( '#hparam-epsilon-span' )
-    .html( config.models.projection.epsilon );
+    .html( projectionConfigTemp.epsilon );
 
-  if( config.models.clustering !== undefined ) {
+  d3.select( '#hparam-clusters' )
+    .property( 'value', clusteringConfigTemp.clusters )
+    .on( 'input', function() {
+      d3.select( '#hparam-clusters-span' ).html( +this.value );
+      clusteringConfigTemp.clusters = +this.value;
+    } );
 
-    d3.select( '#hparam-clusters' )
-      .property( 'value', config.models.clustering.clusters )
-      .on( 'input', function() {
-        d3.select( '#hparam-clusters-span' ).html( +this.value );
-      } );
-
-    d3.select( '#hparam-clusters-span' )
-      .html( config.models.clustering.clusters );
-
-  }
+  d3.select( '#hparam-clusters-span' )
+    .html( clusteringConfigTemp.clusters );
 
 }
 
@@ -192,12 +222,14 @@ function createConfig() {
     config.features.push( { 'name' : k, 'type' : type, 'project' : project } );
   } );
 
-  config.models = {
-    "projection" : {
-      "iterations" : 1000,
-      "perplexity" : 25,
-      "epsilon" : 200,
-    }
+  projectionConfigTemp = {
+    "iterations" : 1000,
+    "perplexity" : 25,
+    "epsilon" : 200,
+  };
+
+  clusteringConfigTemp = {
+    "clusters" : 3
   };
 
 }

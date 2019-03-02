@@ -69,12 +69,11 @@
             <div class="col-md-12">
                 
               <!-- Load Data panel -->
-              <div id="encode-color" class="hide">
+              <div id="encode-color-panel" class="hide">
 
                 <h3>Encode Color</h3> 
                 
                 <select id="encode-color-combo">
-                  <option value=""></option>
                 </select>
 
               </div>
@@ -97,20 +96,24 @@
             
             <div class="col-md-12">
               
-              <div>
-                Iterations: <input id="hparam-iterations" type="range" min="500" max="2000" step="100"><span id="hparam-iterations-span"></span>
-                Perplexity: <input id="hparam-perplexity" type="range" min="5" max="50" step="1"><span id="hparam-perplexity-span"></span>
-                Epsilon: <input id="hparam-epsilon" type="range" min="10" max="1000" step="10"><span id="hparam-epsilon-span"></span>
-                <button type="button" class="btn btn-success btn-sm" onclick="updateProjection()">Run Projection</button>
-              </div>
-              
-              <div>
-              Number of clusters: <input id="hparam-clusters" type="range" min="2" max="10" step="1"><span id="hparam-clusters-span"></span>
-              <input id="runClusteringOnProjection" type="checkbox"> Run on projected data
-              <button type="button" class="btn btn-success btn-sm" onclick="updateCluster()">Run Clustering</button>
-              </div>
+              <div id="projection-panel" class="hide">
+                
+                <div>
+                  Iterations: <input id="hparam-iterations" type="range" min="500" max="2000" step="100"><span id="hparam-iterations-span"></span>
+                  Perplexity: <input id="hparam-perplexity" type="range" min="5" max="50" step="1"><span id="hparam-perplexity-span"></span>
+                  Epsilon: <input id="hparam-epsilon" type="range" min="10" max="1000" step="10"><span id="hparam-epsilon-span"></span>
+                  <button type="button" class="btn btn-success btn-sm" onclick="updateProjection()">Run Projection</button>
+                </div>
+                
+                <div>
+                  Number of clusters: <input id="hparam-clusters" type="range" min="2" max="10" step="1"><span id="hparam-clusters-span"></span>
+                  <input id="runClusteringOnProjection" type="checkbox"> Run on projected data
+                  <button type="button" class="btn btn-success btn-sm" onclick="updateCluster()">Run Clustering</button>
+                </div>
 
-              <div id="projection" class="hide"></div>
+                <div id="projection"></div>
+
+              </div>
             
             </div>
 
@@ -143,10 +146,14 @@
           <div class="row">
               
             <div class="col-md-12">
+
+              <div id="export-panel" class="hide">
               
-              <button type="button" class="btn btn-success btn-sm" onclick="exportConfiguration()">Export Configuration</button>
-              <button type="button" class="btn btn-success btn-sm" onclick="exportData()">Export Data</button>
-              <button type="button" class="btn btn-success btn-sm" onclick="exportProjection()">Export Projection</button>
+                <button type="button" class="btn btn-success btn-sm" onclick="exportConfiguration()">Export Configuration</button>
+                <button type="button" class="btn btn-success btn-sm" onclick="exportData()">Export Data</button>
+                <button type="button" class="btn btn-success btn-sm" onclick="exportProjection()">Export Projection</button>
+
+              </div>
 
             </div>
 

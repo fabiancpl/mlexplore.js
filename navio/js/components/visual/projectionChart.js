@@ -80,7 +80,9 @@ function projectionChart() {
           } ).on( 'mouseout', d => {
 
             tooltip
-              .style( 'opacity', 0 );
+              .style( 'opacity', 0 )
+              .style( 'left', '-100px' )
+              .style( 'top', '-100px' );
 
           } );
 
