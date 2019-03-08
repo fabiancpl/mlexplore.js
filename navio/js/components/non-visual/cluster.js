@@ -25,7 +25,7 @@ function cluster( data, run_on_projection = false ) {
   } );
 
   var Http = new XMLHttpRequest();
-  var url = 'http://localhost:5000/kmeans/' + clusteringConfigTemp.clusters;
+  var url = 'https://t17ah9d6hf.execute-api.us-east-1.amazonaws.com/dev/kmeans/' + clusteringConfigTemp.clusters;
   Http.open( 'POST', url, false );
   Http.setRequestHeader( 'Content-Type', 'application/json' );
 

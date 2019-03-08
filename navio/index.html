@@ -54,9 +54,9 @@
                   <div style="float: left;">
                     <h3>Attributes</h3>  
                   </div>
-                  <div style="float: right;">
+                  <!--<div style="float: right;">
                     <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#newFeatureGroupModal">New group</button>
-                  </div>
+                  </div>-->
                   <div style="clear: left;"></div>
                 </div>
                 <div id="no-group" class="feature-group" ondrop="drop(event)" ondragover="allowDrop(event)">
@@ -102,13 +102,13 @@
                   Iterations: <input id="hparam-iterations" type="range" min="500" max="2000" step="100"><span id="hparam-iterations-span"></span>
                   Perplexity: <input id="hparam-perplexity" type="range" min="5" max="50" step="1"><span id="hparam-perplexity-span"></span>
                   Epsilon: <input id="hparam-epsilon" type="range" min="10" max="1000" step="10"><span id="hparam-epsilon-span"></span>
-                  <button type="button" class="btn btn-success btn-sm" onclick="updateProjection()">Run Projection</button>
+                  <button type="button" class="btn btn-success btn-sm" onclick="updateProjection()">Run t-SNE</button>
                 </div>
                 
                 <div>
                   Number of clusters: <input id="hparam-clusters" type="range" min="2" max="10" step="1"><span id="hparam-clusters-span"></span>
                   <input id="runClusteringOnProjection" type="checkbox"> Run on projected data
-                  <button type="button" class="btn btn-success btn-sm" onclick="updateCluster()">Run Clustering</button>
+                  <button type="button" class="btn btn-success btn-sm" onclick="updateCluster()">Run KMeans</button>
                 </div>
 
                 <div id="projection"></div>
@@ -132,6 +132,22 @@
         </div>
 
         <div class="col-md-5">
+
+          <div class="row">
+              
+            <div class="col-md-12">
+
+              <div id="export-panel" class="hide">
+              
+                <button type="button" class="btn btn-success btn-sm" onclick="exportConfiguration()">Export Configuration</button>
+                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#exportDataModal">Export Dataset</button>
+                <button type="button" class="btn btn-success btn-sm" onclick="exportProjection()">Export Projectionas PNG</button>
+
+              </div>
+
+            </div>
+
+          </div>
           
           <div class="row">
             
@@ -142,28 +158,35 @@
             </div>
 
           </div>
-
-          <div class="row">
-              
-            <div class="col-md-12">
-
-              <div id="export-panel" class="hide">
-              
-                <button type="button" class="btn btn-success btn-sm" onclick="exportConfiguration()">Export Configuration</button>
-                <button type="button" class="btn btn-success btn-sm" onclick="exportData()">Export Data</button>
-                <button type="button" class="btn btn-success btn-sm" onclick="exportProjection()">Export Projection</button>
-
-              </div>
-
-            </div>
-
-          </div>
         
         </div>
       
       </div>
 
     </div>    
+
+    <!-- Export Data Modal -->
+    <div class="modal fade" id="exportDataModal" tabindex="-1" role="dialog" aria-labelledby="exportDataModal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Export Dataset</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            
+                      
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" onclick="exportData()" class="btn btn-success">Export</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Load Data Modal -->
     <div class="modal fade" id="loadDataModal" tabindex="-1" role="dialog" aria-labelledby="loadDataModal" aria-hidden="true">

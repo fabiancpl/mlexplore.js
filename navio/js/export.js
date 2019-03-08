@@ -5,9 +5,9 @@ function exportConfiguration() {
   console.log( 'Exporting configuration as JSON!' );
 
   var configCopy = Object.assign( {}, config );
-  configCopy[ 'features' ] = configCopy[ 'features' ].filter( f => ![ 'x', 'y', 'cluster' ].includes( f.name ) );
+  //configCopy[ 'features' ] = configCopy[ 'features' ].filter( f => ![ 'x', 'y', 'cluster' ].includes( f.name ) );
 
-  download( JSON.stringify( configCopy, null, 2 ), datasetName + '-config.json', 'text/plain' ); 
+  downloadPlain( JSON.stringify( configCopy, null, 2 ), datasetName + '-config.json', 'text/plain' ); 
 
 }
 
@@ -34,7 +34,7 @@ function exportData() {
 
   } );
 
-  download( string, fileName + '.csv', 'text/plain' ); 
+  downloadPlain( string, datasetName + '.csv', 'text/plain' ); 
 
 }
 
@@ -49,7 +49,7 @@ function exportProjection() {
 
 }
 
-function download( content, fileName, contentType ) {
+function downloadPlain( content, fileName, contentType ) {
   var a = document.createElement( 'a' );
   var file = new Blob( [ content ], { type: contentType } );
   a.href = URL.createObjectURL( file );

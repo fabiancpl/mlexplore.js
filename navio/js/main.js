@@ -117,6 +117,9 @@ function updateProjection( run_model = true ) {
     .datum( visibleData )
     .call( chart );
 
+  updateNavio();
+  updateTable();
+
 }
 
 // Load the dataset requested by the user
@@ -143,10 +146,12 @@ function loadData() {
     updateEncodeColor();
 
     // Initialize and put data in Navio
-    updateNavio();
+    updateNavio( on_start = true );
 
     // Update the projection
     updateProjection();
+
+    if( config[ 'models' ][ 'clustering' ] !== undefined ) updateCluster();
 
     // Update the table details
     updateTable();
@@ -208,6 +213,12 @@ function setHyperParameters() {
   d3.select( '#hparam-clusters-span' )
     .html( clusteringConfigTemp.clusters );
 
+  d3.select( '#runClusteringOnProjection' )
+    .property( 'checked', clusteringConfigTemp.run_on_projection )
+    .on( 'input', function() {
+      clusteringConfigTemp.runClusteringOnProjection = d3.select( '#runClusteringOnProjection' ).property( 'checked' );
+    } );
+
 }
 
 function createConfig() {
@@ -240,20 +251,30 @@ function loadConfig() {
   if( configFileURL !== undefined ) {
 
      // Load the the configuration file
-    d3.json( configFileURL ).then( ( config ) => {
+    d3.json( configFileURL ).then( ( config_temp ) => {
 
       console.log( 'Configuration loaded!' );
 
       // Save the configuration for global access
-      this.config = config;
+      this.config = {};
+      this.config[ 'features' ] = config_temp[ 'features' ];
+
+      if( config_temp[ 'models' ] !== undefined ) {
+      
+        if( config_temp[ 'models' ][ 'projection' ] !== undefined ) projectionConfigTemp = config_temp[ 'models' ][ 'projection' ];
+
+        if( config_temp[ 'models' ][ 'clustering' ] !== undefined ) clusteringConfigTemp = config_temp[ 'models' ][ 'clustering' ];
+
+      }
+
 
       // Find features for color encoding
-      var colorFeatures = config.features.filter( d => d.color );
-      if( colorFeatures !== undefined && colorFeatures.lenght > 0 )
-        colorFeature = colorFeatures[ 0 ].name;
+      //var colorFeatures = config.features.filter( d => d.color );
+      //if( colorFeatures !== undefined && colorFeatures.lenght > 0 )
+      //  colorFeature = colorFeatures[ 0 ].name;
 
       // Read hyper-parameters of models
-      d3.select( '#hparam-perplexity-span' ).html( config.models.projection.perplexity );
+      //d3.select( '#hparam-perplexity-span' ).html( config.models.projection.perplexity );
 
     } ).catch( ( error ) => {
 
@@ -269,6 +290,17 @@ function loadConfig() {
 }
 
 function loadDataAndConfig() {
+
+  // Restart state
+  data = undefined;
+  config = undefined;
+  projectionConfigTemp = undefined;
+  clusteringConfigTemp = undefined;
+  autoRun = true;
+  visibleData = undefined;
+  colorFeature = undefined;
+  nv = undefined;
+
 
   // Try to load first the config file to avoid async issues 
   if( dataFileURL !== undefined ) loadConfig();

@@ -11,6 +11,11 @@ var featureGlyph = d3.select( 'body' )
 // Initialize the panel for performing feature selection
 function initFeatureSelection() {
 
+  var features = [];
+  config.features.forEach( f => {
+    if( ![ 'x', 'y', 'cluster' ].includes( f.name ) ) features.push( f );
+  } );
+
   // Show the feature selection panel
   d3.select( '#feature-selection' )
     .attr( 'class', null );
@@ -18,7 +23,7 @@ function initFeatureSelection() {
   // Instantiate all features as no group
   var featButtons = d3.select( '#feature-selection #no-group' )
     .selectAll( 'button' )
-    .data( config.features )
+    .data( features )
     .enter()
       .append( 'button' )
         .attr( 'id', d => d.name )

@@ -8,12 +8,12 @@
     {
       "name": "hair",
       "type": "sequential",
-      "project": true
+      "project": false
     },
     {
       "name": "feathers",
       "type": "sequential",
-      "project": true
+      "project": false
     },
     {
       "name": "eggs",
@@ -68,7 +68,7 @@
     {
       "name": "legs",
       "type": "sequential",
-      "project": true
+      "project": false
     },
     {
       "name": "tail",
@@ -88,15 +88,34 @@
     {
       "name": "class",
       "type": "categorical",
+      "project": false,
+      "color": true
+    },
+    {
+      "name": "x",
+      "type": "sequential",
+      "project": false
+    },
+    {
+      "name": "y",
+      "type": "sequential",
+      "project": false
+    },
+    {
+      "name": "cluster",
+      "type": "categorical",
       "project": false
     }
   ],
   "models": {
     "projection": {
-      "epsilon": 200,
       "perplexity": 50,
-      "dimensions": 2,
+      "epsilon": 1000,
       "iterations": 1000
+    },
+    "clustering": {
+      "clusters": 6,
+      "run_on_projection": false
     }
   }
 }

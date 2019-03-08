@@ -1,0 +1,61 @@
+{
+  "features": [
+    {
+      "name": "Id",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "SepalLengthCm",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "SepalWidthCm",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "PetalLengthCm",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "PetalWidthCm",
+      "type": "sequential",
+      "project": true
+    },
+    {
+      "name": "Species",
+      "type": "categorical",
+      "project": false
+    },
+    {
+      "name": "x",
+      "type": "sequential",
+      "project": false
+    },
+    {
+      "name": "y",
+      "type": "sequential",
+      "project": false
+    },
+    {
+      "name": "cluster",
+      "type": "categorical",
+      "project": false,
+      "color": true
+    }
+  ],
+  "models": {
+    "projection": {
+      "perplexity": 5,
+      "epsilon": 200,
+      "iterations": 1000
+    },
+    "clustering": {
+      "clusters": 3,
+      "run_on_projection": true
+    }
+  }
+}

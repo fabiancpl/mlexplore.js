@@ -5,8 +5,8 @@
 function projectionChart() {
 
   var margin = { top: 10, right: 10, bottom: 10, left: 10 },
-    width = 500,
-    height = 400,
+    width = d3.select( '#projection' ).node().getBoundingClientRect().width - 26,
+    height = width * 2 / 3,
     iWidth = width - margin.left - margin.right,
     iHeight = height - margin.top - margin.bottom;
     xValue = d => d[ 0 ],
@@ -148,8 +148,8 @@ function projectionChart() {
     delete d[ 'visible' ];
     //delete d[ '__seqId' ];
     delete d[ '__i' ];
-    delete d[ 'x' ];
-    delete d[ 'y' ];
+    //delete d[ 'x' ];
+    //delete d[ 'y' ];
 
     keys = Object.keys( d );
     string = '';

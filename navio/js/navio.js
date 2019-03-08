@@ -2,10 +2,10 @@ var nv,
   nv_height = 500;
 
 // Update Navio Panel
-function updateNavio() {
+function updateNavio( on_start = false ) {
 
   // Re-start the data to visualize
-  visibleData = data;
+  //visibleData = data;
 
   // Clean the Navio element
   d3.select( '#navio' ).html( '' );
@@ -13,8 +13,15 @@ function updateNavio() {
   // Create Navio instance
   nv = navio( d3.select( '#navio' ), nv_height );
 
+  var features;
+  if( on_start ) {
+    features = config.features.filter( f => ![ 'x', 'y', 'cluster' ].includes( f.name ) );
+  } else {
+    features = config.features;
+  }
+
   // Set features by type
-  config.features.forEach( f => {
+  features.forEach( f => {
     //if( f.project === true || f.name === colorFeature ) {
       if( f.type === 'sequential' ){
         nv.addSequentialAttrib( f.name );
