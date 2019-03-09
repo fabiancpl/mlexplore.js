@@ -11,12 +11,14 @@ var data,
   visibleData,
   colorFeature;
 
+var run_clustering_on_start = false;
+
 function getProjectionFeatures() {
 
-  var features = config.features.filter( f => f.project );
+  var features = config.features.filter( f => ( f.project ) && ( ![ '__seqId', 'x', 'y', 'cluster' ].includes( f.name ) ) );
   var featureNames = []; 
 
-  features.forEach( f => featureNames.push( f.name ) );
+  features.forEach( f => featureNames.push( f.name ) )
 
   return featureNames;
 
@@ -28,7 +30,7 @@ function getColoredFeatures() {
   var featureNames = []; 
 
   features.forEach( f => {
-    if( ![ 'x', 'y' ].includes( f.name ) ) featureNames.push( f.name );
+    if( ![ '__seqId', 'x', 'y' ].includes( f.name ) ) featureNames.push( f.name );
   } );
 
   return featureNames;
@@ -73,6 +75,7 @@ function updateCluster() {
   updateProjection( run_model = false );
   updateNavio();
   updateTable();
+  updateTicks();
 
 }
 
@@ -151,7 +154,7 @@ function loadData() {
     // Update the projection
     updateProjection();
 
-    if( config[ 'models' ][ 'clustering' ] !== undefined ) updateCluster();
+    if( run_clustering_on_start ) updateCluster();
 
     // Update the table details
     updateTable();
@@ -263,18 +266,12 @@ function loadConfig() {
       
         if( config_temp[ 'models' ][ 'projection' ] !== undefined ) projectionConfigTemp = config_temp[ 'models' ][ 'projection' ];
 
-        if( config_temp[ 'models' ][ 'clustering' ] !== undefined ) clusteringConfigTemp = config_temp[ 'models' ][ 'clustering' ];
+        if( config_temp[ 'models' ][ 'clustering' ] !== undefined ) {
+          clusteringConfigTemp = config_temp[ 'models' ][ 'clustering' ];
+          run_clustering_on_start = true;
+        }
 
       }
-
-
-      // Find features for color encoding
-      //var colorFeatures = config.features.filter( d => d.color );
-      //if( colorFeatures !== undefined && colorFeatures.lenght > 0 )
-      //  colorFeature = colorFeatures[ 0 ].name;
-
-      // Read hyper-parameters of models
-      //d3.select( '#hparam-perplexity-span' ).html( config.models.projection.perplexity );
 
     } ).catch( ( error ) => {
 
@@ -300,6 +297,8 @@ function loadDataAndConfig() {
   visibleData = undefined;
   colorFeature = undefined;
   nv = undefined;
+  run_clustering_on_start = false;
+  cleanFeatureSelection();
 
 
   // Try to load first the config file to avoid async issues 

@@ -28,6 +28,8 @@ function updateEncodeColor() {
         // Set feature to encode color
         colorFeature = d3.select( '#encode-color-combo' ).property( 'value' );
         
+        if( colorFeature === '' ) colorFeature = undefined;
+
         // Update the color in config
         if( colorFeature !== undefined ) {
           config.features.filter( f => !f.project ).forEach( f => delete f.color );
@@ -35,8 +37,9 @@ function updateEncodeColor() {
         }
 
         // Call for redrawing Navio and projection with run model
-        updateNavio();
+        //updateNavio();
         updateProjection( run_model = false );
+        updateTicks();
       } );
     
     var options = d3.select( '#encode-color-combo' )

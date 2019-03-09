@@ -8,12 +8,19 @@ var featureGlyph = d3.select( 'body' )
     .attr( 'class', 'feature-glyph' )       
     .style( 'opacity', 0 );
 
+
+function cleanFeatureSelection() {
+
+  d3.select( '#feature-selection #no-group' ).selectAll( 'button' ).remove();
+
+}
+
 // Initialize the panel for performing feature selection
 function initFeatureSelection() {
 
   var features = [];
   config.features.forEach( f => {
-    if( ![ 'x', 'y', 'cluster' ].includes( f.name ) ) features.push( f );
+    if( ![ '__seqId', 'x', 'y', 'cluster' ].includes( f.name ) ) features.push( f );
   } );
 
   // Show the feature selection panel

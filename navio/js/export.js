@@ -19,22 +19,45 @@ function exportData() {
 
   var string = '';
 
+  // Read the user option
+  var option1 = d3.select( '#exportDataOption1' ).property( 'checked' );
+  var option2 = d3.select( '#exportDataOption2' ).property( 'checked' );
+  var option3 = d3.select( '#exportDataOption3' ).property( 'checked' );  
+
+  var features = [ '__seqId' ];
+  if( option1 ) {
+    features.push( 'x' );
+    features.push( 'y' );
+    if( colorFeature !== undefined ) features.push( colorFeature );
+  } else if( option2 ) {
+    config.features.forEach( feature => features.push( feature.name ) );
+  } else if( option3 ) {
+    features = getProjectionFeatures();
+    features.push( 'x' );
+    features.push( 'y' );
+    if( colorFeature !== undefined ) features.push( colorFeature );
+  }
+
   // Add the header of the CSV
-  config.features.forEach( feature => string += feature.name + ',' );
-  string = string.substring( 0, string.length - 1 ) + '\n';
+  string = features.toString();
+  console.log( 'Attributes to export: ' + string );
+  string += '\n';
 
   // Add the content of the CSV
   visibleData.forEach( row => {
 
-    string_row = '';
-    config.features.forEach( feature => {
-      string_row += row[ feature.name ] + ',';
+    var row_array = [];
+    features.forEach( feature => {
+      row_array.push( row[ feature ] );
     } );
-    string += string_row.substring( 0, string_row.length - 1 ) + '\n';
+    string += row_array.toString() + '\n';
 
   } );
 
-  downloadPlain( string, datasetName + '.csv', 'text/plain' ); 
+  downloadPlain( string, datasetName + '.csv', 'text/plain' );
+
+  // Hide the export data modal
+  $( '#exportDataModal' ).modal( 'hide' );
 
 }
 
@@ -45,7 +68,7 @@ function exportProjection() {
 
   var projection = d3.select( '#projection' ).select( 'svg' ).node();
 
-  saveSvgAsPng( projection, "projection.png" );
+  saveSvgAsPng( projection, datasetName + '-embedding.png' );
 
 }
 

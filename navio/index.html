@@ -141,7 +141,7 @@
               
                 <button type="button" class="btn btn-success btn-sm" onclick="exportConfiguration()">Export Configuration</button>
                 <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#exportDataModal">Export Dataset</button>
-                <button type="button" class="btn btn-success btn-sm" onclick="exportProjection()">Export Projectionas PNG</button>
+                <button type="button" class="btn btn-success btn-sm" onclick="exportProjection()">Export Embedding PNG</button>
 
               </div>
 
@@ -167,7 +167,7 @@
 
     <!-- Export Data Modal -->
     <div class="modal fade" id="exportDataModal" tabindex="-1" role="dialog" aria-labelledby="exportDataModal" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+      <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">Export Dataset</h5>
@@ -177,7 +177,24 @@
           </div>
           <div class="modal-body">
             
-                      
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="exampleRadios" id="exportDataOption1" value="option1" checked>
+              <label class="form-check-label" for="exportDataOption1">
+                Export embedding space and color attribute
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="exampleRadios" id="exportDataOption2" value="option2">
+              <label class="form-check-label" for="exportDataOption2">
+                Export original attributes, embedding space and color attribute
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="exampleRadios" id="exportDataOption3" value="option3">
+              <label class="form-check-label" for="exportDataOption3">
+                Export selected attributes, embedding space and color attribute
+              </label>
+            </div>
 
           </div>
           <div class="modal-footer">
