@@ -1,0 +1,20 @@
+{
+  "name": "i2ML",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fabiancpl/i2ML.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fabiancpl/i2ML/issues"
+  },
+  "homepage": "https://github.com/fabiancpl/i2ML#readme"
+}
