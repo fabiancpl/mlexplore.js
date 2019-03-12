@@ -32,6 +32,10 @@
   display: block;
 }
 
+.btn-dataset {
+  min-width: 120px;
+}
+
 /* Feature selection panel */
 #feature-selection {
   width: 100%;
@@ -124,6 +128,12 @@ div.feature-glyph {
   margin: 5px 0px 5px 0px;
   padding: 8px;
   border-radius: 3px;
+}
+
+.selected {
+  opacity: 1 !important;
+  stroke: black;
+  stroke-width: 5px;
 }
 
 /* Tooltip */

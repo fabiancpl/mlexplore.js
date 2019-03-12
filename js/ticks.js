@@ -12,7 +12,7 @@ function updateTicks() {
 
     var spec = {
       '$schema': 'https://vega.github.io/schema/vega-lite/v3.json',
-      'width': +featureTicks.node().getBoundingClientRect().width - 100,
+      'width': +featureTicks.node().getBoundingClientRect().width - 130,
       'data': { 'values': visibleData },
       'mark': 'tick',
       'encoding': {
@@ -22,7 +22,7 @@ function updateTicks() {
       }
     };
 
-  vegaEmbed( ( '#ticks-' + feature ), spec, { 'actions' : false } );
+    vegaEmbed( ( '#ticks-' + feature ), spec, { 'actions' : false } );
 
   } );
 

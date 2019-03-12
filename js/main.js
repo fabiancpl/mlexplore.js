@@ -331,6 +331,26 @@ function loadConfig() {
 
 function loadDataAndConfig() {
 
+  clearInterface();
+
+  // Try to load first the config file to avoid async issues
+  if( dataFileURL !== undefined ) loadConfig();
+
+}
+
+function loadPreloadedDataset( dataset ) {
+
+  clearInterface();
+
+  datasetName = dataset;
+  dataFileURL = './data/' + datasetName + '.csv';
+
+  loadData();
+
+}
+
+function clearInterface() {
+
   // Restart state
   data = undefined;
   config = undefined;
@@ -343,49 +363,50 @@ function loadDataAndConfig() {
   run_clustering_on_start = false;
   cleanFeatureSelection();
 
-
   // Try to load first the config file to avoid async issues
   if( dataFileURL !== undefined ) loadConfig();
 
+  /* Load data handlers */
+
+  d3.select( '#data-input' )
+    .on( 'change', function() {
+
+      // Get the file name
+      var dataFile = d3.event.target.files[ 0 ];
+      if ( !dataFile ) return;
+
+      // Extract the name of the dataset
+      datasetName = dataFile.name.split( '.' )[ 0 ];
+
+      d3.select( '#data-name' ).html( dataFile.name );
+
+      // Get the path of the file and call the function for load it
+      var reader = new FileReader();
+      reader.onloadend = function( evt ) {
+        dataFileURL = evt.target.result;
+      };
+      reader.readAsDataURL( dataFile );
+
+    } );
+
+  d3.select( '#config-input' )
+    .on( 'change', function() {
+
+      // Get the file name
+      var configFile = d3.event.target.files[ 0 ];
+      if ( !configFile ) return;
+
+      d3.select( '#config-name' ).html( configFile.name );
+
+      // Get the path of the file and call the function for load it
+      var reader = new FileReader();
+      reader.onloadend = function( evt ) {
+        configFileURL = evt.target.result;
+      };
+      reader.readAsDataURL( configFile );
+
+
+    } );
+
 }
 
-/* Load data handlers */
-
-d3.select( '#data-input' )
-  .on( 'change', function() {
-
-    // Get the file name
-    var dataFile = d3.event.target.files[ 0 ];
-    if ( !dataFile ) return;
-
-    // Extract the name of the dataset
-    datasetName = dataFile.name.split( '.' )[ 0 ];
-
-    d3.select( '#data-name' ).html( dataFile.name );
-
-    // Get the path of the file and call the function for load it
-    var reader = new FileReader();
-    reader.onloadend = function( evt ) {
-      dataFileURL = evt.target.result;
-    };
-    reader.readAsDataURL( dataFile );
-
-  } );
-
-d3.select( '#config-input' )
-  .on( 'change', function() {
-
-    // Get the file name
-    var configFile = d3.event.target.files[ 0 ];
-    if ( !configFile ) return;
-
-    d3.select( '#config-name' ).html( configFile.name );
-
-    // Get the path of the file and call the function for load it
-    var reader = new FileReader();
-    reader.onloadend = function( evt ) {
-      configFileURL = evt.target.result;
-    };
-    reader.readAsDataURL( configFile );
-
-  } );
