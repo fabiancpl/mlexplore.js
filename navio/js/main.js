@@ -1,3 +1,4 @@
+/* global d3, cluster, project, updateEncodeColor, updateNavio, updateTable, updateTicks, projectionChart, initFeatureSelection */
 
 var dataFileURL,
   configFileURL,
@@ -61,10 +62,10 @@ function updateCluster() {
   // Create the new feature in the configuration
   if( config.features.find( d => d.name === colorFeature ) === undefined ) {
     config.features.push( {
-      "name": "cluster",
-      "type": "categorical",
-      "project": false,
-      "color" : true
+      'name': 'cluster',
+      'type': 'categorical',
+      'project': false,
+      'color' : true
     } );
   } else {
     config.features.find( d => d.name === colorFeature ).color = true;
@@ -72,7 +73,7 @@ function updateCluster() {
 
   // Update Encode Color and Projection panels
   updateEncodeColor();
-  updateProjection( run_model = false );
+  updateProjection( false );
   updateNavio();
   updateTable();
   updateTicks();
@@ -85,11 +86,25 @@ function updateProjection( run_model = true ) {
   d3.select( '#projection-panel' )
     .attr( 'class', null );
 
-  if( run_model ) {
 
-    var projection = project( visibleData );
+  const projectWorker = new Worker('./js/components/non-visual/projectWorker.js');
 
-    projection[ 'results' ].forEach( ( d, i ) => {
+  if (run_model) {
+    // Pass new parameters to the projection
+    projectWorker.postMessage({
+      data: visibleData,
+      features: getProjectionFeatures(),
+      epsilon: projectionConfigTemp.epsilon,
+      perplexity: projectionConfigTemp.perplexity,
+      iterations: projectionConfigTemp.iterations,
+      dim: 2
+    });
+  }
+
+  projectWorker.onmessage = function (e) {
+    const projection = e.data;
+
+    projection.solution.forEach( ( d, i ) => {
       visibleData[ i ][ 'x' ] = d[ 0 ];
       visibleData[ i ][ 'y' ] = d[ 1 ];
     } );
@@ -100,28 +115,56 @@ function updateProjection( run_model = true ) {
     // Create the new feature in the configuration
     if( config.features.find( d => d.name === 'x' ) === undefined )
       config.features.push( {
-        "name": "x",
-        "type": "sequential",
-        "project": false
+        'name': 'x',
+        'type': 'sequential',
+        'project': false
       }, {
-        "name": "y",
-        "type": "sequential",
-        "project": false
+        'name': 'y',
+        'type': 'sequential',
+        'project': false
       } );
 
-  }
+    var chart = projectionChart()
+      .x( ( d ) => d.x )
+      .y( ( d ) => d.y  )
+      .z( ( d ) => d[ colorFeature ]  );
 
-  var chart = projectionChart()
-    .x( ( d ) => d.x )
-    .y( ( d ) => d.y  )
-    .z( ( d ) => d[ colorFeature ]  );
+    d3.select( '#projection' )
+      .datum( visibleData )
+      .call( chart );
 
-  d3.select( '#projection' )
-    .datum( visibleData )
-    .call( chart );
+    updateNavio();
+    updateTable();
 
-  updateNavio();
-  updateTable();
+
+  };
+
+  // if( run_model ) {
+
+  //   var projection = project( visibleData );
+
+  //   projection[ 'results' ].forEach( ( d, i ) => {
+  //     visibleData[ i ][ 'x' ] = d[ 0 ];
+  //     visibleData[ i ][ 'y' ] = d[ 1 ];
+  //   } );
+
+  //   if( config[ 'models' ] === undefined ) config[ 'models' ] = {};
+  //   config[ 'models' ][ 'projection' ] = projection[ 'config' ];
+
+  //   // Create the new feature in the configuration
+  //   if( config.features.find( d => d.name === 'x' ) === undefined )
+  //     config.features.push( {
+  //       'name': 'x',
+  //       'type': 'sequential',
+  //       'project': false
+  //     }, {
+  //       'name': 'y',
+  //       'type': 'sequential',
+  //       'project': false
+  //     } );
+
+  // }
+
 
 }
 
@@ -164,7 +207,7 @@ function loadData() {
 
     // Show the export panel
     d3.select( '#export-panel' )
-    .attr( 'class', null );
+      .attr( 'class', null );
 
     // Hide the modal
     $( '#loadDataModal' ).modal( 'hide' );
@@ -237,13 +280,13 @@ function createConfig() {
   } );
 
   projectionConfigTemp = {
-    "iterations" : 1000,
-    "perplexity" : 25,
-    "epsilon" : 200,
+    'iterations' : 1,
+    'perplexity' : 25,
+    'epsilon' : 200,
   };
 
   clusteringConfigTemp = {
-    "clusters" : 3
+    'clusters' : 3
   };
 
 }
@@ -253,7 +296,7 @@ function loadConfig() {
 
   if( configFileURL !== undefined ) {
 
-     // Load the the configuration file
+    // Load the the configuration file
     d3.json( configFileURL ).then( ( config_temp ) => {
 
       console.log( 'Configuration loaded!' );
@@ -329,20 +372,20 @@ d3.select( '#data-input' )
 
   } );
 
-  d3.select( '#config-input' )
-    .on( 'change', function() {
+d3.select( '#config-input' )
+  .on( 'change', function() {
 
-      // Get the file name
-      var configFile = d3.event.target.files[ 0 ];
-      if ( !configFile ) return;
+    // Get the file name
+    var configFile = d3.event.target.files[ 0 ];
+    if ( !configFile ) return;
 
-      d3.select( '#config-name' ).html( configFile.name );
+    d3.select( '#config-name' ).html( configFile.name );
 
-      // Get the path of the file and call the function for load it
-      var reader = new FileReader();
-      reader.onloadend = function( evt ) {
-        configFileURL = evt.target.result;
-      };
-      reader.readAsDataURL( configFile );
+    // Get the path of the file and call the function for load it
+    var reader = new FileReader();
+    reader.onloadend = function( evt ) {
+      configFileURL = evt.target.result;
+    };
+    reader.readAsDataURL( configFile );
 
-    } );
+  } );

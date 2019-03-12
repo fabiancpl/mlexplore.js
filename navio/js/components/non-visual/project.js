@@ -1,11 +1,12 @@
+/* global tsnejs, getProjectionFeatures, projectionConfigTemp, visibleData */
 
 function project( data ) {
 
   var features = getProjectionFeatures();
 
   // Build hyper-parameters object
-  var params = {}
-  params.epsilon = projectionConfigTemp.epsilon; 
+  var params = {};
+  params.epsilon = projectionConfigTemp.epsilon;
   params.perplexity = projectionConfigTemp.perplexity;
   params.dim = 2;
 
@@ -17,8 +18,8 @@ function project( data ) {
   // Transform data to multi-dimensional array
   var arrayData = [];
   data.forEach( d => {
-    
-    row = [];
+
+    let row = [];
     features.forEach( feature => {
       row.push( +d[ feature ] );
     } );
@@ -36,12 +37,12 @@ function project( data ) {
 
   console.info( 'Projection finished!' );
 
-  return { 
-    "results" : tsne.getSolution(),
-    "config" : {
-      "perplexity" : projectionConfigTemp.perplexity,
-      "epsilon" : projectionConfigTemp.epsilon,
-      "iterations" : projectionConfigTemp.iterations
+  return {
+    'results' : tsne.getSolution(),
+    'config' : {
+      'perplexity' : projectionConfigTemp.perplexity,
+      'epsilon' : projectionConfigTemp.epsilon,
+      'iterations' : projectionConfigTemp.iterations
     }
   };
 

@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/fabiancpl/i2ML/issues"
   },
-  "homepage": "https://github.com/fabiancpl/i2ML#readme"
+  "homepage": "https://github.com/fabiancpl/i2ML#readme",
+  "devDependencies": {
+    "eslint": "^5.15.1",
+    "prettier": "^1.16.4"
+  }
 }

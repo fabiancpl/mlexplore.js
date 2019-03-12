@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -17,25 +17,25 @@
   <body>
 
     <div class="container-fluid">
-      
+
       <div class="row">
-        
+
         <div class="col-md-12">
-          
+
           <h1 style="text-align: center;">Interacting and Interpreting t-SNE</h1>
 
         </div>
 
       </div>
-      
+
       <div class="row">
 
         <div class="col-md-2">
-        
+
           <div class="row">
-            
+
             <div class="col-md-12">
-              
+
               <!-- Load Data panel -->
               <div id="load-data">
 
@@ -47,12 +47,12 @@
             </div>
 
             <div class="col-md-12">
-              
+
               <!-- Feature Selection panel -->
               <div id="feature-selection" class="hide">
                 <div>
                   <div style="float: left;">
-                    <h3>Attributes</h3>  
+                    <h3>Attributes</h3>
                   </div>
                   <!--<div style="float: right;">
                     <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#newFeatureGroupModal">New group</button>
@@ -67,12 +67,12 @@
             </div>
 
             <div class="col-md-12">
-                
+
               <!-- Load Data panel -->
               <div id="encode-color-panel" class="hide">
 
-                <h3>Encode Color</h3> 
-                
+                <h3>Encode Color</h3>
+
                 <select id="encode-color-combo">
                 </select>
 
@@ -81,30 +81,30 @@
             </div>
 
             <div class="col-md-12" style="overflow-x: scroll;">
-              
+
               <div id="navio"></div>
 
             </div>
 
           </div>
-        
+
         </div>
 
         <div class="col-md-5">
-          
+
           <div class="row">
-            
+
             <div class="col-md-12">
-              
+
               <div id="projection-panel" class="hide">
-                
+
                 <div>
-                  Iterations: <input id="hparam-iterations" type="range" min="500" max="2000" step="100"><span id="hparam-iterations-span"></span>
+                  Iterations: <input id="hparam-iterations" type="range" min="1" max="2000" step="100"><span id="hparam-iterations-span"></span>
                   Perplexity: <input id="hparam-perplexity" type="range" min="5" max="50" step="1"><span id="hparam-perplexity-span"></span>
                   Epsilon: <input id="hparam-epsilon" type="range" min="10" max="1000" step="10"><span id="hparam-epsilon-span"></span>
                   <button type="button" class="btn btn-success btn-sm" onclick="updateProjection()">Run t-SNE</button>
                 </div>
-                
+
                 <div>
                   Number of clusters: <input id="hparam-clusters" type="range" min="2" max="10" step="1"><span id="hparam-clusters-span"></span>
                   <input id="runClusteringOnProjection" type="checkbox"> Run on projected data
@@ -114,15 +114,15 @@
                 <div id="projection"></div>
 
               </div>
-            
+
             </div>
 
           </div>
 
           <div class="row">
-            
+
             <div class="col-md-12">
-              
+
               <div id="table-details"></div>
 
             </div>
@@ -134,11 +134,11 @@
         <div class="col-md-5">
 
           <div class="row">
-              
+
             <div class="col-md-12">
 
               <div id="export-panel" class="hide">
-              
+
                 <button type="button" class="btn btn-success btn-sm" onclick="exportConfiguration()">Export Configuration</button>
                 <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#exportDataModal">Export Dataset</button>
                 <button type="button" class="btn btn-success btn-sm" onclick="exportProjection()">Export Embedding PNG</button>
@@ -148,22 +148,22 @@
             </div>
 
           </div>
-          
+
           <div class="row">
-            
+
             <div class="col-md-12">
-              
+
               <div id="ticks-group"></div>
 
             </div>
 
           </div>
-        
+
         </div>
-      
+
       </div>
 
-    </div>    
+    </div>
 
     <!-- Export Data Modal -->
     <div class="modal fade" id="exportDataModal" tabindex="-1" role="dialog" aria-labelledby="exportDataModal" aria-hidden="true">
@@ -176,7 +176,7 @@
             </button>
           </div>
           <div class="modal-body">
-            
+
             <div class="form-check">
               <input class="form-check-input" type="radio" name="exampleRadios" id="exportDataOption1" value="option1" checked>
               <label class="form-check-label" for="exportDataOption1">
@@ -216,11 +216,11 @@
             </button>
           </div>
           <div class="modal-body">
-            
+
             <div class="row">
               <div class="col-md-12">
                 <span class="btn btn-success btn-sm btn-file">Load Dataset<input id="data-input" type="file"></span>
-                <span id="data-name">No dataset</span>  
+                <span id="data-name">No dataset</span>
               </div>
             </div>
             <br />
@@ -229,7 +229,7 @@
                 <span class="btn btn-success btn-sm btn-file">Load Config<input id="config-input" type="file"></span>
                 <span id="config-name">No config</span>
               </div>
-            </div>            
+            </div>
 
           </div>
           <div class="modal-footer">
@@ -274,17 +274,18 @@
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://unpkg.com/bootstrap-table@1.13.5/dist/bootstrap-table.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/vega@3"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vega-lite@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vega-embed@3"></script>
-    
-    <script type="text/javascript" src="./libs/navio.js"></script>
-    <script src="./libs/tsne.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@3.0.0-rc14"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@3.29.1"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/navio"></script>
+    <!-- <script type="text/javascript" src="./libs/navio.js"></script> -->
+    <!-- <script src="./libs/tsne.js"></script> -->
     <script src="./libs/saveSvgAsPng.js"></script>
-    
+
     <!-- Scripts -->
-    <script type="text/javascript" src="./js/components/non-visual/project.js"></script>
+    <!-- <script type="text/javascript" src="./js/components/non-visual/project.js"></script> -->
     <script type="text/javascript" src="./js/components/non-visual/cluster.js"></script>
     <script type="text/javascript" src="./js/components/visual/projectionChart.js"></script>
     <script type="text/javascript" src="./js/featureSelection.js"></script>

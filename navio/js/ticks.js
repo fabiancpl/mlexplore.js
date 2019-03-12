@@ -11,20 +11,19 @@ function updateTicks() {
       .attr( 'id', d => ( 'ticks-' + feature ) );
 
     var spec = {
-      "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
-      "description": "Shows the relationship between horsepower and the numbver of cylinders using tick marks.",
-      "width": +featureTicks.node().getBoundingClientRect().width - 100,
-      "data": { "values": visibleData },
-      "mark": "tick",
-      "encoding": {
-        "x": { "field": feature, "type": "quantitative" },
-        "y": { "field": colorFeature, "type": "nominal" },
-        "color": { "field": colorFeature, "type": "nominal" }
+      '$schema': 'https://vega.github.io/schema/vega-lite/v3.json',
+      'width': +featureTicks.node().getBoundingClientRect().width - 100,
+      'data': { 'values': visibleData },
+      'mark': 'tick',
+      'encoding': {
+        'x': { 'field': feature, 'type': 'quantitative' },
+        'y': { 'field': colorFeature, 'type': 'nominal' },
+        'color': { 'field': colorFeature, 'type': 'nominal' }
       }
     };
 
-  vegaEmbed( ( '#ticks-' + feature ), spec, { 'actions' : false } ); 
+  vegaEmbed( ( '#ticks-' + feature ), spec, { 'actions' : false } );
 
-  } ); 
+  } );
 
 }
