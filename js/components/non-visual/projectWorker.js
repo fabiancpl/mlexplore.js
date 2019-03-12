@@ -40,7 +40,7 @@ onmessage = function(e) {
 
   // Run t-SNE iterations
   for( let k = 0; k < e.data.iterations; k++ ) {
-    console.log('step', k);
+    console.log('TSNE step', k);
     tsne.step();
     postMessage({
       solution: tsne.getSolution(),

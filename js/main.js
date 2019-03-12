@@ -12,6 +12,8 @@ var data,
   visibleData,
   colorFeature;
 
+const projectWorker = new Worker('./js/components/non-visual/projectWorker.js');
+
 var run_clustering_on_start = false;
 
 function getProjectionFeatures() {
@@ -86,10 +88,8 @@ function updateProjection( run_model = true ) {
   d3.select( '#projection-panel' )
     .attr( 'class', null );
 
-
-  const projectWorker = new Worker('./js/components/non-visual/projectWorker.js');
-
   if (run_model) {
+    console.log('Sending data to Worker');
     // Pass new parameters to the projection
     projectWorker.postMessage({
       data: visibleData,
@@ -99,71 +99,59 @@ function updateProjection( run_model = true ) {
       iterations: projectionConfigTemp.iterations,
       dim: 2
     });
+  } else {
+    // projectWorker.terminate();
   }
 
+  let drawing = false;
   projectWorker.onmessage = function (e) {
     const projection = e.data;
 
-    projection.solution.forEach( ( d, i ) => {
-      visibleData[ i ][ 'x' ] = d[ 0 ];
-      visibleData[ i ][ 'y' ] = d[ 1 ];
-    } );
+    function redrawProjection() {
+      if (drawing) return;
 
-    if( config[ 'models' ] === undefined ) config[ 'models' ] = {};
-    config[ 'models' ][ 'projection' ] = projection[ 'config' ];
-
-    // Create the new feature in the configuration
-    if( config.features.find( d => d.name === 'x' ) === undefined )
-      config.features.push( {
-        'name': 'x',
-        'type': 'sequential',
-        'project': false
-      }, {
-        'name': 'y',
-        'type': 'sequential',
-        'project': false
+      console.log('Redrawing projection ', projection.i, drawing);
+      drawing = true;
+      projection.solution.forEach( ( d, i ) => {
+        visibleData[ i ][ 'x' ] = d[ 0 ];
+        visibleData[ i ][ 'y' ] = d[ 1 ];
       } );
 
-    var chart = projectionChart()
-      .x( ( d ) => d.x )
-      .y( ( d ) => d.y  )
-      .z( ( d ) => d[ colorFeature ]  );
+      if( config[ 'models' ] === undefined ) config[ 'models' ] = {};
+      config[ 'models' ][ 'projection' ] = projection[ 'config' ];
 
-    d3.select( '#projection' )
-      .datum( visibleData )
-      .call( chart );
+      // Create the new feature in the configuration
+      if( config.features.find( d => d.name === 'x' ) === undefined )
+        config.features.push( {
+          'name': 'x',
+          'type': 'sequential',
+          'project': false
+        }, {
+          'name': 'y',
+          'type': 'sequential',
+          'project': false
+        } );
 
-    updateNavio();
-    updateTable();
+      var chart = projectionChart()
+        .x( ( d ) => d.x )
+        .y( ( d ) => d.y  )
+        .z( ( d ) => d[ colorFeature ]  );
+
+      d3.select( '#projection' )
+        .datum( visibleData )
+        .call( chart );
 
 
-  };
+      drawing = false;
+    }
 
-  // if( run_model ) {
+    // Redraw after 100 ms to give enough time to the UI to redraw
+    if (!drawing) setTimeout(redrawProjection, 100 );
 
-  //   var projection = project( visibleData );
+  }; // Worker update
 
-  //   projection[ 'results' ].forEach( ( d, i ) => {
-  //     visibleData[ i ][ 'x' ] = d[ 0 ];
-  //     visibleData[ i ][ 'y' ] = d[ 1 ];
-  //   } );
-
-  //   if( config[ 'models' ] === undefined ) config[ 'models' ] = {};
-  //   config[ 'models' ][ 'projection' ] = projection[ 'config' ];
-
-  //   // Create the new feature in the configuration
-  //   if( config.features.find( d => d.name === 'x' ) === undefined )
-  //     config.features.push( {
-  //       'name': 'x',
-  //       'type': 'sequential',
-  //       'project': false
-  //     }, {
-  //       'name': 'y',
-  //       'type': 'sequential',
-  //       'project': false
-  //     } );
-
-  // }
+  updateNavio();
+  updateTable();
 
 
 }
@@ -192,7 +180,7 @@ function loadData() {
     updateEncodeColor();
 
     // Initialize and put data in Navio
-    updateNavio( on_start = true );
+    updateNavio( true );
 
     // Update the projection
     updateProjection();
@@ -280,7 +268,7 @@ function createConfig() {
   } );
 
   projectionConfigTemp = {
-    'iterations' : 1,
+    'iterations' : 1000,
     'perplexity' : 25,
     'epsilon' : 200,
   };
