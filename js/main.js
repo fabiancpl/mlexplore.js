@@ -320,14 +320,8 @@ function clearInterface() {
   run_clustering_on_start = false;
   cleanFeatureSelection();
 
-<<<<<<< HEAD:js/main.js
-=======
-
   // Try to load first the config file to avoid async issues
   if( dataFileURL !== undefined ) loadConfig();
-
->>>>>>> b3014118598625358cf8b13cedd411fbf8de8414:navio/js/main.js
-}
 
 /* Load data handlers */
 
@@ -369,3 +363,5 @@ d3.select( '#data-input' )
       reader.readAsDataURL( configFile );
 
     } );
+
+}
