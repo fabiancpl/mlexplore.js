@@ -16,7 +16,7 @@ var run_clustering_on_start = false;
 function getProjectionFeatures() {
 
   var features = config.features.filter( f => ( f.project ) && ( ![ '__seqId', 'x', 'y', 'cluster' ].includes( f.name ) ) );
-  var featureNames = []; 
+  var featureNames = [];
 
   features.forEach( f => featureNames.push( f.name ) )
 
@@ -27,7 +27,7 @@ function getProjectionFeatures() {
 function getColoredFeatures() {
 
   var features = config.features.filter( f => !f.project );
-  var featureNames = []; 
+  var featureNames = [];
 
   features.forEach( f => {
     if( ![ '__seqId', 'x', 'y' ].includes( f.name ) ) featureNames.push( f.name );
@@ -58,11 +58,11 @@ function updateCluster() {
   // Clean the config for the color
   config.features.filter( f => !f.project ).forEach( f => delete f.color );
 
-  // Create the new feature in the configuration 
+  // Create the new feature in the configuration
   if( config.features.find( d => d.name === colorFeature ) === undefined ) {
     config.features.push( {
-      "name": "cluster", 
-      "type": "categorical", 
+      "name": "cluster",
+      "type": "categorical",
       "project": false,
       "color" : true
     } );
@@ -97,15 +97,15 @@ function updateProjection( run_model = true ) {
     if( config[ 'models' ] === undefined ) config[ 'models' ] = {};
     config[ 'models' ][ 'projection' ] = projection[ 'config' ];
 
-    // Create the new feature in the configuration 
+    // Create the new feature in the configuration
     if( config.features.find( d => d.name === 'x' ) === undefined )
       config.features.push( {
-        "name": "x", 
-        "type": "sequential", 
+        "name": "x",
+        "type": "sequential",
         "project": false
       }, {
-        "name": "y", 
-        "type": "sequential", 
+        "name": "y",
+        "type": "sequential",
         "project": false
       } );
 
@@ -141,7 +141,7 @@ function loadData() {
     if( config === undefined ) createConfig();
 
     setHyperParameters();
-    
+
     // Initialize Feature Selection panel
     initFeatureSelection();
 
@@ -263,7 +263,7 @@ function loadConfig() {
       this.config[ 'features' ] = config_temp[ 'features' ];
 
       if( config_temp[ 'models' ] !== undefined ) {
-      
+
         if( config_temp[ 'models' ][ 'projection' ] !== undefined ) projectionConfigTemp = config_temp[ 'models' ][ 'projection' ];
 
         if( config_temp[ 'models' ][ 'clustering' ] !== undefined ) {
@@ -320,6 +320,13 @@ function clearInterface() {
   run_clustering_on_start = false;
   cleanFeatureSelection();
 
+<<<<<<< HEAD:js/main.js
+=======
+
+  // Try to load first the config file to avoid async issues
+  if( dataFileURL !== undefined ) loadConfig();
+
+>>>>>>> b3014118598625358cf8b13cedd411fbf8de8414:navio/js/main.js
 }
 
 /* Load data handlers */
@@ -335,7 +342,7 @@ d3.select( '#data-input' )
     datasetName = dataFile.name.split( '.' )[ 0 ];
 
     d3.select( '#data-name' ).html( dataFile.name );
-    
+
     // Get the path of the file and call the function for load it
     var reader = new FileReader();
     reader.onloadend = function( evt ) {
@@ -346,19 +353,19 @@ d3.select( '#data-input' )
   } );
 
   d3.select( '#config-input' )
-  .on( 'change', function() {
+    .on( 'change', function() {
 
-    // Get the file name
-    var configFile = d3.event.target.files[ 0 ];
-    if ( !configFile ) return;
+      // Get the file name
+      var configFile = d3.event.target.files[ 0 ];
+      if ( !configFile ) return;
 
-    d3.select( '#config-name' ).html( configFile.name );
-    
-    // Get the path of the file and call the function for load it
-    var reader = new FileReader();
-    reader.onloadend = function( evt ) {
-      configFileURL = evt.target.result;
-    };
-    reader.readAsDataURL( configFile );
+      d3.select( '#config-name' ).html( configFile.name );
 
-  } );
+      // Get the path of the file and call the function for load it
+      var reader = new FileReader();
+      reader.onloadend = function( evt ) {
+        configFileURL = evt.target.result;
+      };
+      reader.readAsDataURL( configFile );
+
+    } );

@@ -7,7 +7,7 @@ function exportConfiguration() {
   var configCopy = Object.assign( {}, config );
   //configCopy[ 'features' ] = configCopy[ 'features' ].filter( f => ![ 'x', 'y', 'cluster' ].includes( f.name ) );
 
-  downloadPlain( JSON.stringify( configCopy, null, 2 ), datasetName + '-config.json', 'text/plain' ); 
+  downloadPlain( JSON.stringify( configCopy, null, 2 ), datasetName + '-config.json', 'text/plain' );
 
 }
 
@@ -22,7 +22,7 @@ function exportData() {
   // Read the user option
   var option1 = d3.select( '#exportDataOption1' ).property( 'checked' );
   var option2 = d3.select( '#exportDataOption2' ).property( 'checked' );
-  var option3 = d3.select( '#exportDataOption3' ).property( 'checked' );  
+  var option3 = d3.select( '#exportDataOption3' ).property( 'checked' );
 
   var features = [ '__seqId' ];
   if( option1 ) {
