@@ -27,6 +27,26 @@ function projectionChart() {
     
   	selection.each( function( data ) {
 
+      function updateChart() {
+        points.classed( 'selected', d => isBrushed( d3.event.selection, X( d ), Y( d ) ) );
+      }
+
+      function isBrushed( brush_coords, cx, cy ) {
+        var x0 = brush_coords[ 0 ][ 0 ],
+           x1 = brush_coords[ 1 ][ 0 ],
+           y0 = brush_coords[ 0 ][ 1 ],
+           y1 = brush_coords[ 1 ][ 1 ];
+        return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
+      }
+
+      var zoom = d3.zoom()
+        .scaleExtent( [ 1, 10 ] )
+        .on( 'zoom', _ => points.attr( 'transform', d3.event.transform ) );
+
+      var brush = d3.brush()
+        .extent( [ [ 0, 0 ], [ width, height ] ] )
+        .on("start brush", updateChart )
+
       // Select the svg element, if it exists
       svg = d3.select( this ).selectAll( 'svg' )
         .data( [ data ] );
@@ -41,7 +61,9 @@ function projectionChart() {
       // Update the outer dimensions
       svg.merge( svgEnter )
         .attr( 'width', width )
-        .attr( 'height', height );
+        .attr( 'height', height )
+        .call( brush )
+        .call( zoom );
 
       // Update the inner dimensions
       g = svg.merge( svgEnter ).select( 'g' )
@@ -81,8 +103,8 @@ function projectionChart() {
 
             tooltip
               .style( 'opacity', 0 )
-              .style( 'left', '-100px' )
-              .style( 'top', '-100px' );
+              .style( 'left', '-200px' )
+              .style( 'top', '-200px' );
 
           } );
 

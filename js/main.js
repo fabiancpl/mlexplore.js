@@ -288,6 +288,26 @@ function loadConfig() {
 
 function loadDataAndConfig() {
 
+  clearInterface();
+
+  // Try to load first the config file to avoid async issues 
+  if( dataFileURL !== undefined ) loadConfig();
+
+}
+
+function loadPreloadedDataset( dataset ) {
+
+  clearInterface();
+
+  datasetName = dataset;
+  dataFileURL = './data/' + datasetName + '.csv';
+
+  loadData();
+
+}
+
+function clearInterface() {
+
   // Restart state
   data = undefined;
   config = undefined;
@@ -299,10 +319,6 @@ function loadDataAndConfig() {
   nv = undefined;
   run_clustering_on_start = false;
   cleanFeatureSelection();
-
-
-  // Try to load first the config file to avoid async issues 
-  if( dataFileURL !== undefined ) loadConfig();
 
 }
 

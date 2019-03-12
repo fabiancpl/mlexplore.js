@@ -13,7 +13,7 @@ function updateTicks() {
     var spec = {
       "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
       "description": "Shows the relationship between horsepower and the numbver of cylinders using tick marks.",
-      "width": +featureTicks.node().getBoundingClientRect().width - 100,
+      "width": +featureTicks.node().getBoundingClientRect().width - 130,
       "data": { "values": visibleData },
       "mark": "tick",
       "encoding": {
