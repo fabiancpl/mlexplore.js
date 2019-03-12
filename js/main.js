@@ -268,7 +268,7 @@ function createConfig() {
   } );
 
   projectionConfigTemp = {
-    'iterations' : 1000,
+    'iterations' : 100,
     'perplexity' : 25,
     'epsilon' : 200,
   };
