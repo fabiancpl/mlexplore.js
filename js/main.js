@@ -82,6 +82,11 @@ function updateCluster() {
 
 }
 
+function stopProjection() {
+  // projectWorker.terminate();
+  projectWorker.postMessage({stop:true});
+}
+
 // Project the data calling re-train model if specified
 function updateProjection( run_model = true ) {
 
@@ -89,7 +94,11 @@ function updateProjection( run_model = true ) {
     .attr( 'class', null );
 
   if (run_model) {
+    // Try to stop the previous worker loop if it exists
+    projectWorker.postMessage({stop:true});
+
     console.log('Sending data to Worker');
+
     // Pass new parameters to the projection
     projectWorker.postMessage({
       data: visibleData,
@@ -99,19 +108,17 @@ function updateProjection( run_model = true ) {
       iterations: projectionConfigTemp.iterations,
       dim: 2
     });
-  } else {
-    // projectWorker.terminate();
   }
 
-  let drawing = false;
+  let frameId = null;
   projectWorker.onmessage = function (e) {
     const projection = e.data;
 
     function redrawProjection() {
-      if (drawing) return;
 
-      console.log('Redrawing projection ', projection.i, drawing);
-      drawing = true;
+      d3.select('#spanIter').text(projection.i);
+      console.log('Redrawing projection ', projection.i);
+      // drawing = true;
       projection.solution.forEach( ( d, i ) => {
         visibleData[ i ][ 'x' ] = d[ 0 ];
         visibleData[ i ][ 'y' ] = d[ 1 ];
@@ -140,17 +147,16 @@ function updateProjection( run_model = true ) {
       d3.select( '#projection' )
         .datum( visibleData )
         .call( chart );
-
-
-      drawing = false;
     }
 
-    // Redraw after 100 ms to give enough time to the UI to redraw
-    if (!drawing) setTimeout(redrawProjection, 100 );
+    // If we haven't launch the previous drawing command, skip it
+    if(frameId) window.cancelAnimationFrame(frameId);
+
+    frameId = window.requestAnimationFrame(redrawProjection);
 
   }; // Worker update
 
-  updateNavio();
+  // updateNavio();
   updateTable();
 
 
@@ -268,7 +274,7 @@ function createConfig() {
   } );
 
   projectionConfigTemp = {
-    'iterations' : 100,
+    'iterations' : 1000,
     'perplexity' : 25,
     'epsilon' : 200,
   };

@@ -99,10 +99,12 @@
               <div id="projection-panel" class="hide">
 
                 <div>
-                  Iterations: <input id="hparam-iterations" type="range" min="1" max="2000" step="100"><span id="hparam-iterations-span"></span>
+                  Iterations: <input id="hparam-iterations" type="range" min="1" max="2000" step="10"><span id="hparam-iterations-span"></span>
                   Perplexity: <input id="hparam-perplexity" type="range" min="5" max="50" step="1"><span id="hparam-perplexity-span"></span>
                   Epsilon: <input id="hparam-epsilon" type="range" min="10" max="1000" step="10"><span id="hparam-epsilon-span"></span>
                   <button type="button" class="btn btn-success btn-sm" onclick="updateProjection()">Run t-SNE</button>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="stopProjection()">Stop</button>
+                  <div>i=<span id="spanIter"></span></div>
                 </div>
 
                 <div>

@@ -1,3 +1,5 @@
+/* global navio, d3, config */
+
 var nv,
   nv_height = 500;
 
@@ -12,6 +14,8 @@ function updateNavio( on_start = false ) {
 
   // Create Navio instance
   nv = navio( d3.select( '#navio' ), nv_height );
+  nv.attribWidth=8;
+  nv.attribFontSize=8;
 
   var features;
   if( on_start ) {
@@ -29,7 +33,7 @@ function updateNavio( on_start = false ) {
         nv.addCategoricalAttrib( f.name );
       }
     //}
-    
+
   } );
 
   // Set the dataset to Navio
@@ -43,7 +47,7 @@ function updateNavio( on_start = false ) {
     updateProjection();
 
     // Update the detail table
-    updateTable()
+    updateTable();
   } );
 
 }
