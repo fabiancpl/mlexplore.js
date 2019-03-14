@@ -48,6 +48,8 @@ function updateNavio( on_start = false ) {
 
     // Update the detail table
     updateTable();
+
+    updateTicks();
   } );
 
 }
