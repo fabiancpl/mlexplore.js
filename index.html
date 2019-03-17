@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.13.5/dist/bootstrap-table.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
@@ -20,62 +21,53 @@
 
       <div class="row">
 
-        <div class="col-md-12">
+        <!-- Load Data panel -->
+        <div id="load-data" class="col-md-3 border text-center">
 
-          <h1 style="text-align: center;">Interacting and Interpreting t-SNE</h1>
+          <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#load-data-modal">Load Dataset</button>
+          <span id="load-config-btn" class="btn btn-success btn-sm btn-file disabled">Load Config<input id="load-config-input" type="file" disabled></span>
+          &nbsp;&nbsp;&nbsp;<span id="dataset-name-main"></span>
 
         </div>
+        <div class="col-md-6 border-top border-bottom text-center">
 
+          <h1>Exploring Data with t-SNE</h1>
+
+        </div>
+        <div id="export-data" class="col-md-3 border text-center">
+
+          <!-- Export Data panel -->
+          <button id="export-results-btn" type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#export-results-modal" disabled>Export Results</button>
+          <button id="export-embedding-btn" type="button" class="btn btn-success btn-sm" onclick="exportProjection()" disabled>Export Embedding</button>
+          <button id="export-config-btn" type="button" class="btn btn-success btn-sm" onclick="exportConfiguration()" disabled>Export Config</button>
+
+        </div>
       </div>
-
       <div class="row">
-
-        <div class="col-md-2">
+        <div class="col-md-3">
 
           <div class="row">
-
-            <div class="col-md-12">
-
-              <!-- Load Data panel -->
-              <div id="load-data">
-
-                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#loadDataModal">Load Dataset</button>
-                <span id="data-description">No data</span>
-
-              </div>
-
-            </div>
-
-            <div class="col-md-12">
-
+            
+            <div id="feature-selection" class="col-md-12 border-right border-bottom text-center">
+              
               <!-- Feature Selection panel -->
-              <div id="feature-selection" class="hide">
-                <div>
-                  <div style="float: left;">
-                    <h3>Attributes</h3>
+              <div style="min-height: 50px;">
+                <div style="float: left;">
+                  <h4>Attributes</h4>
+                </div>
+                <div style="float: right;">
+                  <!--<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#newFeatureGroupModal">New group</button>-->
+                  <div id="color-group" class="feature-group" ondrop="featureDrop(event)" ondragover="featureAllowDrop(event)">
+                    <div class="header">Use for color</div>
                   </div>
-                  <!--<div style="float: right;">
-                    <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#newFeatureGroupModal">New group</button>
-                  </div>-->
-                  <div style="clear: left;"></div>
-                </div>
-                <div id="no-group" class="feature-group" ondrop="drop(event)" ondragover="allowDrop(event)">
-                  <div class="header">No group</div>
-                </div>
+                </div> 
+                <div style="clear: left;"></div>
               </div>
-
-            </div>
-
-            <div class="col-md-12">
-
-              <!-- Load Data panel -->
-              <div id="encode-color-panel" class="hide">
-
-                <h3>Encode Color</h3>
-
-                <select id="encode-color-combo">
-                </select>
-
+              <div id="embed-group" class="feature-group" ondrop="featureDrop(event)" ondragover="featureAllowDrop(event)">
+                <div class="header">User for embedding</div>
+              </div>
+              <div id="none-group" class="feature-group" ondrop="featureDrop(event)" ondragover="featureAllowDrop(event)">
+                <div class="header">No role</div>
               </div>
 
             </div>
@@ -85,6 +77,27 @@
               <div id="navio"></div>
 
             </div>
+
+
+          </div>
+
+        </div>
+
+      </div>
+      <div class="row">
+
+        <div class="col-md-2">
+
+          <div class="row">
+
+            <div class="col-md-12">
+
+            </div>
+
+            <div class="col-md-12">
+
+            </div>
+
 
           </div>
 
@@ -141,9 +154,7 @@
 
               <div id="export-panel" class="hide">
 
-                <button type="button" class="btn btn-success btn-sm" onclick="exportConfiguration()">Export Configuration</button>
-                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#exportDataModal">Export Dataset</button>
-                <button type="button" class="btn btn-success btn-sm" onclick="exportProjection()">Export Embedding PNG</button>
+                
 
               </div>
 
@@ -167,8 +178,50 @@
 
     </div>
 
+    <!-- Load Data Modal -->
+    <div class="modal fade" id="load-data-modal" tabindex="-1" role="dialog" aria-labelledby="load-data-modal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Load Dataset</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+
+            <div class="row">
+              <div class="col-md-12 text-center">
+                <button type="button" onclick="loadDataset( 'iris' )" class="btn btn-success btn-dataset"><i class="fas fa-database"></i><br />Iris</button>
+                <button type="button" onclick="loadDataset( 'zoo' )" class="btn btn-success btn-dataset"><i class="fas fa-database"></i><br />Zoo</button>
+              </div>
+            </div>
+            <br />
+            <div class="row">
+              <div class="col-md-12 text-center">
+                <button type="button" onclick="loadDataset( 'cancer' )" class="btn btn-success btn-dataset"><i class="fas fa-database"></i><br />Breast Cancer</button>
+                <button type="button" onclick="loadDataset( 'heart' )" class="btn btn-success btn-dataset"><i class="fas fa-database"></i><br />Heart Diseases</button>
+              </div>
+            </div>
+            <br />
+            <div class="row">
+              <div class="col-md-12 text-center">
+                <span class="btn btn-success btn-sm btn-file">Load Dataset<input id="load-dataset-input" type="file"></span>
+                <span id="dataset-name">No dataset</span>
+              </div>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" onclick="loadDataset()" class="btn btn-success">Load</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Export Data Modal -->
-    <div class="modal fade" id="exportDataModal" tabindex="-1" role="dialog" aria-labelledby="exportDataModal" aria-hidden="true">
+    <div class="modal fade" id="export-results-modal" tabindex="-1" role="dialog" aria-labelledby="export-results-modal" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -207,53 +260,8 @@
       </div>
     </div>
 
-    <!-- Load Data Modal -->
-    <div class="modal fade" id="loadDataModal" tabindex="-1" role="dialog" aria-labelledby="loadDataModal" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Load Dataset</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-
-            <div class="row">
-              <div class="col-md-12">
-                <span class="btn btn-success btn-sm btn-file">Load Dataset<input id="data-input" type="file"></span>
-                <span id="data-name">No dataset</span>
-              </div>
-            </div>
-            <br />
-            <div class="row">
-              <div class="col-md-12">
-                <span class="btn btn-success btn-sm btn-file">Load Config<input id="config-input" type="file"></span>
-                <span id="config-name">No config</span>
-              </div>
-            </div>
-
-            <hr class="separator">
-
-            <div class="text-center">
-
-              <button type="button" onclick="loadPreloadedDataset( 'iris' )" class="btn btn-success btn-dataset"><i class="fas fa-database"></i><br />Iris</button>
-              <button type="button" onclick="loadPreloadedDataset( 'zoo' )" class="btn btn-success btn-dataset"><i class="fas fa-database"></i><br />Zoo</button>
-              <button type="button" onclick="loadPreloadedDataset( 'cancer' )" class="btn btn-success btn-dataset"><i class="fas fa-database"></i><br />Breast Cancer</button>
-
-            </div>
-
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" onclick="loadDataAndConfig()" class="btn btn-success">Load</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- New Feature Group Modal -->
-    <div class="modal fade" id="newFeatureGroup" tabindex="-1" role="dialog" aria-labelledby="newFeatureGroup" aria-hidden="true">
+    <!--<div class="modal fade" id="new-feature-group-modal" tabindex="-1" role="dialog" aria-labelledby="new-feature-group-modal" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -276,28 +284,33 @@
           </div>
         </div>
       </div>
-    </div>
+    </div>-->
 
     <!-- Third-party libraries -->
+    <!-- Generics -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js"></script>
+    <script src="./libs/saveSvgAsPng.js"></script>
+
+    <!-- Bootstrap -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.13.5/dist/bootstrap-table.min.js"></script>
+
+    <!-- Visualization -->
     <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-    <script src="https://unpkg.com/bootstrap-table@1.13.5/dist/bootstrap-table.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/vega@5.0.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-lite@3.0.0-rc14"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-embed@3.29.1"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/navio"></script>
+    
+    <!-- Machine Learning -->
     <!-- <script src="./libs/tsne.js"></script> -->
-    <script src="./libs/saveSvgAsPng.js"></script>
 
     <!-- Scripts -->
     <!-- <script type="text/javascript" src="./js/components/non-visual/project.js"></script> -->
-    <script type="text/javascript" src="./js/components/non-visual/cluster.js"></script>
+    <!--<script type="text/javascript" src="./js/components/non-visual/cluster.js"></script>
     <script type="text/javascript" src="./js/components/visual/projectionChart.js"></script>
     <script type="text/javascript" src="./js/featureSelection.js"></script>
     <script type="text/javascript" src="./js/encodeColor.js"></script>
@@ -305,7 +318,12 @@
     <script type="text/javascript" src="./js/tableDetails.js"></script>
     <script type="text/javascript" src="./js/ticks.js"></script>
     <script type="text/javascript" src="./js/export.js"></script>
-    <script type="text/javascript" src="./js/main.js"></script>
+    <script type="text/javascript" src="./js/main.js"></script>-->
+
+    <script type="text/javascript" src="./js2/dataset.js"></script>
+    <script type="text/javascript" src="./js2/featureSelection.js"></script>
+    <script type="text/javascript" src="./js2/nv.js"></script>
+    <script type="text/javascript" src="./js2/main.js"></script>
 
   </body>
 </html>

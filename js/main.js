@@ -8,13 +8,11 @@ var data,
   config,
   projectionConfigTemp,
   clusteringConfigTemp,
-  autoRun = true,
   visibleData,
-  colorFeature;
+  colorFeature,
+  run_clustering_on_start = false;
 
 const projectWorker = new Worker('./js/components/non-visual/projectWorker.js');
-
-var run_clustering_on_start = false;
 
 function getProjectionFeatures() {
 
@@ -162,55 +160,6 @@ function updateProjection( run_model = true ) {
 
 }
 
-// Load the dataset requested by the user
-function loadData() {
-
-  // Load the dataset in D3 format
-  d3.csv( dataFileURL, d3.autoType ).then( ( data ) => {
-
-    console.log( 'Dataset loaded!' );
-
-    // Save the dataset for global access
-    this.data = data;
-    visibleData = data;
-
-    // If a configuration file was not loaded
-    if( config === undefined ) createConfig();
-
-    setHyperParameters();
-
-    // Initialize Feature Selection panel
-    initFeatureSelection();
-
-    // Initialize Encode Color panel
-    updateEncodeColor();
-
-    // Initialize and put data in Navio
-    updateNavio( true );
-
-    // Update the projection
-    updateProjection();
-
-    if( run_clustering_on_start ) updateCluster();
-
-    // Update the table details
-    updateTable();
-
-    // Update the ticks panel
-    updateTicks();
-
-    // Show the export panel
-    d3.select( '#export-panel' )
-      .attr( 'class', null );
-
-    // Hide the modal
-    $( '#loadDataModal' ).modal( 'hide' );
-    d3.select( '#data-description' ).html( ' ' + datasetName + ' dataset' );
-
-  } );
-
-}
-
 function setHyperParameters() {
 
   d3.select( '#hparam-perplexity' )
@@ -258,6 +207,55 @@ function setHyperParameters() {
     .on( 'input', function() {
       clusteringConfigTemp.runClusteringOnProjection = d3.select( '#runClusteringOnProjection' ).property( 'checked' );
     } );
+
+}
+
+// Load the dataset requested by the user
+function loadData() {
+
+  // Load the dataset in D3 format
+  d3.csv( dataFileURL, d3.autoType ).then( ( data ) => {
+
+    console.log( 'Dataset loaded!' );
+
+    // Save the dataset for global access
+    this.data = data;
+    visibleData = data;
+
+    // If a configuration file was not loaded
+    if( config === undefined ) createConfig();
+
+    setHyperParameters();
+
+    // Initialize Feature Selection panel
+    initFeatureSelection();
+
+    // Initialize Encode Color panel
+    updateEncodeColor();
+
+    // Initialize and put data in Navio
+    updateNavio( true );
+
+    // Update the projection
+    updateProjection();
+
+    if( run_clustering_on_start ) updateCluster();
+
+    // Update the table details
+    updateTable();
+
+    // Update the ticks panel
+    updateTicks();
+
+    // Show the export panel
+    d3.select( '#export-panel' )
+      .classed( 'hide', false );
+
+    // Hide the modal
+    $( '#loadDataModal' ).modal( 'hide' );
+    d3.select( '#data-description' ).html( ' ' + datasetName + ' dataset' );
+
+  } );
 
 }
 
@@ -350,57 +348,56 @@ function clearInterface() {
   config = undefined;
   projectionConfigTemp = undefined;
   clusteringConfigTemp = undefined;
-  autoRun = true;
   visibleData = undefined;
   colorFeature = undefined;
   nv = undefined;
   run_clustering_on_start = false;
   cleanFeatureSelection();
+  stopProjection();
 
   // Try to load first the config file to avoid async issues
   if( dataFileURL !== undefined ) loadConfig();
 
-  /* Load data handlers */
-
-  d3.select( '#data-input' )
-    .on( 'change', function() {
-
-      // Get the file name
-      var dataFile = d3.event.target.files[ 0 ];
-      if ( !dataFile ) return;
-
-      // Extract the name of the dataset
-      datasetName = dataFile.name.split( '.' )[ 0 ];
-
-      d3.select( '#data-name' ).html( dataFile.name );
-
-      // Get the path of the file and call the function for load it
-      var reader = new FileReader();
-      reader.onloadend = function( evt ) {
-        dataFileURL = evt.target.result;
-      };
-      reader.readAsDataURL( dataFile );
-
-    } );
-
-  d3.select( '#config-input' )
-    .on( 'change', function() {
-
-      // Get the file name
-      var configFile = d3.event.target.files[ 0 ];
-      if ( !configFile ) return;
-
-      d3.select( '#config-name' ).html( configFile.name );
-
-      // Get the path of the file and call the function for load it
-      var reader = new FileReader();
-      reader.onloadend = function( evt ) {
-        configFileURL = evt.target.result;
-      };
-      reader.readAsDataURL( configFile );
-
-
-    } );
-
 }
+
+/* Load data handlers */
+
+d3.select( '#data-input' )
+  .on( 'change', function() {
+
+    // Get the file name
+    var dataFile = d3.event.target.files[ 0 ];
+    if ( !dataFile ) return;
+
+    // Extract the name of the dataset
+    datasetName = dataFile.name.split( '.' )[ 0 ];
+
+    d3.select( '#data-name' ).html( dataFile.name );
+
+    // Get the path of the file and call the function for load it
+    var reader = new FileReader();
+    reader.onloadend = function( evt ) {
+      dataFileURL = evt.target.result;
+    };
+    reader.readAsDataURL( dataFile );
+
+  } );
+
+d3.select( '#config-input' )
+  .on( 'change', function() {
+
+    // Get the file name
+    var configFile = d3.event.target.files[ 0 ];
+    if ( !configFile ) return;
+
+    d3.select( '#config-name' ).html( configFile.name );
+
+    // Get the path of the file and call the function for load it
+    var reader = new FileReader();
+    reader.onloadend = function( evt ) {
+      configFileURL = evt.target.result;
+    };
+    reader.readAsDataURL( configFile );
+
+  } );
 

@@ -24,8 +24,8 @@ function initFeatureSelection() {
   } );
 
   // Show the feature selection panel
-  d3.select( '#feature-selection' )
-    .attr( 'class', null );
+  //d3.select( '#feature-selection' )
+  //  .attr( 'class', null );
 
   // Instantiate all features as no group
   var featButtons = d3.select( '#feature-selection #no-group' )

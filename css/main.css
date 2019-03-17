@@ -1,15 +1,25 @@
-.hide {
-  display: none;
-}
-
 /* Load data panel */ 
 
 #load-data {
-  width: 100%;
-  border: 1px solid gray;
-  margin: 5px 0px 5px 0px;
-  padding: 8px;
-  border-radius: 3px;
+  padding: 11px;
+}
+
+#load-data button {
+  min-width: 130px;
+}
+
+#load-data span {
+  min-width: 130px;
+}
+
+/* Export data panel */ 
+
+#export-data {
+  padding: 11px;
+}
+
+#export-data button {
+  min-width: 130px;
 }
 
 .btn-file {
@@ -33,16 +43,12 @@
 }
 
 .btn-dataset {
-  min-width: 120px;
+  min-width: 140px;
 }
 
 /* Feature selection panel */
 #feature-selection {
-  width: 100%;
-  border: 1px solid gray;
-  margin: 5px 0px 5px 0px;
-  padding: 8px;
-  border-radius: 3px;
+  padding: 10px;
 }
 
 #feature-selection .feature-group {
@@ -50,6 +56,10 @@
   margin: 5px 0px 10px 0px;
   padding: 8px;
   border-radius: 3px;
+}
+
+#feature-selection #color-group.feature-group {
+  min-width: 150px;
 }
 
 #feature-selection .feature-group .header {
@@ -81,10 +91,6 @@
   border-radius: 15px;
   padding: 0px 10px 2px 10px;
   margin: 0px 3px 0px 3px;
-}
-
-#feature-selection .feature-group button span  {
-  padding-left: 15px;
 }
 
 #feature-selection .feature-group button .custom-control-input  {
