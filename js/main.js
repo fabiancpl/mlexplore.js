@@ -96,7 +96,6 @@ function updateProjection( run_model = true ) {
     projectWorker.postMessage({stop:true});
 
     console.log('Sending data to Worker');
-
     // Pass new parameters to the projection
     projectWorker.postMessage({
       data: visibleData,
@@ -167,6 +166,7 @@ function setHyperParameters() {
     .on( 'input', function() {
       d3.select( '#hparam-perplexity-span' ).html( +this.value );
       projectionConfigTemp.perplexity = +this.value;
+      updateProjection();
     } );
 
   d3.select( '#hparam-perplexity-span' )
@@ -187,6 +187,7 @@ function setHyperParameters() {
     .on( 'input', function() {
       d3.select( '#hparam-epsilon-span' ).html( +this.value );
       projectionConfigTemp.epsilon = +this.value;
+      updateProjection();
     } );
 
   d3.select( '#hparam-epsilon-span' )
