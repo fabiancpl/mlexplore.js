@@ -53,9 +53,17 @@ var featureSelection = ( function() {
       if( event.target.tagName === 'DIV' ) {
 
         if( !( event.target.id === 'color-group' && features.find( f => f.role === 'color' ) !== undefined ) ) {
-          event.target.appendChild( document.getElementById( elementId ) );
-          features.find( f => f.name === elementId ).role = event.target.id.replace( '-group', '' );
-          resolve( features );
+
+          if( event.target.id === 'embed-group' && features.find( f => f.name === elementId ).type === 'categorical' ) {
+            reject( 'A categorical attribute cannot be used for embedding!' );  
+          } else {
+
+            event.target.appendChild( document.getElementById( elementId ) );
+            features.find( f => f.name === elementId ).role = event.target.id.replace( '-group', '' );
+            resolve( features );
+            
+          }
+
         } else {
           reject( 'You need to remove first the current attribute used for color!' );
         }
@@ -75,7 +83,7 @@ var featureSelection = ( function() {
       return features;
     },
     set features( f ) {
-      features = f.filter( f => ![ '__seqId', 'x', 'y' ].includes( f.name ) );
+      features = f.filter( f => ![ '__seqId', '__x', '__y', '__cluster' ].includes( f.name ) );
     }
   }
 } )();

@@ -104,32 +104,13 @@
   padding-left: 5px;
 }
 
-div.feature-glyph { 
-  position: absolute;     
-  text-align: center;     
-  width: 150px; 
-  height: 150px;       
-  padding: 3px;       
-  font: 12px;    
-  background: white; 
-  border: 1px solid gray;    
-  border-radius: 3px;     
-  pointer-events: none;     
+/* Embedding panel */
+
+#hparams-tuning {
+  padding: 11px 0 11px 0;
 }
 
-/* Encode Color panel */
-
-#encode-color-panel {
-  width: 100%;
-  border: 1px solid gray;
-  margin: 5px 0px 5px 0px;
-  padding: 8px;
-  border-radius: 3px;
-}
-
-/* Projection panel */
-
-#projection {
+#embedding {
   border: 1px solid gray;
   margin: 5px 0px 5px 0px;
   padding: 8px;

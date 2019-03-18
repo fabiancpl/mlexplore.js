@@ -2,7 +2,6 @@ var dataset = ( function() {
 
   var name,
     datasetURL, configURL,
-    data, visibleData,
     config, embeddingFeatures;
 
   function init() {
@@ -63,7 +62,6 @@ var dataset = ( function() {
       console.log( 'Dataset loaded sucessfully!' );
 
       data = d;
-      visibleData = data;
       config = createConfig();
 
     } ).catch( error => console.log( 'Error loading the dataset!' ) );
@@ -86,7 +84,7 @@ var dataset = ( function() {
     } );
 
     // Creating models hyper-parameters
-    config.models = {
+    /*config.models = {
       'embed': {
         'iterations': 1000,
         'perplexity': 25,
@@ -98,8 +96,7 @@ var dataset = ( function() {
         'embedded_space': false,
         'runned': false
       }
-
-    };
+    };*/
 
     console.log( 'By default configuration created!' );
 
@@ -130,7 +127,7 @@ var dataset = ( function() {
       console.log( 'Configuration loaded!' );
       config = c;
 
-      // TODO: Uppdate with new config
+      // TODO: Update with new config
       //updateWithConfig();
 
     } ).catch( error => console.log( 'Error loading the configuration file!' ) );
@@ -148,13 +145,10 @@ var dataset = ( function() {
       return data;
     },
     get visibleData() {
-      return visibleData;
+      return data.filter( d => d.visible );
     },
     get config() {
       return config;
-    },
-    set config( c ) {
-      config = c;
     }
   }
 } )();

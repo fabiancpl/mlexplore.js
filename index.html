@@ -82,100 +82,86 @@
           </div>
 
         </div>
-
-      </div>
-      <div class="row">
-
-        <div class="col-md-2">
-
+        <div class="col-md-6">
+          
           <div class="row">
+            
+            <div class="col-md-12 text-center">
+              
+              <div class="row">
+                
+                <div class="col-md-9 text-center">
+                  
+                  <div class="row">
+                    
+                    <div class="col-md-12 text-center">
 
-            <div class="col-md-12">
+                      <div class="row">
+                        
+                        <div id="hparams-tuning" class="col-md-12 border-bottom text-center">
+                          
+                          <!--Iterations: <input id="hparam-iterations" type="range" min="1" max="2000" step="10"><span id="hparam-iterations-span"></span>-->
+                          Perplexity: <input id="hparam-perplexity" type="range" class="slider" min="5" max="50" step="5"><span id="hparam-perplexity-span"></span>
+                          Epsilon: <input id="hparam-epsilon" type="range" min="10" max="1000" step="10"><span id="hparam-epsilon-span"></span>
+                          <button id="run-embed-btn" type="button" class="btn btn-success btn-sm" onclick="updateProjection()" disabled>Run t-SNE</button>
+                          <button id="restart-embed-btn" type="button" class="btn btn-secondary btn-sm" onclick="stopProjection()" disabled>Restart</button>
+                          <span>Step: <span id="embed-step-span">0</span></span>
 
-            </div>
+                        </div>
 
-            <div class="col-md-12">
+                      </div>
+                      <div class="row">
 
-            </div>
+                        <div id="hparams-tuning" class="col-md-12 border-bottom text-center">
+                          
+                          Number of clusters: <input id="hparam-clusters" type="range" min="2" max="10" step="1"><span id="hparam-clusters-span"></span>
+                          <input id="runClusteringOnProjection" type="checkbox"> Run on projected data
+                          <button id="run-cluster-btn" type="button" class="btn btn-success btn-sm" onclick="updateCluster()" disabled>Run K-Means</button>
 
+                        </div>
 
-          </div>
+                      </div>                      
+                      
+                    </div>
 
-        </div>
+                  </div>
 
-        <div class="col-md-5">
-
-          <div class="row">
-
-            <div class="col-md-12">
-
-              <div id="projection-panel" class="hide">
-
-                <div>
-                  Iterations: <input id="hparam-iterations" type="range" min="1" max="2000" step="10"><span id="hparam-iterations-span"></span>
-                  Perplexity: <input id="hparam-perplexity" type="range" min="5" max="200" step="1"><span id="hparam-perplexity-span"></span>
-                  Epsilon: <input id="hparam-epsilon" type="range" min="10" max="1000" step="10"><span id="hparam-epsilon-span"></span>
-                  <button type="button" class="btn btn-success btn-sm" onclick="updateProjection()">Run t-SNE</button>
-                  <button type="button" class="btn btn-secondary btn-sm" onclick="stopProjection()">Stop</button>
-                  <span>i=<span id="spanIter"></span></span>
                 </div>
+                <div class="col-md-3 border-left border-bottom text-center">
+                  <div id="min-embedding"></div>  
+                </div>  
 
-                <div>
-                  Number of clusters: <input id="hparam-clusters" type="range" min="2" max="10" step="1"><span id="hparam-clusters-span"></span>
-                  <input id="runClusteringOnProjection" type="checkbox"> Run on projected data
-                  <button type="button" class="btn btn-success btn-sm" onclick="updateCluster()">Run KMeans</button>
+              </div>
+              <div class="row">
+                
+                <div class="col-md-12 text-center">
+
+                  <div id="embedding"></div>
+
                 </div>
-
-                <div id="projection"></div>
 
               </div>
 
             </div>
 
           </div>
-
           <div class="row">
-
-            <div class="col-md-12">
-
+            
+            <div class="col-md-12 border-top border-bottom text-center">
+              
               <div id="table-details"></div>
 
             </div>
-
-          </div>
-
-        </div>
-
-        <div class="col-md-5">
-
-          <div class="row">
-
-            <div class="col-md-12">
-
-              <div id="export-panel" class="hide">
-
-                
-
-              </div>
-
-            </div>
-
-          </div>
-
-          <div class="row">
-
-            <div class="col-md-12">
-
-              <div id="ticks-group"></div>
-
-            </div>
-
-          </div>
+            
+          </div>          
 
         </div>
+        <div class="col-md-3 border-left border-bottom border-right text-center" style="overflow-y: scroll; height: 100vh; overflow: auto;">
+          
+          <div id="feature-distribution"></div>
 
+        </div>
       </div>
-
     </div>
 
     <!-- Load Data Modal -->
@@ -323,6 +309,10 @@
     <script type="text/javascript" src="./js2/dataset.js"></script>
     <script type="text/javascript" src="./js2/featureSelection.js"></script>
     <script type="text/javascript" src="./js2/nv.js"></script>
+    <script type="text/javascript" src="./js2/embed.js"></script>
+    <script type="text/javascript" src="./js2/cluster.js"></script>
+    <script type="text/javascript" src="./js2/tableDetails.js"></script>
+    <script type="text/javascript" src="./js2/featureDistribution.js"></script>
     <script type="text/javascript" src="./js2/main.js"></script>
 
   </body>
