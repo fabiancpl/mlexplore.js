@@ -36,7 +36,9 @@ function loadDataset( name ) {
     embed.features = dataset.config.features;
     //embed.hparams = dataset.config.models.embed;
     embed.init();
+    embed.start();
 
+    // Initialize cluster panel
     cluster.data = dataset.visibleData;
     cluster.features = dataset.config.features;
     //cluster.hparams = dataset.config.models.cluster;
@@ -48,7 +50,7 @@ function loadDataset( name ) {
     tableDetails.callback = tableDetailsCallback;
     tableDetails.init();
 
-    // TODO: Ticks
+    // Initialize feature distribution panel
     featureDistribution.data = dataset.visibleData;
     featureDistribution.features = dataset.config.features;
     featureDistribution.init();
