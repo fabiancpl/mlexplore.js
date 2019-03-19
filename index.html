@@ -31,14 +31,14 @@
         </div>
         <div class="col-md-6 border-top border-bottom text-center">
 
-          <h1>Exploring Data with t-SNE</h1>
+          <h1>Exploring Data with Interactive t-SNE</h1>
 
         </div>
         <div id="export-data" class="col-md-3 border text-center">
 
           <!-- Export Data panel -->
           <button id="export-results-btn" type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#export-results-modal" disabled>Export Results</button>
-          <button id="export-embedding-btn" type="button" class="btn btn-success btn-sm" onclick="exportProjection()" disabled>Export Embedding</button>
+          <button id="export-embedding-btn" type="button" class="btn btn-success btn-sm" onclick="exportEmbedding()" disabled>Export Embedding</button>
           <button id="export-config-btn" type="button" class="btn btn-success btn-sm" onclick="exportConfiguration()" disabled>Export Config</button>
 
         </div>
@@ -170,9 +170,6 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">Load Dataset</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
           </div>
           <div class="modal-body">
 
@@ -193,14 +190,14 @@
             <div class="row">
               <div class="col-md-12 text-center">
                 <span class="btn btn-success btn-sm btn-file">Load Dataset<input id="load-dataset-input" type="file"></span>
-                <span id="dataset-name">No dataset</span>
+                <span id="dataset-name-span"></span>
               </div>
             </div>
 
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" onclick="loadDataset()" class="btn btn-success">Load</button>
+            <!--<button id="load-data-close-btn" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+            <button id="load-data-load-btn" type="button" onclick="loadDataset()" class="btn btn-success" disabled>Load</button>
           </div>
         </div>
       </div>
@@ -211,7 +208,7 @@
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Export Dataset</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Export Data</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -315,6 +312,7 @@
     <script type="text/javascript" src="./js2/miniEmbeddingPlot.js"></script>
     <script type="text/javascript" src="./js2/tableDetails.js"></script>
     <script type="text/javascript" src="./js2/featureDistribution.js"></script>
+    <script type="text/javascript" src="./js2/exportResults.js"></script>
     <script type="text/javascript" src="./js2/main.js"></script>
 
   </body>

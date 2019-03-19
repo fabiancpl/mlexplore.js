@@ -72,13 +72,21 @@ var featureSelection = ( function() {
 
   }
 
-  // TODO: Clean panel
+  // Clean panel
+  function clean() {
+
+    //d3.select( '#feature-selection #embed-group' ).html( '' );
+    //d3.select( '#feature-selection #color-group' ).html( '' );
+    //d3.select( '#feature-selection #none-group' ).html( '' );
+
+  }
 
   return {
     init: init,
     allowDrop: allowDrop,
     drop: drop,
     drag: drag,
+    clean: clean,
     get features() {
       return features;
     },

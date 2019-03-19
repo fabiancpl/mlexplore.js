@@ -1,18 +1,19 @@
-/* global d3, dataset, featureSelection, navio, nv, embed, cluster, embeddingPlot, miniEmbeddingPlot, tableDetails, featureDistribution */
+/* global d3, dataset, featureSelection, navio, nv, embed, cluster, embeddingPlot, miniEmbeddingPlot, tableDetails, featureDistribution, exportResults */
 
 dataset.init();
 $( '#load-data-modal' ).modal( 'show' );
 
 function loadDataset( name ) {
 
-  // TODO: Clear interface
-  //clearInterface();
+  d3.select( '#load-data-load-btn' )
+    .property( 'disabled', true )
+    .html( '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Loading...' );
 
   dataset.loadDataset( name ).then( _ => {
 
-    $( '#load-data-modal' ).modal( 'hide' );
-    d3.select( '#load-config-btn' ).classed( 'disabled', false );
-    d3.select( '#load-config-input' ).property( 'disabled', false );
+    // Clean interface
+    featureSelection.clean();
+
     d3.select( '#run-embed-btn' ).property( 'disabled', false );
     d3.select( '#restart-embed-btn' ).property( 'disabled', false );
     d3.select( '#run-cluster-btn' ).property( 'disabled', false );
@@ -56,7 +57,17 @@ function loadDataset( name ) {
     featureDistribution.features = dataset.config.features;
     featureDistribution.init();
 
-    // TODO: Exports
+    // Exports
+    exportResults.name = dataset.name;
+    exportResults.data = dataset.visibleData;
+    exportResults.config = dataset.config;
+
+    // Hide Load Data modal
+    $( '#load-data-modal' ).modal( 'hide' );
+    d3.select( '#load-data-load-btn' )
+      .html( 'Load' );
+    d3.select( '#dataset-name-span' )
+      .text( '' );
 
   } );
 
@@ -140,4 +151,21 @@ function embedOnStop( embedding, hparams ) {
 function tableRowSelection( row, $element ) {
   console.log( row );
   //$element.css( { "background-color": "gray" } );
+}
+
+function exportData() {
+  //exportResults.exportData();
+}
+
+
+function exportEmbedding() {
+  exportResults.exportEmbedding();
+}
+
+function exportEmbedding() {
+  exportResults.exportEmbedding();
+}
+
+function exportConfiguration() {
+  exportResults.exportConfiguration();
 }

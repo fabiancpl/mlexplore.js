@@ -16,7 +16,7 @@ var dataset = ( function() {
         // Extract the name of the dataset
         name = dataFile.name.split( '.' )[ 0 ];
 
-        d3.select( '#dataset-name' ).html( dataFile.name );
+        d3.select( '#dataset-name-span' ).html( dataFile.name );
 
         // Get the path of the file and call the function for load it
         var reader = new FileReader();
@@ -24,6 +24,9 @@ var dataset = ( function() {
           datasetURL = evt.target.result;
         };
         reader.readAsDataURL( dataFile );
+
+        d3.select( '#load-data-load-btn' )
+          .property( 'disabled', false );
 
       } );
 
@@ -34,7 +37,7 @@ var dataset = ( function() {
         var configFile = d3.event.target.files[ 0 ];
         if ( !configFile ) return;
 
-        d3.select( '#config-name' ).html( configFile.name );
+        //d3.select( '#config-name' ).html( configFile.name );
 
         // Get the path of the file and call the function for load it
         var reader = new FileReader();
@@ -51,6 +54,9 @@ var dataset = ( function() {
 
   function loadDataset( n ) {
 
+    //d3.select( '#load-config-btn' ).classed( 'disabled', false );
+    //d3.select( '#load-config-input' ).property( 'disabled', false );
+
     if( n ) {
       name = n;
       datasetURL = './data/' + name + '.csv';
@@ -62,17 +68,10 @@ var dataset = ( function() {
       console.log( 'Dataset loaded sucessfully!' );
 
       var keys = Object.keys( d[ 0 ] );
-
-      /*keys_new = keys.map( k => {
-        return k.replace(/[^\w\s]/gi, '').replace( ' ', '' );
-      } );
-*/
       d2 = d.map( di => {
-
-        return _.mapKeys( di, function(value, key) {
+        return _.mapKeys( di, function( value, key ) {
           return  key.replace(/[^\w\s]/gi, '').replace( ' ', '' );
-        });
-
+        } );
       } );
 
       data = d2;

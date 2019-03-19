@@ -25,14 +25,14 @@ var featureDistribution = ( function() {
   }
 
   function buildSpec( f, width ) {
-
+    
     var sequentialSpec = {
       '$schema': 'https://vega.github.io/schema/vega-lite/v3.json',
       'width': width,
       'data': { 'values': data },
       'mark': 'tick',
       'encoding': {
-        'x': { 'field': f.name, 'type': 'quantitative' },
+        'x': { 'field': f.name, 'type': 'quantitative', "scale": { "domain": [ d3.min( data, d => d[ f.name ] ), d3.max( data, d => d[ f.name ] ) ] } },
         'y': { 'field': color, 'type': 'nominal' },
         'color': { 'field': color, 'type': 'nominal' }
       }
