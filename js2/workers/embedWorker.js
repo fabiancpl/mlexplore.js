@@ -6,7 +6,7 @@ function embedWorker() {
     shouldStop = false,
     intervalId = null;
 
-  function init( e ) {
+  function start( e ) {
     
     if( intervalId ) {
       console.log( 'Stopping previous interval' );
@@ -45,6 +45,11 @@ function embedWorker() {
         console.log( 'Finishing interval', k );
         clearInterval( intervalId );
         intervalId = null;
+
+        postMessage( {
+          stoped: true,
+        } );
+
         return;
       }
 
@@ -66,7 +71,7 @@ function embedWorker() {
   }
 
   me = {
-    init,
+    start,
     stop
   };
 
@@ -80,5 +85,5 @@ onmessage = function( e ) {
     myWorker.stop();
     return;
   }
-  myWorker.init( e );
+  myWorker.start( e );
 };

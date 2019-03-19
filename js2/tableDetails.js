@@ -1,7 +1,7 @@
 var tableDetails = ( function() {
 
   var data, features,
-    callback;
+    onRowSelection;
 
   function init() {
 
@@ -17,7 +17,7 @@ var tableDetails = ( function() {
       pagination: true,
       pageSize: 5,
       search: true,
-      onClickRow: callback
+      onClickRow: onRowSelection
     };
 
     $( '#table-details table' ).bootstrapTable( structure );
@@ -33,8 +33,8 @@ var tableDetails = ( function() {
     set features( f ) {
       features = f.filter( f => ![ '__seqId', '__x', '__y', '__cluster' ].includes( f.name ) );
     },
-    set callback( c ) {
-      callback = c;
+    set onRowSelection( f ) {
+      onRowSelection = f;
     }
   }
 } )();

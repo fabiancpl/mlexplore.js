@@ -1,10 +1,11 @@
 var embed = ( function() {
 
-  var data, features,
+  var data, embedding, features, running = false,
     hparams = {
       epsilon: 200,
       perplexity: 25
-    };
+    },
+    onStep, onStop;
 
   const worker = new Worker( './js2/workers/embedWorker.js' );
 
@@ -47,7 +48,7 @@ var embed = ( function() {
     // Try to stop the previous worker loop if it exists
     worker.postMessage( { stop: true } );
 
-    console.log( 'Sending data to Worker' );
+    //console.log( 'Sending data to Worker' );
     
     // Pass new parameters to the projection
     worker.postMessage( {
@@ -58,50 +59,36 @@ var embed = ( function() {
       iterations: 1000
     } );
 
+    running = true;
+    d3.select( '#run-embed-btn' ).html( 'Stop' );
+
     let frameId = null;
     worker.onmessage = function ( e ) {
       
-      const embedding = e.data;
+      if( e.data.hasOwnProperty( 'stoped' ) ) {
 
-      function redrawEmbedding() {
+        running = false;
+        d3.select( '#run-embed-btn' ).html( 'Run t-SNE' );
+        onStop( embedding, hparams );
 
-        d3.select( '#embed-step-span' ).text( embedding.i );
-        console.log('Redrawing embedding ', embedding.i );
+      } else {
 
-        embedding.solution.forEach( ( d, i ) => {
-          data[ i ][ '__x' ] = d[ 0 ];
-          data[ i ][ '__y' ] = d[ 1 ];
-        } );
+        embedding = e.data;
 
-        //if( config[ 'models' ] === undefined ) config[ 'models' ] = {};
-        //config[ 'models' ][ 'projection' ] = projection[ 'config' ];
+        function redrawEmbedding() {
 
-        // Create the new feature in the configuration
-        /*if( config.features.find( d => d.name === 'x' ) === undefined )
-          config.features.push( {
-            'name': 'x',
-            'type': 'sequential',
-            'project': false
-          }, {
-            'name': 'y',
-            'type': 'sequential',
-            'project': false
-          } );*/
+          d3.select( '#embed-step-span' ).text( embedding.i );
+          console.log('Redrawing embedding ', embedding.i );
 
-        /*var chart = projectionChart()
-          .x( ( d ) => d.x )
-          .y( ( d ) => d.y  )
-          .z( ( d ) => d[ colorFeature ]  );
+          onStep( embedding );
 
-        d3.select( '#projection' )
-          .datum( visibleData )
-          .call( chart );*/
+        }
+
+        // If we haven't launch the previous drawing command, skip it
+        if( frameId ) window.cancelAnimationFrame( frameId );
+        frameId = window.requestAnimationFrame( redrawEmbedding );
 
       }
-
-      // If we haven't launch the previous drawing command, skip it
-      if( frameId ) window.cancelAnimationFrame( frameId );
-      frameId = window.requestAnimationFrame( redrawEmbedding );
 
     }
 
@@ -109,6 +96,9 @@ var embed = ( function() {
 
   function stop() {
     worker.postMessage( { stop: true } );
+    running = false;
+    d3.select( '#run-embed-btn' ).html( 'Run t-SNE' );
+    onStop( embedding, hparams );
   }
 
   return {
@@ -120,6 +110,15 @@ var embed = ( function() {
     },
     set features( f ) {
       features = f.filter( f => f.role === 'embed' );
+    },
+    get running() {
+      return running;
+    },
+    set onStep( f ) {
+      onStep = f;
+    },
+    set onStop( f ) {
+      onStop = f;
     }
   }
 } )();

@@ -61,7 +61,21 @@ var dataset = ( function() {
 
       console.log( 'Dataset loaded sucessfully!' );
 
-      data = d;
+      var keys = Object.keys( d[ 0 ] );
+
+      /*keys_new = keys.map( k => {
+        return k.replace(/[^\w\s]/gi, '').replace( ' ', '' );
+      } );
+*/
+      d2 = d.map( di => {
+
+        return _.mapKeys( di, function(value, key) {
+          return  key.replace(/[^\w\s]/gi, '').replace( ' ', '' );
+        });
+
+      } );
+
+      data = d2;
       config = createConfig();
 
     } ).catch( error => console.log( 'Error loading the dataset!' ) );
@@ -82,21 +96,6 @@ var dataset = ( function() {
         role: ( type === 'sequential' || type ===  'binary' ) ? 'embed' : ( f === 'class' ) ? 'color' : 'none'
       }
     } );
-
-    // Creating models hyper-parameters
-    /*config.models = {
-      'embed': {
-        'iterations': 1000,
-        'perplexity': 25,
-        'epsilon': 200,
-        'runned': false
-      }, 
-      'cluster': {
-        'clusters': 3,
-        'embedded_space': false,
-        'runned': false
-      }
-    };*/
 
     console.log( 'By default configuration created!' );
 

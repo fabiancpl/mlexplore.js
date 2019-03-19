@@ -2,7 +2,7 @@ var nv = ( function() {
 
   var nav, height = 500,
     data, features,
-    callback;
+    onFiltering;
 
   function init() {
 
@@ -25,7 +25,7 @@ var nv = ( function() {
 
     // Set data to Navio
     nav.data( data );
-    nav.updateCallback( callback );
+    nav.updateCallback( onFiltering );
 
   }
 
@@ -37,8 +37,8 @@ var nv = ( function() {
     set features( f ) {
       features = f.filter( f => ![ '__seqId', '__x', '__y', '__cluster' ].includes( f.name ) );
     },
-    set callback( c ) {
-      callback = c;
+    set onFiltering( f ) {
+      onFiltering = f;
     }
   }
 } )();
