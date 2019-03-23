@@ -26,13 +26,43 @@ var cluster = ( function() {
 
   }
 
+  function start() {
+
+    console.info( 'Clustering data!' );
+    console.info( 'Number of clusters: ' + hparams.clusters );
+    console.info( 'Attributes: ' + features );
+    console.info( 'Númber of Items: ' + data.length );
+
+    // Transform data to multi-dimensional array
+    var featuredData = data.map( d => {
+      datum = {};
+      features.forEach( f => {
+        datum[ f ] = +d[ f ];
+      } );
+      return datum;
+    } );
+
+    var Http = new XMLHttpRequest();
+    var url = 'https://t17ah9d6hf.execute-api.us-east-1.amazonaws.com/dev/kmeans/' + hparams.clusters;
+    Http.open( 'POST', url, false );
+    Http.setRequestHeader( 'Content-Type', 'application/json' );
+    Http.send( JSON.stringify( featuredData ) );
+    
+    onStop( Http.responseText.split( ' ' ), hparams );
+
+  }
+
   return {
     init: init,
+    start: start,
     set data( d ) {
       data = d;
     },
     set features( f ) {
-      features = f.filter( f => f.role === 'cluster' );
+      features = f;
+    },
+    set onStop( f ) {
+      onStop = f;
     }
   }
 } )();

@@ -26,7 +26,7 @@ function loadDataset( name ) {
     featureSelection.features = dataset.config.features;
     featureSelection.roles = dataset.config.roles;
     featureSelection.onCheck = featureOnCheck;
-    featureSelection.onColorChange = onColorChange;
+    featureSelection.onColorChange = featureOnColorChange;
     featureSelection.init();
 
     // Initialize navio panel
@@ -45,8 +45,8 @@ function loadDataset( name ) {
 
     // Initialize cluster panel
     cluster.data = dataset.visibleData;
-    cluster.features = dataset.config.features;
-    //cluster.hparams = dataset.config.models.cluster;
+    cluster.features = dataset.config.roles.embed;
+    cluster.onStop = clusterOnStop;
     cluster.init();
 
     // Initialize table
@@ -88,8 +88,8 @@ function featureOnCheck( feature ) {
 
   // Restart the execution of a new embedding
   embed.features = dataset.config.roles.embed;
-  embed.stop();
-  embed.start();
+  //embed.stop();
+  //embed.start();
 
   // Update feature distributions
   featureDistribution.roles = dataset.config.roles;
@@ -97,7 +97,7 @@ function featureOnCheck( feature ) {
 
 }
 
-function onColorChange( feature_name ) {
+function featureOnColorChange( feature_name ) {
 
   // Update the config object
   dataset.config.roles.color = undefined;
@@ -119,12 +119,11 @@ function navioFiltering() {
 
   // Restart the execution of a new embedding
   embed.data = dataset.visibleData;
-  embed.stop();
-  embed.start();
+  //embed.stop();
+  //embed.start();
 
   // Update table details
   tableDetails.data = dataset.visibleData;
-  featureDistribution.features = dataset.config.features;
   tableDetails.update();
 
   // Update feature distributions
@@ -143,6 +142,14 @@ function embedRun() {
 
 }
 
+function clusterRun() {
+
+  cluster.data = dataset.visibleData;
+  cluster.features = dataset.config.roles.embed;
+  cluster.start();
+  
+}
+
 function embedStep( embedding ) {
 
   // Update embedding plot
@@ -155,17 +162,41 @@ function embedStep( embedding ) {
 
 function embedOnStop( embedding, hparams ) {
 
+  console.log(  'Embedding finished!' );
+
   dataset.visibleData = dataset.visibleData.map( ( d, i ) => {
     d.__x = embedding.solution[ i ][ 0 ];
     d.__y = embedding.solution[ i ][ 1 ];   
   } );
 
   hparams[ 'iterations' ] = embedding.i;
-  dataset.config.models = { embedding: hparams };
+  if( dataset.config.models === undefined ) dataset.config.models = {};
+  dataset.config.models.embedding = hparams;
 
   miniEmbeddingPlot.data = dataset.visibleData;
   miniEmbeddingPlot.color = dataset.config.roles.color;
   miniEmbeddingPlot.draw();
+
+}
+
+function clusterOnStop( clusters, hparams ) {
+
+  console.log(  'Clustering finished!' );
+
+  dataset.visibleData = dataset.visibleData.map( ( d, i ) => {
+    d.__cluster = +clusters[ i ];   
+  } );
+
+  dataset.config.roles.color = '__cluster';
+
+  if( dataset.config.models === undefined ) dataset.config.models = {};
+  dataset.config.models.clustering = hparams;
+
+  featureSelection.addClusterFeature();
+
+  // Update feature distributions
+  featureDistribution.roles = dataset.config.roles;
+  featureDistribution.init();
 
 }
 

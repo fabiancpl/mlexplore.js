@@ -1,7 +1,8 @@
 var featureSelection = ( function() {
 
   var features, roles,
-    onCheck, onColorChange;
+    onCheck, onColorChange, addColorFeature,
+    selectOptions;
 
   function init() {
 
@@ -39,8 +40,9 @@ var featureSelection = ( function() {
     var colorSelection = d3.select( '#color-selection' )
       .on( 'change', _ => onColorChange( colorSelection.property( 'value' ) ) );
     
+    selectOptions = [ { 'name': '' } ].concat( features );
     colorSelection.selectAll( 'option' )
-        .data( [ { 'name': '' } ].concat( features ) )
+        .data( selectOptions )
         .enter()
         .append( 'option' )
           .attr( 'value', f => f.name )
@@ -57,9 +59,25 @@ var featureSelection = ( function() {
 
   }
 
+  function addClusterFeature() {
+
+    var colorSelection = d3.select( '#color-selection' ).html( '' );
+
+    selectOptions = [ { 'name': '' } ].concat( features ).concat( [ { 'name': '__cluster' } ] );
+    colorSelection.selectAll( 'option' )
+        .data( selectOptions )
+        .enter()
+        .append( 'option' )
+          .attr( 'value', f => f.name )
+          .property( 'selected', f => ( f.name === roles.color ) ? true : false )
+          .html( f => f.name );
+
+  }
+
   return {
     init: init,
     clean: clean,
+    addClusterFeature: addClusterFeature, 
     set features( f ) {
       features = f.filter( f => ![ '__seqId', '__x', '__y' ].includes( f.name ) );
     },
