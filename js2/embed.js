@@ -47,13 +47,11 @@ var embed = ( function() {
 
     // Try to stop the previous worker loop if it exists
     worker.postMessage( { stop: true } );
-
-    //console.log( 'Sending data to Worker' );
     
     // Pass new parameters to the projection
     worker.postMessage( {
       data: data,
-      features: features.map( f => f.name ),
+      features: features,
       hparams: hparams,
       dim: 2,
       iterations: 1000
@@ -109,7 +107,7 @@ var embed = ( function() {
       data = d;
     },
     set features( f ) {
-      features = f.filter( f => f.role === 'embed' );
+      features = f;
     },
     get running() {
       return running;

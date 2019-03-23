@@ -1,6 +1,6 @@
 var embeddingPlot = ( function() {
 
-  var data, embedding, features;
+  var data, embedding, color;
 
   var margin = { top: 10, right: 10, bottom: 10, left: 10 },
     width, height, iWidth, iHeight,
@@ -10,16 +10,15 @@ var embeddingPlot = ( function() {
 
   var svg, g,
     points,
-    tooltip = d3.select( 'body' ).append( 'div' )
-      .attr( 'class', 'tooltip' )
-      .style( 'opacity', 0 );
+    tooltip;
 
   function draw() {
     
     d3.select( '#embedding' ).html( '' );
 
-    color = features.filter( f => f.role === 'color' );
-    color = ( color.length > 0 ) ? color[ 0 ].name : undefined;
+    tooltip = d3.select( 'body' ).append( 'div' )
+      .attr( 'class', 'tooltip' )
+      .style( 'opacity', 0 );
 
     width = d3.select( '#embedding' ).node().getBoundingClientRect().width - 20,
     height = width * 2 / 3,
@@ -53,11 +52,11 @@ var embeddingPlot = ( function() {
         .attr( 'cx', d => xScale( d[ 0 ] ) )
         .attr( 'cy', d => yScale( d[ 1 ] ) )
         .attr( 'r', 3 )
-        .attr( 'fill', ( d, i ) => ( color !== undefined ) ? zScale( data[ i ][ color ] ) : 'steelblue' );
-        /*.on( 'mouseover', d => {
+        .attr( 'fill', ( d, i ) => ( color !== undefined && data !== undefined ) ? zScale( data[ i ][ color ] ) : 'steelblue' );
+        /*.on( 'mouseover', ( d, i ) => {
 
           tooltip
-            .html( drawTooltip( d ) )
+            .html( drawTooltip( data[ i ] ) )
             .style( 'opacity', 1 )
             .style( 'left', ( d3.event.pageX + 15 ) + 'px' )
             .style( 'top', ( d3.event.pageY ) + 'px' );
@@ -75,20 +74,19 @@ var embeddingPlot = ( function() {
 
   function changeColor() {
 
-    if( points !== undefined ) {
-
-      color = features.filter( f => f.role === 'color' );
-      color = ( color.length > 0 ) ? color[ 0 ].name : undefined;
-
-      if( color !== undefined )
-        zScale
-          .domain( d3.map( data, f => f[ color ] ) );
+    if( points !== undefined && color !== undefined ) {
+      zScale
+        .domain( d3.map( data, f => f[ color ] ) );
 
       points
-        .attr( 'fill', ( d, i ) => ( color !== undefined ) ? zScale( data[ i ][ color ] ) : 'steelblue' );
+        .attr( 'fill', ( d, i ) => zScale( data[ i ][ color ] ) );
 
     }
 
+  }
+
+  function drawTooltip( d ) {
+    return Object.keys( d ).filter( f => ![ 'visible', '__seqId', '__i', '__x', '__y' ].includes( f ) ).map( f => '<b>' + f + ':</b> ' + d[ f ] ).join( "<br />" );
   }
 
   return {
@@ -100,8 +98,8 @@ var embeddingPlot = ( function() {
     set embedding( e ) {
       embedding = e;
     },
-    set features( f ) {
-      features = f;
+    set color( c ) {
+      color = c;
     }
   }
 } )();

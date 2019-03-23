@@ -1,24 +1,18 @@
 var featureDistribution = ( function() {
 
-  var data, features, color;
+  var data, features, roles;
 
   function init() {
-    
-    color = features.filter( f => f.role === 'color' );
-    color = ( color.length > 0 ) ? color[ 0 ].name : undefined;
-
-    // Update features object filtering features by role
-    features = features.filter( f => f.role === 'embed' );
 
     var featDistSelections = d3.select( '#feature-distribution' );
     featDistSelections.html( '' );
 
-    features.forEach( feature => {
+    features.map( f => {
 
       var featDistSelection = featDistSelections.append( 'div' )
-        .attr( 'id', d => ( 'ticks-' + feature.name ) );
+        .attr( 'id', f.name + '-distribution' );
 
-      vegaEmbed( ( '#ticks-' + feature.name ), buildSpec( feature, +featDistSelection.node().getBoundingClientRect().width - 150 ), { 'actions' : false } );
+      vegaEmbed( ( '#' + f.name + '-distribution' ), buildSpec( f, +featDistSelection.node().getBoundingClientRect().width - 150 ), { 'actions' : false } );
 
     } );
 
@@ -33,12 +27,12 @@ var featureDistribution = ( function() {
       'mark': 'tick',
       'encoding': {
         'x': { 'field': f.name, 'type': 'quantitative', "scale": { "domain": [ d3.min( data, d => d[ f.name ] ), d3.max( data, d => d[ f.name ] ) ] } },
-        'y': { 'field': color, 'type': 'nominal' },
-        'color': { 'field': color, 'type': 'nominal' }
+        'y': { 'field': roles.color, 'type': 'nominal' },
+        'color': { 'field': roles.color, 'type': 'nominal' }
       }
     };
 
-    var binarySpec = {
+    var booleanSpec = {
       '$schema': 'https://vega.github.io/schema/vega-lite/v3.json',
       'width': width,
       'data': { 'values': data },
@@ -48,12 +42,12 @@ var featureDistribution = ( function() {
           "aggregate": "sum", "field": f.name, "type": "quantitative",
           "axis": {"title": f.name } 
         },
-        'y': { 'field': color, 'type': 'nominal' },
-        'color': { 'field': color, 'type': 'nominal' }
+        'y': { 'field': roles.color, 'type': 'nominal' },
+        'color': { 'field': roles.color, 'type': 'nominal' }
       }
     };
 
-    return ( f.type === 'binary' ) ? binarySpec : sequentialSpec;
+    return ( f.type === 'boolean' ) ? booleanSpec : sequentialSpec;
 
   }
 
@@ -65,6 +59,9 @@ var featureDistribution = ( function() {
     },
     set features( f ) {
       features = f;
+    },
+    set roles( r ) {
+      roles = r;
     }
   }
 } )();

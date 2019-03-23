@@ -1,25 +1,25 @@
 /* Load data panel */ 
 
 #load-data {
-  padding: 11px;
+  padding: .6rem 0;
 }
 
 #load-data button {
-  min-width: 130px;
+  min-width: 8rem;
 }
 
 #load-data span {
-  min-width: 130px;
+  min-width: 8rem;
 }
 
 /* Export data panel */ 
 
 #export-data {
-  padding: 11px;
+  padding: .6rem 0;
 }
 
 #export-data button {
-  min-width: 130px;
+  min-width: 8rem;
 }
 
 .btn-file {
@@ -43,65 +43,40 @@
 }
 
 .btn-dataset {
-  min-width: 140px;
+  min-width: 10rem;
+  margin: .4rem .2rem;
 }
 
 /* Feature selection panel */
 #feature-selection {
-  padding: 10px;
+  padding: 1rem;
 }
 
-#feature-selection .feature-group {
-  border: 1px solid gray;
-  margin: 5px 0px 10px 0px;
-  padding: 8px;
-  border-radius: 3px;
+#feature-container button {
+  font-size: .7rem;
+  border-radius: .7rem;
+  padding: .1rem 1rem .1rem 1rem;
+  margin: 0 .2rem 0 .2rem;
 }
 
-#feature-selection #color-group.feature-group {
-  min-width: 150px;
-}
-
-#feature-selection .feature-group .header {
-  font-size: 9px;
-  background: white;
-  margin-top: -15px;
-  float: left;
-  padding: 0 5px 0 5px;
-}
-
-#feature-selection .feature-group .header input  {
+#feature-container button .custom-control-input  {
+  margin: .1rem 0 0 0;
   z-index: 0;
   opacity: 1;
   cursor: pointer;
 }
 
-#feature-selection .feature-group .header i {
-  padding-left: 15px;
-  color: red;
-  cursor: pointer;
+#feature-container button span  {
+  margin-left: 1rem;
 }
 
-#feature-selection .feature-group .header span {
+
+#feature-container button i  {
   padding-left: 5px;
 }
 
-#feature-selection .feature-group button {
-  font-size: 12px;
-  border-radius: 15px;
-  padding: 0px 10px 2px 10px;
-  margin: 0px 3px 0px 3px;
-}
-
-#feature-selection .feature-group button .custom-control-input  {
-  margin: 4px 0px 0px 0px;
-  z-index: 0;
-  opacity: 1;
-  cursor: pointer;
-}
-
-#feature-selection .feature-group button i  {
-  padding-left: 5px;
+#color-selection {
+  min-width: 7rem;
 }
 
 /* Embedding panel */
@@ -127,8 +102,8 @@
 
 div.tooltip { 
   position: absolute;     
-  min-width: 100px;          
-  min-height: 100px;
+  min-width: 200px;          
+  min-height: 200px;
   background: white; 
   border: 1px solid gray;    
   border-radius: 3px;

@@ -2,6 +2,7 @@ var dataset = ( function() {
 
   var name,
     datasetURL, configURL,
+    data, visibleData,
     config, embeddingFeatures;
 
   function init() {
@@ -67,14 +68,15 @@ var dataset = ( function() {
 
       console.log( 'Dataset loaded sucessfully!' );
 
-      var keys = Object.keys( d[ 0 ] );
+      // Removing special characters from colum names
+      /*var keys = Object.keys( d[ 0 ] );
       d2 = d.map( di => {
         return _.mapKeys( di, function( value, key ) {
           return  key.replace(/[^\w\s]/gi, '').replace( ' ', '' );
         } );
-      } );
+      } );*/
 
-      data = d2;
+      data = d;
       config = createConfig();
 
     } ).catch( error => console.log( 'Error loading the dataset!' ) );
@@ -91,10 +93,20 @@ var dataset = ( function() {
       var type = identifyDataType( f );
       return {
         name: f,
-        type: type,
-        role: ( type === 'sequential' || type ===  'binary' ) ? 'embed' : ( f === 'class' ) ? 'color' : 'none'
+        type: identifyDataType( f )
       }
     } );
+
+    config.roles = {};
+    config.roles.embed = config.features.filter( f => f.type === 'sequential' || f.type ===  'boolean' ).map( f => f.name );
+    
+    // Try to select an appropiate feature for color encoding
+    var categFeatures = config.features.filter( f => f.type === 'categorical' );
+    var candidates = categFeatures.map( f => {
+      if( d3.map( data, d => d[ f ] ).keys().length < 5 ) return f.name;
+    } ).filter( f => f !== undefined );
+    console.log( candidates );
+    config.roles.color = candidates[ 0 ];
 
     console.log( 'By default configuration created!' );
 
@@ -107,7 +119,7 @@ var dataset = ( function() {
       
       var values = d3.map( data, d => d[ f ] ).keys();
       if( values.length === 2 && ( values.includes( "0" ) && values.includes( "1" ) ) ) {
-        return 'binary';
+        return 'boolean';
       } else {
         return 'sequential';
       }
@@ -117,7 +129,7 @@ var dataset = ( function() {
   }
 
   // Load the configuration file
-  function loadConfig() {
+  /*function loadConfig() {
 
     // Load the the configuration file
     d3.json( configURL ).then( c => {
@@ -130,12 +142,12 @@ var dataset = ( function() {
 
     } ).catch( error => console.log( 'Error loading the configuration file!' ) );
 
-  }
+  }*/
 
   return {
     init: init,
     loadDataset: loadDataset,
-    loadConfig: loadConfig,
+    /*loadConfig: loadConfig,*/
     get name() {
       return name;
     },

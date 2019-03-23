@@ -18,6 +18,8 @@ var nv = ( function() {
     features.map( f => {
       if( f.type === 'sequential' ){
         nav.addSequentialAttrib( f.name );
+      } else if( f.type === 'boolean' ){
+        nav.addBooleanAttrib( f.name );
       } else {
         nav.addCategoricalAttrib( f.name );
       }

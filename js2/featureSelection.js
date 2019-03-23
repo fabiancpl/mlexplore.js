@@ -1,26 +1,27 @@
 var featureSelection = ( function() {
 
-  var features;
+  var features, roles,
+    onCheck, onColorChange;
 
   function init() {
 
-    drawGroups( 'embed-group', features.filter( f => f.role === 'embed' ) );
-    drawGroups( 'color-group', features.filter( f => f.role === 'color' ) );
-    drawGroups( 'none-group', features.filter( f => f.role === 'none' ) );
-
-  }
-
-  function drawGroups( group, features ) {
-
-    var featButtons = d3.select( '#feature-selection #' + group )
+    var featButtons = d3.select( '#feature-selection #feature-container' )
       .selectAll( 'button' )
-      .data( features )
+      .data( features.filter( f => f.name !== '__cluster' ) )
       .enter()
         .append( 'button' )
-          .attr( 'id', f => f.name )
-          .attr( 'class', f => 'btn btn-secondary' )
-          .attr( 'draggable', true )
-          .attr( 'ondragstart', 'featureDrag(event)' );
+          .attr( 'id', f => f.name + '-feature' )
+          .attr( 'class', f => 'btn btn-' + ( ( f.type === 'categorical' ) ? 'light' : 'secondary' ) );
+
+    // Create checks for enable / disable features  
+    featButtons
+      .append( 'input' )
+        .attr( 'id', d => d.name + '-chk' )
+        .attr( 'type', 'checkbox' )
+        .attr( 'class', 'custom-control-input' )
+        .property( 'checked', f => ( roles.embed.indexOf( f.name ) !== -1 ) ? true : false )
+        .property( 'disabled', f => ( f.type === 'categorical' ) ? true : false )
+        .on( 'change', f => onCheck( f ) );
 
     // Add feature name to element
     featButtons
@@ -30,68 +31,46 @@ var featureSelection = ( function() {
     // Add feature type icon to element
     featButtons
       .append( 'i' )
-      .attr( 'id', d => d.name + '-type' )
+      .attr( 'id', f => f.name + '-type' )
       .attr( 'class', 'text-warning' )
-      .html( d => ( ( d.type === 'categorical' ) ? '<b>A</b>' : ( d.type === 'binary' ) ? '<b>B</b>' : '<b>#</b>' ) );
+      .html( d => ( ( d.type === 'categorical' ) ? '<b>A</b>' : ( d.type === 'boolean' ) ? '<b>B</b>' : '<b>#</b>' ) );
 
-  }
-
-  function allowDrop( event ) {
-    event.preventDefault();
-  }
-
-  function drag( event ) {
-    event.dataTransfer.setData( 'text', event.target.id );
-  }
-
-  function drop( event ) {
-
-    return new Promise( ( resolve, reject ) => { 
-      
-      event.preventDefault();
-      var elementId = event.dataTransfer.getData( 'text' );
-      if( event.target.tagName === 'DIV' ) {
-
-        if( !( event.target.id === 'color-group' && features.find( f => f.role === 'color' ) !== undefined ) ) {
-
-          if( event.target.id === 'embed-group' && features.find( f => f.name === elementId ).type === 'categorical' ) {
-            reject( 'A categorical attribute cannot be used for embedding!' );  
-          } else {
-
-            event.target.appendChild( document.getElementById( elementId ) );
-            features.find( f => f.name === elementId ).role = event.target.id.replace( '-group', '' );
-            resolve( features );
-            
-          }
-
-        } else {
-          reject( 'You need to remove first the current attribute used for color!' );
-        }
-      }
-    } );
+    // Set event for handling combobox change
+    var colorSelection = d3.select( '#color-selection' )
+      .on( 'change', _ => onColorChange( colorSelection.property( 'value' ) ) );
+    
+    colorSelection.selectAll( 'option' )
+        .data( [ { 'name': '' } ].concat( features ) )
+        .enter()
+        .append( 'option' )
+          .attr( 'value', f => f.name )
+          .property( 'selected', f => ( f.name === roles.color ) ? true : false )
+          .html( f => f.name );
 
   }
 
   // Clean panel
   function clean() {
 
-    //d3.select( '#feature-selection #embed-group' ).html( '' );
-    //d3.select( '#feature-selection #color-group' ).html( '' );
-    //d3.select( '#feature-selection #none-group' ).html( '' );
+    d3.select( '#feature-selection #feature-container' ).html( '' );
+    d3.select( '#color-selection' ).html( '' );
 
   }
 
   return {
     init: init,
-    allowDrop: allowDrop,
-    drop: drop,
-    drag: drag,
     clean: clean,
-    get features() {
-      return features;
-    },
     set features( f ) {
-      features = f.filter( f => ![ '__seqId', '__x', '__y', '__cluster' ].includes( f.name ) );
+      features = f.filter( f => ![ '__seqId', '__x', '__y' ].includes( f.name ) );
+    },
+    set roles( r ) {
+      roles = r;
+    },
+    set onCheck( f ) {
+      onCheck = f;
+    },
+    set onColorChange( f ) {
+      onColorChange = f;
     }
   }
 } )();

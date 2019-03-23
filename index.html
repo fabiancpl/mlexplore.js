@@ -51,24 +51,17 @@
             <div id="feature-selection" class="col-md-12 border-right border-bottom text-center">
               
               <!-- Feature Selection panel -->
-              <div style="min-height: 50px;">
+              <div>
                 <div style="float: left;">
                   <h4>Attributes</h4>
                 </div>
                 <div style="float: right;">
-                  <!--<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#newFeatureGroupModal">New group</button>-->
-                  <div id="color-group" class="feature-group" ondrop="featureDrop(event)" ondragover="featureAllowDrop(event)">
-                    <div class="header">Use for color</div>
-                  </div>
+                  <select id="color-selection">
+                  </select>
                 </div> 
                 <div style="clear: left;"></div>
               </div>
-              <div id="embed-group" class="feature-group" ondrop="featureDrop(event)" ondragover="featureAllowDrop(event)">
-                <div class="header">User for embedding</div>
-              </div>
-              <div id="none-group" class="feature-group" ondrop="featureDrop(event)" ondragover="featureAllowDrop(event)">
-                <div class="header">No role</div>
-              </div>
+              <div id="feature-container"></div>
 
             </div>
 
@@ -178,16 +171,10 @@
                 <button type="button" onclick="loadDataset( 'iris' )" class="btn btn-success btn-dataset"><i class="fas fa-database"></i><br />Iris</button>
                 <button type="button" onclick="loadDataset( 'zoo' )" class="btn btn-success btn-dataset"><i class="fas fa-database"></i><br />Zoo</button>
               </div>
-            </div>
-            <br />
-            <div class="row">
               <div class="col-md-12 text-center">
                 <button type="button" onclick="loadDataset( 'cancer' )" class="btn btn-success btn-dataset"><i class="fas fa-database"></i><br />Breast Cancer</button>
                 <button type="button" onclick="loadDataset( 'heart' )" class="btn btn-success btn-dataset"><i class="fas fa-database"></i><br />Heart Diseases</button>
               </div>
-            </div>
-            <br />
-            <div class="row">
               <div class="col-md-12 text-center">
                 <span class="btn btn-success btn-sm btn-file">Load Dataset<input id="load-dataset-input" type="file"></span>
                 <span id="dataset-name-span"></span>
@@ -286,7 +273,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vega@5.0.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-lite@3.0.0-rc14"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-embed@3.29.1"></script>
-    <script src="https://cdn.jsdelivr.net/npm/navio"></script>
+    <script src="https://unpkg.com/navio@0.0.34/dist/navio.min.js"></script>
     
     <!-- Machine Learning -->
     <!-- <script src="./libs/tsne.js"></script> -->

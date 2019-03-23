@@ -1,6 +1,6 @@
 var miniEmbeddingPlot = ( function() {
 
-  var data, features;
+   var data, color;
 
   var margin = { top: 5, right: 5, bottom: 5, left: 5 },
     width, height, iWidth, iHeight,
@@ -14,9 +14,6 @@ var miniEmbeddingPlot = ( function() {
   function draw() {
     
     d3.select( '#mini-embedding' ).html( '' );
-
-    color = features.filter( f => f.role === 'color' );
-    color = ( color.length > 0 ) ? color[ 0 ].name : undefined;
 
     width = d3.select( '#mini-embedding' ).node().getBoundingClientRect().width - 10,
     height = width * 2 / 3,
@@ -56,17 +53,12 @@ var miniEmbeddingPlot = ( function() {
 
   function changeColor() {
 
-    if( points !== undefined ) {
-
-      color = features.filter( f => f.role === 'color' );
-      color = ( color.length > 0 ) ? color[ 0 ].name : undefined;
-
-      if( color !== undefined )
-        zScale
-          .domain( d3.map( data, f => f[ color ] ) );
+    if( points !== undefined && color !== undefined ) {
+      zScale
+        .domain( d3.map( data, f => f[ color ] ) );
 
       points
-        .attr( 'fill', ( d, i ) => ( color !== undefined ) ? zScale( data[ i ][ color ] ) : 'steelblue' );
+        .attr( 'fill', ( d, i ) => zScale( data[ i ][ color ] ) );
 
     }
 
@@ -78,8 +70,8 @@ var miniEmbeddingPlot = ( function() {
     set data( d ) {
       data = d;
     },
-    set features( f ) {
-      features = f;
+    set color( c ) {
+      color = c;
     }
   }
 } )();

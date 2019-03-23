@@ -11,7 +11,7 @@ function loadDataset( name ) {
 
   dataset.loadDataset( name ).then( _ => {
 
-    // Clean interface
+    // TODO: Clean interface
     featureSelection.clean();
 
     d3.select( '#run-embed-btn' ).property( 'disabled', false );
@@ -24,6 +24,9 @@ function loadDataset( name ) {
 
     // Initialize feature selection panel
     featureSelection.features = dataset.config.features;
+    featureSelection.roles = dataset.config.roles;
+    featureSelection.onCheck = featureOnCheck;
+    featureSelection.onColorChange = onColorChange;
     featureSelection.init();
 
     // Initialize navio panel
@@ -34,7 +37,7 @@ function loadDataset( name ) {
 
     // Initialize embedding panel
     embed.data = dataset.visibleData;
-    embed.features = dataset.config.features;
+    embed.features = dataset.config.roles.embed;
     embed.onStep = embedStep;
     embed.onStop = embedOnStop;
     embed.init();
@@ -55,6 +58,7 @@ function loadDataset( name ) {
     // Initialize feature distribution panel
     featureDistribution.data = dataset.visibleData;
     featureDistribution.features = dataset.config.features;
+    featureDistribution.roles = dataset.config.roles;
     featureDistribution.init();
 
     // Exports
@@ -73,33 +77,50 @@ function loadDataset( name ) {
 
 }
 
-function featureAllowDrop( event ) {
-  featureSelection.allowDrop( event );
+function featureOnCheck( feature ) {
+  
+  // Update the config object
+  if( dataset.config.roles.embed.indexOf( feature.name ) === -1 ) {
+    dataset.config.roles.embed.push( feature.name );
+  } else {
+    dataset.config.roles.embed = dataset.config.roles.embed.filter( f => f !== feature.name );
+  }
+
+  // Restart the execution of a new embedding
+  embed.features = dataset.config.roles.embed;
+  embed.stop();
+  embed.start();
+
+  // Update feature distributions
+  featureDistribution.roles = dataset.config.roles;
+  featureDistribution.init();
+
 }
 
-function featureDrop( event ) {
-  featureSelection.drop( event )
-    .then( f => {
+function onColorChange( feature_name ) {
 
-      // Update embedding
-      embed.features = dataset.config.features;
+  // Update the config object
+  dataset.config.roles.color = undefined;
+  if( feature_name !== '' ) dataset.config.roles.color = feature_name;
 
-      // Update embedding plot
-      embeddingPlot.changeColor();
-      miniEmbeddingPlot.changeColor();
+  // Update embedding plot
+  embeddingPlot.color = dataset.config.roles.color;
+  embeddingPlot.changeColor();
+  miniEmbeddingPlot.color = dataset.config.roles.color;
+  miniEmbeddingPlot.changeColor();
 
-      // Update feature distributions
-      featureDistribution.features = dataset.config.features;
-      featureDistribution.update();
+  // Update feature distributions
+  featureDistribution.roles = dataset.config.roles;
+  featureDistribution.init();
 
-    } ).catch( error => alert( error ) );
-}
-
-function featureDrag( event ) {
-  featureSelection.drag( event );
 }
 
 function navioFiltering() {
+
+  // Restart the execution of a new embedding
+  embed.data = dataset.visibleData;
+  embed.stop();
+  embed.start();
 
   // Update table details
   tableDetails.data = dataset.visibleData;
@@ -108,7 +129,7 @@ function navioFiltering() {
 
   // Update feature distributions
   featureDistribution.data = dataset.visibleData;
-  featureDistribution.update();
+  featureDistribution.init();
 
 }
 
@@ -127,7 +148,7 @@ function embedStep( embedding ) {
   // Update embedding plot
   embeddingPlot.data = dataset.visibleData;
   embeddingPlot.embedding = embedding.solution;
-  embeddingPlot.features = dataset.config.features;
+  embeddingPlot.color = dataset.config.roles.color;
   embeddingPlot.draw();
 
 }
@@ -143,7 +164,7 @@ function embedOnStop( embedding, hparams ) {
   dataset.config.models = { embedding: hparams };
 
   miniEmbeddingPlot.data = dataset.visibleData;
-  miniEmbeddingPlot.features = dataset.config.features;
+  miniEmbeddingPlot.color = dataset.config.roles.color;
   miniEmbeddingPlot.draw();
 
 }
