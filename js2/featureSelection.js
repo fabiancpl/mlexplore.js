@@ -72,6 +72,8 @@ var featureSelection = ( function() {
           .property( 'selected', f => ( f.name === roles.color ) ? true : false )
           .html( f => f.name );
 
+    onColorChange( '__cluster' );
+
   }
 
   return {

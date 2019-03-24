@@ -102,11 +102,8 @@ var dataset = ( function() {
     
     // Try to select an appropiate feature for color encoding
     var categFeatures = config.features.filter( f => f.type === 'categorical' );
-    var candidates = categFeatures.map( f => {
-      if( d3.map( data, d => d[ f ] ).keys().length < 5 ) return f.name;
-    } ).filter( f => f !== undefined );
-    console.log( candidates );
-    config.roles.color = candidates[ 0 ];
+    var candidates = categFeatures.filter( f => d3.map( data, d => d[ f.name ] ).keys().length <= 5 );
+    config.roles.color = candidates[ 0 ].name;
 
     console.log( 'By default configuration created!' );
 

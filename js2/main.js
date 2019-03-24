@@ -118,7 +118,7 @@ function featureOnColorChange( feature_name ) {
 function navioFiltering() {
 
   // Restart the execution of a new embedding
-  embed.data = dataset.visibleData;
+  //embed.data = dataset.visibleData;
   //embed.stop();
   //embed.start();
 

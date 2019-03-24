@@ -44,11 +44,12 @@ var cluster = ( function() {
 
     var Http = new XMLHttpRequest();
     var url = 'https://t17ah9d6hf.execute-api.us-east-1.amazonaws.com/dev/kmeans/' + hparams.clusters;
-    Http.open( 'POST', url, false );
+    Http.open( 'POST', url, true );
     Http.setRequestHeader( 'Content-Type', 'application/json' );
+    Http.onreadystatechange = function() {
+      onStop( this.responseText.split( ' ' ), hparams );
+    };
     Http.send( JSON.stringify( featuredData ) );
-    
-    onStop( Http.responseText.split( ' ' ), hparams );
 
   }
 
