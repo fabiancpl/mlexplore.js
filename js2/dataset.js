@@ -69,12 +69,12 @@ var dataset = ( function() {
       console.log( 'Dataset loaded sucessfully!' );
 
       // Removing special characters from colum names
-      /*var keys = Object.keys( d[ 0 ] );
-      d2 = d.map( di => {
+      var keys = Object.keys( d[ 0 ] );
+      d = d.map( di => {
         return _.mapKeys( di, function( value, key ) {
           return  key.replace(/[^\w\s]/gi, '').replace( ' ', '' );
         } );
-      } );*/
+      } );
 
       data = d;
       config = createConfig();
@@ -97,8 +97,10 @@ var dataset = ( function() {
       }
     } );
 
+    // Defines candidates features for embedding
     config.roles = {};
-    config.roles.embed = config.features.filter( f => f.type === 'sequential' || f.type ===  'boolean' ).map( f => f.name );
+    config.roles.embed = config.features.filter( f => f.type === 'sequential' || f.type ===  'boolean' )
+      .filter( f => !f.name.toLowerCase().includes( 'id' ) ).map( f => f.name );
     
     // Try to select an appropiate feature for color encoding
     var categFeatures = config.features.filter( f => f.type === 'categorical' );

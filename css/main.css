@@ -93,14 +93,11 @@
 }
 
 .brushed {
-    fill: #ff3399;
-    stroke: #8e1b54;
     opacity: 1.0;
 }
 
 .non_brushed {
-    fill: #404040;
-    opacity: 0.5;
+    opacity: 0.3;
 }
 
 /* Tooltip */
@@ -113,4 +110,10 @@ div.tooltip {
   border: 1px solid gray;    
   border-radius: 3px;
   padding: 5px 15px;
+}
+
+/* Table Details */
+
+.table td, .table th {
+  padding: .4rem;
 }

@@ -29,6 +29,14 @@ var embeddingPlot = ( function() {
       .attr( 'width', width )
       .attr( 'height', height );
 
+    brush = d3.brush()
+      .on( 'brush', highlightBrushedCircles )
+      .on( 'end', displayTable ); 
+
+    svg.append( 'g' )
+      .on( 'click', cleanHighlight )
+      .call( brush );
+
     g = svg.append( 'g' )
       .attr( 'transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
@@ -48,12 +56,14 @@ var embeddingPlot = ( function() {
       .data( embedding )
       .enter()
       .append( 'circle' )
-        .attr( "class", 'embedding-circle' ) //non_brushed
+        .attr( 'class', 'embedding-circle' )
+        .attr( 'id', ( d, i ) => data[ i ].__seqId )
         .attr( 'cx', d => xScale( d[ 0 ] ) )
         .attr( 'cy', d => yScale( d[ 1 ] ) )
         .attr( 'r', 3 )
-        .attr( 'fill', ( d, i ) => ( color !== undefined && data !== undefined ) ? zScale( data[ i ][ color ] ) : 'steelblue' );
-        /*.on( 'mouseover', ( d, i ) => {
+        .attr( 'fill', ( d, i ) => ( color !== undefined && data !== undefined ) ? zScale( data[ i ][ color ] ) : 'steelblue' )
+        .on( 'click', ( d, i ) => onItemClick( data[ i ] ) )
+        .on( 'mouseover', ( d, i ) => {
 
           tooltip
             .html( drawTooltip( data[ i ] ) )
@@ -68,14 +78,7 @@ var embeddingPlot = ( function() {
             .style( 'left', '-200px' )
             .style( 'top', '-200px' );
 
-        } );*/
-
-    brush = d3.brush()
-      .on( 'brush', highlightBrushedCircles )
-      .on( 'end', displayTable ); 
-
-    svg.append( 'g' )
-      .call( brush );
+        } );
 
   }
 
@@ -95,6 +98,12 @@ var embeddingPlot = ( function() {
     }
   }
 
+  function cleanHighlight() {
+    points
+      .classed( 'non_brushed', false )
+      .classed( 'brushed', true );
+  }
+
   function displayTable() {
     // disregard brushes w/o selections  
     // ref: http://bl.ocks.org/mbostock/6232537
@@ -112,8 +121,8 @@ var embeddingPlot = ( function() {
         //d_brushed.forEach(d_row => populateTableRow(d_row));
         console.log( d_brushed.length );
     } else {
-      //clearTableRows();
       console.log( 'No selection' );
+      cleanHighlight();
     }
   }
 
@@ -138,6 +147,20 @@ var embeddingPlot = ( function() {
 
   }
 
+  function onItemClick( item ) {
+    console.log( 'Item clicked' );
+    console.log( item );
+
+    points
+      .classed( 'non_brushed', true );
+
+    points.filter( function() {
+      return d3.select( this ).attr( 'id' ) === item.__seqId.toString()
+    } ).classed( 'non_brushed', false )
+      .classed( 'brushed', true );
+
+  }
+
   function drawTooltip( d ) {
     return Object.keys( d ).filter( f => ![ 'visible', '__seqId', '__i', '__x', '__y' ].includes( f ) ).map( f => '<b>' + f + ':</b> ' + d[ f ] ).join( "<br />" );
   }
@@ -145,6 +168,7 @@ var embeddingPlot = ( function() {
   return {
     draw: draw,
     changeColor: changeColor,
+    onItemClick: onItemClick,
     set data( d ) {
       data = d;
     },

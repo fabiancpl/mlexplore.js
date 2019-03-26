@@ -87,9 +87,10 @@ function featureOnCheck( feature ) {
   }
 
   // Restart the execution of a new embedding
+  embed.data = dataset.visibleData;
   embed.features = dataset.config.roles.embed;
-  //embed.stop();
-  //embed.start();
+  embed.stop();
+  embed.start();
 
   // Update feature distributions
   featureDistribution.roles = dataset.config.roles;
@@ -118,13 +119,10 @@ function featureOnColorChange( feature_name ) {
 function navioFiltering() {
 
   // Restart the execution of a new embedding
-  //embed.data = dataset.visibleData;
-  //embed.stop();
-  //embed.start();
-
-  embeddingPlot.data = dataset.visibleData;
-  embeddingPlot.embedding = dataset.visibleData.map( d => { return [ d.__x, d.__y ] } );
-  embeddingPlot.draw();
+  embed.data = dataset.visibleData;
+  embed.features = dataset.config.roles.embed;
+  embed.stop();
+  embed.start();
 
   // Update table details
   tableDetails.data = dataset.visibleData;
@@ -208,7 +206,7 @@ function clusterOnStop( clusters, hparams ) {
 
 function tableRowSelection( row, $element ) {
   console.log( row );
-  //$element.css( { "background-color": "gray" } );
+  embeddingPlot.onItemClick( row );
 }
 
 function exportData() {
