@@ -14,21 +14,39 @@ var nv = ( function() {
     nav.attribWidth = 10;
     nav.attribFontSize = 8;
 
-    // Set features by type
-    features.map( f => {
-      if( f.type === 'sequential' ){
-        nav.addSequentialAttrib( f.name );
-      } else if( f.type === 'boolean' ){
-        nav.addBooleanAttrib( f.name );
-      } else {
-        nav.addCategoricalAttrib( f.name );
-      }
-    } );
+
+    // // Set features by type
+    // features.map( f => {
+    //   if( f.type === 'sequential' ){
+    //     nav.addSequentialAttrib( f.name );
+    //   } else if( f.type === 'boolean' ){
+    //     nav.addBooleanAttrib( f.name );
+    //   } else {
+    //     nav.addCategoricalAttrib( f.name );
+    //   }
+    // } );
+
+    nav.addCategoricalAttrib('__cluster', d3.scaleOrdinal(d3.schemeCategory10));
+    nav.addDivergingAttrib('__x',
+      d3.scaleDiverging(d3.interpolatePRGn)
+        .domain([-200, 0, 200]));
+    nav.addDivergingAttrib('__y',
+      d3.scaleDiverging(d3.interpolatePRGn)
+        .domain([-200, 0, 200]));
 
     // Set data to Navio
     nav.data( data );
+
+    // Detect features types with navio and redraw
+    nav.addAllAttribs(features.map(f => f.name));
+
+
     nav.updateCallback( onFiltering );
 
+  }
+
+  function update() {
+    nav.update();
   }
 
   return {
@@ -41,6 +59,7 @@ var nv = ( function() {
     },
     set onFiltering( f ) {
       onFiltering = f;
-    }
-  }
+    },
+    update : update
+  };
 } )();

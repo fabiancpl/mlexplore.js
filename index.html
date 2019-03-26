@@ -47,9 +47,9 @@
         <div class="col-md-3">
 
           <div class="row">
-            
+
             <div id="feature-selection" class="col-md-12 border-right border-bottom text-center">
-              
+
               <!-- Feature Selection panel -->
               <div>
                 <div style="float: left;">
@@ -58,7 +58,7 @@
                 <div style="float: right;">
                   <select id="color-selection">
                   </select>
-                </div> 
+                </div>
                 <div style="clear: left;"></div>
               </div>
               <div id="feature-container"></div>
@@ -76,23 +76,23 @@
 
         </div>
         <div class="col-md-6">
-          
+
           <div class="row">
-            
+
             <div class="col-md-12 text-center">
-              
+
               <div class="row">
-                
+
                 <div class="col-md-9 text-center">
-                  
+
                   <div class="row">
-                    
+
                     <div class="col-md-12 text-center">
 
                       <div class="row">
-                        
+
                         <div id="hparams-tuning" class="col-md-12 border-bottom text-center">
-                          
+
                           <!--Iterations: <input id="hparam-iterations" type="range" min="1" max="2000" step="10"><span id="hparam-iterations-span"></span>-->
                           Perplexity: <i class="fas fa-info-circle" data-toggle="tooltip" title="The perplexity is related to the number of nearest neighbors that is used in other manifold learning algorithms. Larger datasets usually require a larger perplexity."></i> <input id="hparam-perplexity" type="range" class="slider" min="5" max="50" step="5"><span id="hparam-perplexity-span"></span>
                           Learning Rate: <i class="fas fa-info-circle" data-toggle="tooltip" title="If the learning rate is too high, the data may look like a ‘ball’ with any point approximately equidistant from its nearest neighbours. If the learning rate is too low, most points may look compressed in a dense cloud with few outliers. If the cost function gets stuck in a bad local minimum increasing the learning rate may help."></i> <input id="hparam-epsilon" type="range" min="10" max="1000" step="10"><span id="hparam-epsilon-span"></span>
@@ -106,27 +106,27 @@
                       <div class="row">
 
                         <div id="hparams-tuning" class="col-md-12 border-bottom text-center">
-                          
+
                           Number of clusters: <i class="fas fa-info-circle" data-toggle="tooltip" title="The number of clusters to form as well as the number of centroids to generate."></i> <input id="hparam-clusters" type="range" min="2" max="10" step="1"><span id="hparam-clusters-span"></span>
                           <input id="runClusteringOnProjection" type="checkbox"> Run on projected data
                           <button id="run-cluster-btn" type="button" class="btn btn-success btn-sm" onclick="clusterRun()" disabled>Run K-Means</button>
 
                         </div>
 
-                      </div>                      
-                      
+                      </div>
+
                     </div>
 
                   </div>
 
                 </div>
                 <div class="col-md-3 border-left border-bottom text-center">
-                  <div id="mini-embedding"></div>  
-                </div>  
+                  <div id="mini-embedding"></div>
+                </div>
 
               </div>
               <div class="row">
-                
+
                 <div class="col-md-12 text-center">
 
                   <div id="embedding"></div>
@@ -139,18 +139,18 @@
 
           </div>
           <div class="row">
-            
+
             <div class="col-md-12 border-top border-bottom text-center">
-              
+
               <div id="table-details"></div>
 
             </div>
-            
-          </div>          
+
+          </div>
 
         </div>
         <div class="col-md-3 border-left border-bottom border-right text-center" style="overflow-y: scroll; height: 100vh; overflow: auto;">
-          
+
           <div id="feature-distribution"></div>
 
         </div>
@@ -273,8 +273,8 @@
     <script src="https://cdn.jsdelivr.net/npm/vega@5.3.2"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-lite@3.0.2"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-embed@4.0.0-rc1"></script>
-    <script src="https://unpkg.com/navio@0.0.37/dist/navio.min.js"></script>
-    
+    <script src="https://unpkg.com/navio@0.0.37/dist/navio.js"></script>
+
     <!-- Machine Learning -->
     <!-- <script src="./libs/tsne.js"></script> -->
 

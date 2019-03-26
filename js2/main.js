@@ -1,4 +1,4 @@
-/* global d3, dataset, featureSelection, navio, nv, embed, cluster, embeddingPlot, miniEmbeddingPlot, tableDetails, featureDistribution, exportResults */
+/* global d3, dataset, featureSelection, navio, nv, embed, cluster, embeddingPlot, miniEmbeddingPlot, tableDetails, featureDistribution, exportResults, $ */
 
 dataset.init();
 $( '#load-data-modal' ).modal( 'show' );
@@ -78,7 +78,7 @@ function loadDataset( name ) {
 }
 
 function featureOnCheck( feature ) {
-  
+
   // Update the config object
   if( dataset.config.roles.embed.indexOf( feature.name ) === -1 ) {
     dataset.config.roles.embed.push( feature.name );
@@ -151,7 +151,7 @@ function clusterRun() {
   cluster.data = dataset.visibleData;
   cluster.features = dataset.config.roles.embed;
   cluster.start();
-  
+
 }
 
 function embedStep( embedding ) {
@@ -170,7 +170,7 @@ function embedOnStop( embedding, hparams ) {
 
   dataset.visibleData = dataset.visibleData.map( ( d, i ) => {
     d.__x = embedding.solution[ i ][ 0 ];
-    d.__y = embedding.solution[ i ][ 1 ];   
+    d.__y = embedding.solution[ i ][ 1 ];
   } );
 
   hparams[ 'iterations' ] = embedding.i;
@@ -181,6 +181,7 @@ function embedOnStop( embedding, hparams ) {
   miniEmbeddingPlot.color = dataset.config.roles.color;
   miniEmbeddingPlot.draw();
 
+  nv.update();
 }
 
 function clusterOnStop( clusters, hparams ) {
@@ -188,7 +189,7 @@ function clusterOnStop( clusters, hparams ) {
   console.log(  'Clustering finished!' );
 
   dataset.visibleData = dataset.visibleData.map( ( d, i ) => {
-    d.__cluster = +clusters[ i ];   
+    d.__cluster = +clusters[ i ];
   } );
 
   dataset.config.roles.color = '__cluster';
@@ -202,6 +203,7 @@ function clusterOnStop( clusters, hparams ) {
   featureDistribution.roles = dataset.config.roles;
   featureDistribution.init();
 
+  nv.update();
 }
 
 function tableRowSelection( row, $element ) {
