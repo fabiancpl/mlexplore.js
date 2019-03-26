@@ -9,12 +9,10 @@ function embedWorker() {
   function start( e ) {
     
     if( intervalId ) {
-      console.log( 'Stopping previous interval' );
       clearInterval( intervalId );
       intervalId = null;
     }
 
-    console.log( 'Project Worker: Message received from main script' );
     shouldStop = false;
 
     const data = e.data.data;
@@ -42,7 +40,6 @@ function embedWorker() {
     function iterate() {
 
       if( k > e.data.iterations || shouldStop ) {
-        console.log( 'Finishing interval', k );
         clearInterval( intervalId );
         intervalId = null;
 
@@ -53,7 +50,6 @@ function embedWorker() {
         return;
       }
 
-      console.log( 'TSNE step', k );
       tsne.step();
       postMessage( {
         solution: tsne.getSolution(),
@@ -66,7 +62,6 @@ function embedWorker() {
   }
 
   function stop() {
-    console.log( 'Stopping Worker' );
     shouldStop = true;
   }
 

@@ -122,6 +122,10 @@ function navioFiltering() {
   //embed.stop();
   //embed.start();
 
+  embeddingPlot.data = dataset.visibleData;
+  embeddingPlot.embedding = dataset.visibleData.map( d => { return [ d.__x, d.__y ] } );
+  embeddingPlot.draw();
+
   // Update table details
   tableDetails.data = dataset.visibleData;
   tableDetails.update();
@@ -137,6 +141,8 @@ function embedRun() {
   if( embed.running ) {
     embed.stop();
   } else {
+    embed.data = dataset.visibleData;
+    embed.features = dataset.config.roles.embed;
     embed.start();
   }
 

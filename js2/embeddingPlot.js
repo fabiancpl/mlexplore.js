@@ -9,7 +9,7 @@ var embeddingPlot = ( function() {
     zScale = d3.scaleOrdinal( d3.schemeCategory10 );
 
   var svg, g,
-    points,
+    points, brush,
     tooltip;
 
   function draw() {
@@ -48,7 +48,7 @@ var embeddingPlot = ( function() {
       .data( embedding )
       .enter()
       .append( 'circle' )
-        .attr( "class", "embedding-circle" )
+        .attr( "class", 'embedding-circle' ) //non_brushed
         .attr( 'cx', d => xScale( d[ 0 ] ) )
         .attr( 'cy', d => yScale( d[ 1 ] ) )
         .attr( 'r', 3 )
@@ -70,6 +70,59 @@ var embeddingPlot = ( function() {
 
         } );*/
 
+    brush = d3.brush()
+      .on( 'brush', highlightBrushedCircles )
+      .on( 'end', displayTable ); 
+
+    svg.append( 'g' )
+      .call( brush );
+
+  }
+
+  function highlightBrushedCircles() {
+    if( d3.event.selection != null ) {
+      // revert circles to initial style
+      points.attr( 'class', 'non_brushed' );
+      
+      var brush_coords = d3.brushSelection( this );
+      
+      // style brushed circles
+      points.filter( function(){
+        var cx = d3.select( this ).attr( 'cx' ),
+          cy = d3.select( this ).attr( 'cy' );
+        return isBrushed( brush_coords, cx, cy );
+      } ).attr( 'class', 'brushed' );
+    }
+  }
+
+  function displayTable() {
+    // disregard brushes w/o selections  
+    // ref: http://bl.ocks.org/mbostock/6232537
+    if ( !d3.event.selection ) return;
+
+    // programmed clearing of brush after mouse-up
+    // ref: https://github.com/d3/d3-brush/issues/10
+    d3.select( this ).call( brush.move, null );
+
+    var d_brushed = d3.selectAll( ".brushed" ).data();
+
+    // populate table if one or more elements is brushed
+    if( d_brushed.length > 0 ) {
+        //clearTableRows();
+        //d_brushed.forEach(d_row => populateTableRow(d_row));
+        console.log( d_brushed.length );
+    } else {
+      //clearTableRows();
+      console.log( 'No selection' );
+    }
+  }
+
+  function isBrushed( brush_coords, cx, cy ) {
+    var x0 = brush_coords[ 0 ][ 0 ],
+      x1 = brush_coords[ 1 ][ 0 ],
+      y0 = brush_coords[ 0 ][ 1 ],
+      y1 = brush_coords[ 1 ][ 1 ];
+    return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
   }
 
   function changeColor() {

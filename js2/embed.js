@@ -74,12 +74,8 @@ var embed = ( function() {
         embedding = e.data;
 
         function redrawEmbedding() {
-
           d3.select( '#embed-step-span' ).text( embedding.i );
-          console.log('Redrawing embedding ', embedding.i );
-
           onStep( embedding );
-
         }
 
         // If we haven't launch the previous drawing command, skip it

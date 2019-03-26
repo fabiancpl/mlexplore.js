@@ -92,10 +92,15 @@
   border-radius: 3px;
 }
 
-.selected {
-  opacity: 1 !important;
-  stroke: black;
-  stroke-width: 5px;
+.brushed {
+    fill: #ff3399;
+    stroke: #8e1b54;
+    opacity: 1.0;
+}
+
+.non_brushed {
+    fill: #404040;
+    opacity: 0.5;
 }
 
 /* Tooltip */

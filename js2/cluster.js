@@ -1,10 +1,12 @@
 var cluster = ( function() {
 
-  var data, features,
+  var data, clusters, features,
     hparams = {
       clusters: 3,
       embedded_space: false
     };
+
+  const worker = new Worker( './js2/workers/clusterWorker.js' );
 
   function init() {
 
@@ -28,28 +30,25 @@ var cluster = ( function() {
 
   function start() {
 
-    console.info( 'Clustering data!' );
-    console.info( 'Number of clusters: ' + hparams.clusters );
-    console.info( 'Attributes: ' + features );
-    console.info( 'Númber of Items: ' + data.length );
+    d3.select( '#run-cluster-btn' )
+      .property( 'disabled', true )
+      .html( '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Running...' );
 
-    // Transform data to multi-dimensional array
-    var featuredData = data.map( d => {
-      datum = {};
-      features.forEach( f => {
-        datum[ f ] = +d[ f ];
-      } );
-      return datum;
+    // Send message to worker to start model training
+    worker.postMessage( {
+      data: data,
+      features: features,
+      hparams: hparams
     } );
 
-    var Http = new XMLHttpRequest();
-    var url = 'https://t17ah9d6hf.execute-api.us-east-1.amazonaws.com/dev/kmeans/' + hparams.clusters;
-    Http.open( 'POST', url, true );
-    Http.setRequestHeader( 'Content-Type', 'application/json' );
-    Http.onreadystatechange = function() {
-      onStop( this.responseText.split( ' ' ), hparams );
+    worker.onmessage = function ( e ) {
+      d3.select( '#run-cluster-btn' )
+        .property( 'disabled', false )
+        .html( 'Run K-Means' );
+
+      clusters = e.data.solution;
+      onStop( clusters, hparams );
     };
-    Http.send( JSON.stringify( featuredData ) );
 
   }
 

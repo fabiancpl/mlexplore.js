@@ -28,7 +28,7 @@ var featureDistribution = ( function() {
       'encoding': {
         'x': { 'field': f.name, 'type': 'quantitative', "scale": { "domain": [ d3.min( data, d => d[ f.name ] ), d3.max( data, d => d[ f.name ] ) ] } },
         'y': { 'field': roles.color, 'type': 'nominal' },
-        'color': { 'field': roles.color, 'type': 'nominal' }
+        'color': { 'field': roles.color, 'type': 'nominal', 'scale': { 'scheme': 'category10' } }
       }
     };
 
