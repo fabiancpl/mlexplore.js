@@ -5,6 +5,7 @@ var dataset = ( function() {
     data, visibleData,
     config, embeddingFeatures;
 
+  // Initialize the interface for loading a dataset and a config file
   function init() {
 
     d3.select( '#load-dataset-input' )
@@ -53,6 +54,7 @@ var dataset = ( function() {
 
   }
 
+  // Called from main process to load a dataset
   function loadDataset( n ) {
 
     //d3.select( '#load-config-btn' ).classed( 'disabled', false );
@@ -61,14 +63,15 @@ var dataset = ( function() {
     if( n ) {
       name = n;
       datasetURL = './data/' + name + '.csv';
-
     }
 
+    // Return a D3 promise when dataset has been loaded
     return d3.csv( datasetURL, d3.autoType ).then( d => {
 
       console.log( 'Dataset loaded sucessfully!' );
 
-      // Removing special characters from colum names
+      // Remove special characters from colum names to avoid other components crash
+      // This block can be slow
       var keys = Object.keys( d[ 0 ] );
       d = d.map( di => {
         return _.mapKeys( di, function( value, key ) {
@@ -77,29 +80,33 @@ var dataset = ( function() {
       } );
 
       data = d;
+
+      // Create the configuration object by default
       config = createConfig();
 
     } ).catch( error => console.log( 'Error loading the dataset!' ) );
 
   }
 
+  // Create a configuration file based on dataset attributes
   function createConfig() {
 
     config = {};
 
-    // Creating feature descriptions
+    // Identify the type for each attribute
     keys = Object.keys( data[ 0 ] );
     config.features = keys.map( f => {
-      var type = identifyDataType( f );
+      var props = identifyDataType( f );
       return {
         name: f,
-        type: identifyDataType( f )
+        type: props.type,
+        sclae: props.scale
       }
     } );
 
     // Defines candidates features for embedding
     config.roles = {};
-    config.roles.embed = config.features.filter( f => f.type === 'sequential' || f.type ===  'boolean' )
+    config.roles.embed = config.features.filter( f => f.type === 'sequential' || f.type === 'diverging' || f.type ===  'boolean' )
       .filter( f => !f.name.toLowerCase().includes( 'id' ) ).map( f => f.name );
     
     // Try to select an appropiate feature for color encoding
@@ -113,17 +120,34 @@ var dataset = ( function() {
 
   }
 
+  // Identify the type of an attribute in the dataset from its values
   function identifyDataType( f ) {
     if( typeof data[ 0 ][ f ] === 'number' ) { 
       
+      // If attribute contains only 0 and 1 values, it is understood as boolean
       var values = d3.map( data, d => d[ f ] ).keys();
-      if( values.length === 2 && ( values.includes( "0" ) && values.includes( "1" ) ) ) {
-        return 'boolean';
+      if( values.length === 2 && ( values.includes( '0' ) && values.includes( '1' ) ) ) {
+        return { 
+          type: 'boolean', 
+          scale: d3.scaleOrdinal( d3.schemePaired ).domain( [ 0, 1 ] )
+        };
+      } else if( d3.min( data, d => d[ f ] ) < 0 ) {
+        return { 
+          type: 'diverging', 
+          scale: d3.scaleSequential( d3.interpolatePRGn ).domain( [ d3.min( data, d => d[ f ] ), d3.max( data, d => d[ f ] ) ] )
+        };        
       } else {
-        return 'sequential';
+        return { 
+          type: 'sequential', 
+          scale: d3.scaleSequential( d3.schemeBlues ).domain( [ 0, d3.max( data, d => d[ f ] ) ] )
+        };
       }
+
     } else {
-      return 'categorical';
+      return { 
+        type: 'categorical', 
+        scale: d3.scaleOrdinal( d3.schemeCategory10 ).domain( d3.map( data, d => d[ f ] ) )
+      };
     } 
   }
 
@@ -145,7 +169,7 @@ var dataset = ( function() {
 
   return {
     init: init,
-    loadDataset: loadDataset,
+    load: loadDataset,
     /*loadConfig: loadConfig,*/
     get name() {
       return name;
@@ -154,7 +178,7 @@ var dataset = ( function() {
       return data;
     },
     get visibleData() {
-      return data.filter( d => d.visible );
+      return data.filter( d => d.selected );
     },
     get config() {
       return config;

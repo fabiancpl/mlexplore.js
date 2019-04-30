@@ -14,31 +14,30 @@ var nv = ( function() {
     nav.attribWidth = 10;
     nav.attribFontSize = 8;
 
+    nav.addCategoricalAttrib( '__cluster', d3.scaleOrdinal( d3.schemeCategory10 ).domain( [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] ) );
 
-    // // Set features by type
-    // features.map( f => {
-    //   if( f.type === 'sequential' ){
-    //     nav.addSequentialAttrib( f.name );
-    //   } else if( f.type === 'boolean' ){
-    //     nav.addBooleanAttrib( f.name );
-    //   } else {
-    //     nav.addCategoricalAttrib( f.name );
-    //   }
-    // } );
+    nav.addAttrib( '__x', d3.scaleSequential( d3.interpolateRdBu ).domain( [ -20, 20 ] ) );
 
-    nav.addCategoricalAttrib('__cluster', d3.scaleOrdinal(d3.schemeCategory10));
-    nav.addDivergingAttrib('__x',
-      d3.scaleDiverging(d3.interpolatePRGn)
-        .domain([-200, 0, 200]));
-    nav.addDivergingAttrib('__y',
-      d3.scaleDiverging(d3.interpolatePRGn)
-        .domain([-200, 0, 200]));
+    nav.addAttrib( '__y', d3.scaleSequential( d3.interpolateRdBu ).domain( [ -20, 20 ] ) );
+
+    // Set features by type
+    features.map( f => {
+      if( f.type === 'sequential' ){
+        nav.addSequentialAttrib( f.name, f.scale );
+      } else if( f.type === 'diverging' ){
+        nav.addDivergingAttrib( f.name, f.scale );
+      } else if( f.type === 'boolean' ){
+        nav.addBooleanAttrib( f.name, f.scale );
+      } else {
+        nav.addCategoricalAttrib( f.name, f.scale );
+      }
+    } );
 
     // Set data to Navio
     nav.data( data );
 
     // Detect features types with navio and redraw
-    nav.addAllAttribs(features.map(f => f.name));
+    //nav.addAllAttribs(features.map(f => f.name));
 
 
     nav.updateCallback( onFiltering );

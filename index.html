@@ -31,7 +31,8 @@
         </div>
         <div class="col-md-6 border-top border-bottom text-center">
 
-          <h1>Exploring Data with Interactive t-SNE</h1>
+          <h5>Exploring High-Dimensional Data by Interacting and Interpreting t-SNE and K-Means</h5>
+          By: Fabian C. Peña, Universidad de los Andes
 
         </div>
         <div id="export-data" class="col-md-3 border text-center">
@@ -61,6 +62,7 @@
                 </div>
                 <div style="clear: left;"></div>
               </div>
+              <button id="select-unselect-all-btn" type="button" class="btn btn-success btn-sm" onclick="featureOnCheckAll()">Check / Uncheck All</button>
               <div id="feature-container"></div>
 
             </div>
@@ -270,10 +272,11 @@
     <!-- Visualization -->
     <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://unpkg.com/popper.js@1.14/dist/umd/popper.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/navio/dist/navio.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega@5.3.2"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-lite@3.0.2"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-embed@4.0.0-rc1"></script>
-    <script src="https://unpkg.com/navio@0.0.37/dist/navio.js"></script>
 
     <!-- Machine Learning -->
     <!-- <script src="./libs/tsne.js"></script> -->

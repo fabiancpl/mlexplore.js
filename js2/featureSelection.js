@@ -8,7 +8,7 @@ var featureSelection = ( function() {
 
     var featButtons = d3.select( '#feature-selection #feature-container' )
       .selectAll( 'button' )
-      .data( features.filter( f => f.name !== '__cluster' ) )
+      .data( features.filter( f => f.name !== '__cluster' || f.name !== '__x' || f.name !== '__y' ) )
       .enter()
         .append( 'button' )
           .attr( 'id', f => f.name + '-feature' )

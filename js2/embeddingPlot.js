@@ -14,7 +14,9 @@ var embeddingPlot = ( function() {
 
   function draw() {
     
+    // Cleaning the component
     d3.select( '#embedding' ).html( '' );
+    d3.selectAll( '.tooltip' ).remove();
 
     tooltip = d3.select( 'body' ).append( 'div' )
       .attr( 'class', 'tooltip' )

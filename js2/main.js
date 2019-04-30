@@ -1,31 +1,40 @@
 /* global d3, dataset, featureSelection, navio, nv, embed, cluster, embeddingPlot, miniEmbeddingPlot, tableDetails, featureDistribution, exportResults, $ */
 
+// Prepares the interface for load a dataset
 dataset.init();
 $( '#load-data-modal' ).modal( 'show' );
 
+// Load a dataset specified by the user
 function loadDataset( name ) {
 
+  // Modify the Load button to evidence that process is running
   d3.select( '#load-data-load-btn' )
     .property( 'disabled', true )
     .html( '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Loading...' );
 
-  dataset.loadDataset( name ).then( _ => {
+  // Call load in Dataset component
+  // Promise run when dataset has loaded successfully
+  dataset.load( name ).then( _ => {
 
-    // TODO: Clean interface
+    // Clean the feature selection component
     featureSelection.clean();
 
+    // Enable buttons for interact with models and export results
     d3.select( '#run-embed-btn' ).property( 'disabled', false );
-    d3.select( '#restart-embed-btn' ).property( 'disabled', false );
+    //d3.select( '#restart-embed-btn' ).property( 'disabled', false );
     d3.select( '#run-cluster-btn' ).property( 'disabled', false );
     d3.select( '#export-results-btn' ).property( 'disabled', false );
     d3.select( '#export-embedding-btn' ).property( 'disabled', false );
     d3.select( '#export-config-btn' ).property( 'disabled', false );
+    
+    // Update the name of the selected dataset 
     d3.select( '#dataset-name-main' ).html( ' ' + dataset.name + ' dataset' );
 
     // Initialize feature selection panel
     featureSelection.features = dataset.config.features;
     featureSelection.roles = dataset.config.roles;
     featureSelection.onCheck = featureOnCheck;
+    //featureSelection.onCheckAll = featureOnCheckAll;
     featureSelection.onColorChange = featureOnColorChange;
     featureSelection.init();
 
@@ -89,12 +98,34 @@ function featureOnCheck( feature ) {
   // Restart the execution of a new embedding
   embed.data = dataset.visibleData;
   embed.features = dataset.config.roles.embed;
-  embed.stop();
-  embed.start();
+  //embed.stop();
+  //embed.start();
 
   // Update feature distributions
   featureDistribution.roles = dataset.config.roles;
   featureDistribution.init();
+
+}
+
+var allChecked = false;
+
+function featureOnCheckAll() {
+
+  if( allChecked ) {
+    d3.selectAll( '.custom-control-input' ).property( 'checked', false );
+    dataset.config.roles.embed = [];
+    allChecked = false;
+  } else {
+    
+    dataset.config.roles.embed = dataset.config.features.map( f => {
+      if( f.type !== 'categorical' ) {
+        d3.select( '#' + f.name + '-chk' ).property( 'checked', true );
+      }
+      return f.name;
+    } );
+
+    allChecked = true;
+  }
 
 }
 
@@ -118,11 +149,13 @@ function featureOnColorChange( feature_name ) {
 
 function navioFiltering() {
 
+  console.log( dataset.visibleData );
+
   // Restart the execution of a new embedding
   embed.data = dataset.visibleData;
   embed.features = dataset.config.roles.embed;
-  embed.stop();
-  embed.start();
+  //embed.stop();
+  //embed.start();
 
   // Update table details
   tableDetails.data = dataset.visibleData;
@@ -136,12 +169,19 @@ function navioFiltering() {
 
 function embedRun() {
 
-  if( embed.running ) {
-    embed.stop();
+  if( dataset.config.roles.embed.length > 0 ) {
+
+    if( embed.running ) {
+      embed.stop();
+    } else {
+      embed.data = dataset.visibleData;
+      embed.features = dataset.config.roles.embed;
+      embed.start();
+    }
+
   } else {
-    embed.data = dataset.visibleData;
-    embed.features = dataset.config.roles.embed;
-    embed.start();
+    // TODO: Modal bootstrap
+    alert( 'At least one attribute must be checked!' );
   }
 
 }
