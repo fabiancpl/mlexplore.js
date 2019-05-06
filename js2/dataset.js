@@ -100,7 +100,7 @@ var dataset = ( function() {
       return {
         name: f,
         type: props.type,
-        sclae: props.scale
+        scale: props.scale
       }
     } );
 

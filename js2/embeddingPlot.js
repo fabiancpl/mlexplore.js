@@ -1,6 +1,7 @@
 var embeddingPlot = ( function() {
 
-  var data, embedding, color;
+  var data, embedding, color,
+    onHighlighting;
 
   var margin = { top: 10, right: 10, bottom: 10, left: 10 },
     width, height, iWidth, iHeight,
@@ -44,24 +45,24 @@ var embeddingPlot = ( function() {
 
     xScale
       .range( [ 0, iWidth ] )
-      .domain( [ d3.min( embedding, d => d[ 0 ] ), d3.max( embedding, d => d[ 0 ] ) ] );
+      .domain( [ d3.min( data, d => d.__x ), d3.max( data, d => d.__x ) ] );
 
     yScale
       .range( [ iHeight, 0 ] )
-      .domain( [ d3.min( embedding, d => d[ 1 ] ), d3.max( embedding, d => d[ 1 ] ) ] );   
+      .domain( [ d3.min( data, d => d.__y ), d3.max( data, d => d.__y ) ] );   
 
     if( color !== undefined )
       zScale
         .domain( d3.map( data, f => f[ color ] ) );
 
     points = g.selectAll( '.embedding-circle' )
-      .data( embedding )
+      .data( data )
       .enter()
       .append( 'circle' )
         .attr( 'class', 'embedding-circle' )
-        .attr( 'id', ( d, i ) => data[ i ].__seqId )
-        .attr( 'cx', d => xScale( d[ 0 ] ) )
-        .attr( 'cy', d => yScale( d[ 1 ] ) )
+        .attr( 'id', d => d.__seqId )
+        .attr( 'cx', d => xScale( d.__x ) )
+        .attr( 'cy', d => yScale( d.__y ) )
         .attr( 'r', 3 )
         .attr( 'fill', ( d, i ) => ( color !== undefined && data !== undefined ) ? zScale( data[ i ][ color ] ) : 'steelblue' )
         .on( 'click', ( d, i ) => onItemClick( data[ i ] ) )
@@ -115,15 +116,17 @@ var embeddingPlot = ( function() {
     // ref: https://github.com/d3/d3-brush/issues/10
     d3.select( this ).call( brush.move, null );
 
-    var d_brushed = d3.selectAll( ".brushed" ).data();
+    var d_brushed = g.selectAll( ".brushed" ).data();
+
+    onHighlighting( d_brushed );
 
     // populate table if one or more elements is brushed
     if( d_brushed.length > 0 ) {
-        //clearTableRows();
-        //d_brushed.forEach(d_row => populateTableRow(d_row));
-        console.log( d_brushed.length );
+      //clearTableRows();
+      //d_brushed.forEach(d_row => populateTableRow(d_row));
+      //console.log( d_brushed.length );
     } else {
-      console.log( 'No selection' );
+      //console.log( 'No selection' );
       cleanHighlight();
     }
   }
@@ -145,6 +148,9 @@ var embeddingPlot = ( function() {
       points
         .attr( 'fill', ( d, i ) => zScale( data[ i ][ color ] ) );
 
+    } else {
+      points
+        .attr( 'fill', 'steelblue' );
     }
 
   }
@@ -179,6 +185,9 @@ var embeddingPlot = ( function() {
     },
     set color( c ) {
       color = c;
+    },
+    set onHighlighting( f ) {
+      onHighlighting = f;
     }
   }
 } )();

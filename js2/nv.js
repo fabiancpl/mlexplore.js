@@ -23,7 +23,7 @@ var nv = ( function() {
     // Set features by type
     features.map( f => {
       if( f.type === 'sequential' ){
-        nav.addSequentialAttrib( f.name, f.scale );
+        nav.addSequentialAttrib( f.name, f.scalde );
       } else if( f.type === 'diverging' ){
         nav.addDivergingAttrib( f.name, f.scale );
       } else if( f.type === 'boolean' ){

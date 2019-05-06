@@ -7,7 +7,7 @@ var featureDistribution = ( function() {
     var featDistSelections = d3.select( '#feature-distribution' );
     featDistSelections.html( '' );
 
-    features.filter( f => f.name !== roles.color ).map( f => {
+    features.filter( f => ( f.name !== roles.color ) && ( roles.embed.includes( f.name ) ) ).map( f => {
 
       var featDistSelection = featDistSelections.append( 'div' )
         .attr( 'id', f.name + '-distribution' );

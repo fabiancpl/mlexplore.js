@@ -43,6 +43,7 @@ var miniEmbeddingPlot = ( function() {
       .data( data )
       .enter()
       .append( 'circle' )
+        .attr( 'id', d => d.__seqId )
         .attr( "class", "mini-embedding-circle" )
         .attr( 'cx', d => xScale( d.__x ) )
         .attr( 'cy', d => yScale( d.__y ) )
@@ -60,13 +61,31 @@ var miniEmbeddingPlot = ( function() {
       points
         .attr( 'fill', ( d, i ) => zScale( data[ i ][ color ] ) );
 
+    } else {
+      points
+        .attr( 'fill', 'steelblue' );
     }
 
+  }
+
+  function highlight( selection ) {
+
+    console.log( selection );
+
+    points.classed( 'brushed', false );
+    points.classed( 'non_brushed', true );
+
+    selection.map( sel => {
+      var point = g.select( '[id="' + sel.__seqId + '"]' );
+      point.classed( 'non_brushed', false );
+      point.classed( 'brushed', true );
+    } );
   }
 
   return {
     draw: draw,
     changeColor: changeColor,
+    highlight: highlight,
     set data( d ) {
       data = d;
     },

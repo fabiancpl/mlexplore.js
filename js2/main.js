@@ -50,13 +50,15 @@ function loadDataset( name ) {
     embed.onStep = embedStep;
     embed.onStop = embedOnStop;
     embed.init();
-    embed.start();
+    //embed.start();
 
     // Initialize cluster panel
     cluster.data = dataset.visibleData;
     cluster.features = dataset.config.roles.embed;
     cluster.onStop = clusterOnStop;
     cluster.init();
+
+    embeddingPlot.onHighlighting = embeddingOnHighlighting;
 
     // Initialize table
     tableDetails.data = dataset.visibleData;
@@ -174,6 +176,11 @@ function embedRun() {
     if( embed.running ) {
       embed.stop();
     } else {
+        
+      miniEmbeddingPlot.data = dataset.visibleData;
+      miniEmbeddingPlot.color = dataset.config.roles.color;
+      miniEmbeddingPlot.draw();
+
       embed.data = dataset.visibleData;
       embed.features = dataset.config.roles.embed;
       embed.start();
@@ -196,9 +203,14 @@ function clusterRun() {
 
 function embedStep( embedding ) {
 
+  dataset.visibleData = dataset.visibleData.map( ( d, i ) => {
+    d.__x = embedding.solution[ i ][ 0 ];
+    d.__y = embedding.solution[ i ][ 1 ];
+  } );
+
   // Update embedding plot
   embeddingPlot.data = dataset.visibleData;
-  embeddingPlot.embedding = embedding.solution;
+  //embeddingPlot.embedding = embedding.solution;
   embeddingPlot.color = dataset.config.roles.color;
   embeddingPlot.draw();
 
@@ -213,13 +225,19 @@ function embedOnStop( embedding, hparams ) {
     d.__y = embedding.solution[ i ][ 1 ];
   } );
 
+  // Update embedding plot
+  embeddingPlot.data = dataset.visibleData;
+  //embeddingPlot.embedding = embedding.solution;
+  embeddingPlot.color = dataset.config.roles.color;
+  embeddingPlot.draw();
+
   hparams[ 'iterations' ] = embedding.i;
   if( dataset.config.models === undefined ) dataset.config.models = {};
   dataset.config.models.embedding = hparams;
 
-  miniEmbeddingPlot.data = dataset.visibleData;
+  /*miniEmbeddingPlot.data = dataset.visibleData;
   miniEmbeddingPlot.color = dataset.config.roles.color;
-  miniEmbeddingPlot.draw();
+  miniEmbeddingPlot.draw();*/
 
   nv.update();
 }
@@ -244,6 +262,11 @@ function clusterOnStop( clusters, hparams ) {
   featureDistribution.init();
 
   nv.update();
+}
+
+function embeddingOnHighlighting( selection ) {
+  console.log( selection.length );
+  miniEmbeddingPlot.highlight( selection );
 }
 
 function tableRowSelection( row, $element ) {
