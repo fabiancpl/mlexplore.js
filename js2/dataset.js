@@ -129,7 +129,7 @@ var dataset = ( function() {
       if( values.length === 2 && ( values.includes( '0' ) && values.includes( '1' ) ) ) {
         return { 
           type: 'boolean', 
-          scale: d3.scaleOrdinal( d3.schemePaired ).domain( [ 0, 1 ] )
+          scale: d3.scaleOrdinal( d3.schemeSet2 ).domain( [ 0, 1 ] )
         };
       } else if( d3.min( data, d => d[ f ] ) < 0 ) {
         return { 
