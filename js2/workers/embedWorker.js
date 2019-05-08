@@ -24,11 +24,21 @@ function embedWorker() {
     console.info( hparams );
     console.info( 'Attributes: ' + features );
     console.info( 'Númber of Items: ' + data.length );
+    
+    importScripts( 'https://d3js.org/d3.v5.min.js' );  
+    importScripts( '../../libs/tsne.js' );
+
+    // Scaling features
+    feature_stats = {};
+    features.map( feature => {
+      feature_stats[ feature ] = {
+        "mean": d3.mean( data, d => d[ feature ] ),
+        "std": d3.deviation( data, d => d[ feature ] )
+      }
+    } );
 
     // Transform data to multi-dimensional array
-    var arrayData = data.map( d => features.map( feature => +d[ feature ] ) );
-
-    importScripts( '../../libs/tsne.js' );
+    var arrayData = data.map( d => features.map( feature => ( +d[ feature ] - feature_stats[ feature ].mean ) / feature_stats[ feature ].std ) );
 
     // Instantiate t-SNE object and attach the data
     var tsne = new tsnejs.tSNE( hparams );

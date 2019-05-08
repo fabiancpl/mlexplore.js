@@ -15,11 +15,22 @@ function clusterWorker() {
     console.info( 'Attributes: ' + features );
     console.info( 'Númber of Items: ' + data.length );
 
+    importScripts( 'https://d3js.org/d3.v5.min.js' );
+
+    // Scaling features
+    feature_stats = {};
+    features.map( feature => {
+      feature_stats[ feature ] = {
+        "mean": d3.mean( data, d => d[ feature ] ),
+        "std": d3.deviation( data, d => d[ feature ] )
+      }
+    } );
+
     // Transform data to multi-dimensional array
     var featuredData = data.map( d => {
       datum = {};
       features.forEach( f => {
-        datum[ f ] = +d[ f ];
+        datum[ f ] = ( +d[ f ] - feature_stats[ f ].mean ) / feature_stats[ f ].std;
       } );
       return datum;
     } );

@@ -107,7 +107,7 @@ var dataset = ( function() {
     // Defines candidates features for embedding
     config.roles = {};
     config.roles.embed = config.features.filter( f => f.type === 'sequential' || f.type === 'diverging' || f.type ===  'boolean' )
-      .filter( f => !f.name.toLowerCase().includes( 'id' ) ).map( f => f.name );
+      .filter( f => ( !f.name.toLowerCase().startsWith( 'id' ) ) || ( !f.name.toLowerCase().endsWith( 'id' ) ) ).map( f => f.name );
     
     // Try to select an appropiate feature for color encoding
     var categFeatures = config.features.filter( f => f.type === 'categorical' );
@@ -139,7 +139,7 @@ var dataset = ( function() {
       } else {
         return { 
           type: 'sequential', 
-          scale: d3.scaleSequential( d3.schemeBlues ).domain( [ 0, d3.max( data, d => d[ f ] ) ] )
+          scale: d3.scaleSequential( d3.interpolateBlues ).domain( [ 0, d3.max( data, d => d[ f ] ) ] )
         };
       }
 

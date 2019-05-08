@@ -23,13 +23,13 @@ var nv = ( function() {
     // Set features by type
     features.map( f => {
       if( f.type === 'sequential' ){
-        nav.addSequentialAttrib( f.name, f.scalde );
+        nav.addSequentialAttrib( f.name, f.scale );
       } else if( f.type === 'diverging' ){
-        nav.addDivergingAttrib( f.name, f.scale );
+        nav.addAttrib( f.name, f.scale );
       } else if( f.type === 'boolean' ){
-        nav.addBooleanAttrib( f.name, f.scale );
+        nav.addAttrib( f.name, f.scale );
       } else {
-        nav.addCategoricalAttrib( f.name, f.scale );
+        nav.addAttrib( f.name, f.scale );
       }
     } );
 

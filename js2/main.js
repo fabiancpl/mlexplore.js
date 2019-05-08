@@ -53,8 +53,8 @@ function loadDataset( name ) {
     //embed.start();
 
     // Initialize cluster panel
-    cluster.data = dataset.visibleData;
-    cluster.features = dataset.config.roles.embed;
+    //cluster.data = dataset.visibleData;
+    //cluster.features = dataset.config.roles.embed;
     cluster.onStop = clusterOnStop;
     cluster.init();
 
@@ -119,12 +119,12 @@ function featureOnCheckAll() {
     allChecked = false;
   } else {
     
-    dataset.config.roles.embed = dataset.config.features.map( f => {
-      if( f.type !== 'categorical' ) {
+    dataset.config.roles.embed = dataset.config.features
+      .filter( f => ( f.type !== 'categorical' ) )
+      .map( f => {
         d3.select( '#' + f.name + '-chk' ).property( 'checked', true );
-      }
-      return f.name;
-    } );
+        return f.name;
+      } );
 
     allChecked = true;
   }
@@ -196,7 +196,18 @@ function embedRun() {
 function clusterRun() {
 
   cluster.data = dataset.visibleData;
-  cluster.features = dataset.config.roles.embed;
+
+   if( dataset.config.models === undefined ) dataset.config.models = {};
+  if( dataset.config.models.clustering === undefined ) {
+    cluster.features = dataset.config.roles.embed;
+  } else {
+    if( !dataset.config.models.clustering.embedded_space ) {
+      cluster.features = dataset.config.roles.embed;
+    } else {
+      cluster.features = [ '__x', '__y' ];
+    }
+  }
+  
   cluster.start();
 
 }
