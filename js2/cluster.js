@@ -26,6 +26,12 @@ var cluster = ( function() {
         hparams.embedded_space = d3.select( '#runClusteringOnProjection' ).property( 'checked' );
       } );
 
+    /*d3.select( '#scaleFeatures' )
+      .property( 'checked', hparams.scale_features )
+      .on( 'input', function() {
+        hparams.scale_features = d3.select( '#scaleFeatures' ).property( 'checked' );
+      } );*/
+
   }
 
   function start() {

@@ -3,7 +3,8 @@ var embed = ( function() {
   var data, embedding, features, running = false,
     hparams = {
       epsilon: 200,
-      perplexity: 25
+      perplexity: 25,
+      scale_features: true
     },
     onStep, onStop;
 
@@ -40,6 +41,12 @@ var embed = ( function() {
 
     d3.select( '#hparam-epsilon-span' )
       .html( hparams.epsilon );
+
+    d3.select( '#scaleFeatures' )
+      .property( 'checked', hparams.scale_features )
+      .on( 'input', function() {
+        hparams.scale_features = d3.select( '#scaleFeatures' ).property( 'checked' );
+      } );
 
   }
 
