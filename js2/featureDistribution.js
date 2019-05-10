@@ -1,11 +1,24 @@
 var featureDistribution = ( function() {
 
-  var data, features, roles;
+  var data, features, roles,
+    colorScale = {};
 
   function init() {
 
     var featDistSelections = d3.select( '#feature-distribution' );
     featDistSelections.html( '' );
+
+    var colorFeature = features.find( f => f.name === roles.color );
+    if( colorFeature.type === 'categorical' ) {
+      colorScale.type = 'nominal';
+      colorScale.scheme = 'category10';
+    } else if( colorFeature.type === 'boolean' ) {
+      colorScale.type = 'nominal';
+      colorScale.scheme = 'category10';
+    } else {
+      colorScale.type = 'quantitative';
+      colorScale.scheme = 'blues';
+    }
 
     features.filter( f => ( f.name !== roles.color ) && ( roles.embed.includes( f.name ) ) ).map( f => {
 
@@ -19,7 +32,7 @@ var featureDistribution = ( function() {
   }
 
   function buildSpec( f, width ) {
-    
+
     var sequentialSpec = {
       '$schema': 'https://vega.github.io/schema/vega-lite/v3.json',
       'width': width,
@@ -27,12 +40,12 @@ var featureDistribution = ( function() {
       'mark': 'tick',
       'encoding': {
         'x': { 'field': f.name, 'type': 'quantitative', "scale": { "domain": [ d3.min( data, d => d[ f.name ] ), d3.max( data, d => d[ f.name ] ) ] } },
-        'y': { 'field': roles.color, 'type': 'nominal' },
-        'color': { 'field': roles.color, 'type': 'nominal', 'scale': { 'scheme': 'category10' } }
+        //'y': { 'field': roles.color, 'type': colorScale.type },
+        'color': { 'field': roles.color, 'type': colorScale.type, 'scale': { 'scheme': colorScale.scheme } }
       }
     };
 
-    var booleanSpec = {
+    /*var booleanSpec = {
       '$schema': 'https://vega.github.io/schema/vega-lite/v3.json',
       'width': width,
       'data': { 'values': data },
@@ -45,9 +58,10 @@ var featureDistribution = ( function() {
         'y': { 'field': roles.color, 'type': 'nominal' },
         'color': { 'field': roles.color, 'type': 'nominal' }
       }
-    };
+    };*/
 
-    return ( f.type === 'boolean' ) ? booleanSpec : sequentialSpec;
+    //return ( f.type === 'boolean' ) ? booleanSpec : sequentialSpec;
+    return sequentialSpec;
 
   }
 

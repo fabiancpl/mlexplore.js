@@ -100,19 +100,36 @@ var dataset = ( function() {
       return {
         name: f,
         type: props.type,
-        scale: props.scale
+        //scale: props.scale
       }
     } );
 
     // Defines candidates features for embedding
     config.roles = {};
-    config.roles.embed = config.features.filter( f => f.type === 'sequential' || f.type === 'diverging' || f.type ===  'boolean' )
+    config.roles.embed = config.features
+      .filter( f => f.type === 'sequential' || f.type === 'diverging' || f.type ===  'boolean' )
       .filter( f => ( !f.name.toLowerCase().startsWith( 'id' ) ) || ( !f.name.toLowerCase().endsWith( 'id' ) ) ).map( f => f.name );
     
     // Try to select an appropiate feature for color encoding
     var categFeatures = config.features.filter( f => f.type === 'categorical' );
     var candidates = categFeatures.filter( f => d3.map( data, d => d[ f.name ] ).keys().length <= 5 );
     config.roles.color = candidates[ 0 ].name;
+
+    // Add features for model results
+    config.features.push( {
+      'name': '__x',
+      'type': 'diverging'
+    } );
+
+    config.features.push( {
+      'name': '__y',
+      'type': 'diverging'
+    } );
+
+    config.features.push( {
+      'name': '__cluster',
+      'type': 'categorical'
+    } );
 
     console.log( 'By default configuration created!' );
 
@@ -129,24 +146,24 @@ var dataset = ( function() {
       if( values.length === 2 && ( values.includes( '0' ) && values.includes( '1' ) ) ) {
         return { 
           type: 'boolean', 
-          scale: d3.scaleOrdinal( d3.schemeSet2 ).domain( [ 0, 1 ] )
+          //scale: d3.scaleOrdinal( d3.schemeSet2 ).domain( [ 0, 1 ] )
         };
       } else if( d3.min( data, d => d[ f ] ) < 0 ) {
         return { 
           type: 'diverging', 
-          scale: d3.scaleSequential( d3.interpolatePRGn ).domain( [ d3.min( data, d => d[ f ] ), d3.max( data, d => d[ f ] ) ] )
+          //scale: d3.scaleSequential( d3.interpolatePRGn ).domain( [ d3.min( data, d => d[ f ] ), d3.max( data, d => d[ f ] ) ] )
         };        
       } else {
         return { 
           type: 'sequential', 
-          scale: d3.scaleSequential( d3.interpolateBlues ).domain( [ 0, d3.max( data, d => d[ f ] ) ] )
+          //scale: d3.scaleSequential( d3.interpolateBlues ).domain( [ 0, d3.max( data, d => d[ f ] ) ] )
         };
       }
 
     } else {
       return { 
         type: 'categorical', 
-        scale: d3.scaleOrdinal( d3.schemeCategory10 ).domain( d3.map( data, d => d[ f ] ) )
+        //scale: d3.scaleOrdinal( d3.schemeCategory10 ).domain( d3.map( data, d => d[ f ] ) )
       };
     } 
   }

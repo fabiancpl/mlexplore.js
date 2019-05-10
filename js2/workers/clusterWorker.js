@@ -11,29 +11,41 @@ function clusterWorker() {
     const hparams = e.data.hparams;
 
     console.info( 'Clustering data!' );
-    console.info( 'Number of clusters: ' + hparams.clusters );
+    console.info( hparams );
     console.info( 'Attributes: ' + features );
     console.info( 'Númber of Items: ' + data.length );
 
     importScripts( 'https://d3js.org/d3.v5.min.js' );
 
     // Scaling features
-    feature_stats = {};
-    features.map( feature => {
-      feature_stats[ feature ] = {
-        "mean": d3.mean( data, d => d[ feature ] ),
-        "std": d3.deviation( data, d => d[ feature ] )
-      }
-    } );
+    var arrayData;
+    if( hparams.scale_features ) {
 
-    // Transform data to multi-dimensional array
-    var featuredData = data.map( d => {
-      datum = {};
-      features.forEach( f => {
-        datum[ f ] = ( +d[ f ] - feature_stats[ f ].mean ) / feature_stats[ f ].std;
+      feature_stats = {};
+      features.map( feature => {
+        feature_stats[ feature ] = {
+          "mean": d3.mean( data, d => d[ feature ] ),
+          "std": d3.deviation( data, d => d[ feature ] )
+        }
       } );
-      return datum;
-    } );
+
+      // Transform data to multi-dimensional array
+      var featuredData = data.map( d => {
+        var datum = {};
+        features.forEach( f => { datum[ f ] = ( +d[ f ] - feature_stats[ f ].mean ) / feature_stats[ f ].std; } );
+        return datum;
+      } );
+
+    } else {
+      
+      // Transform data to multi-dimensional array
+      var featuredData = data.map( d => {
+        var datum = {};
+        features.forEach( f => { datum[ f ] = +d[ f ]; } );
+        return datum;
+      } );
+
+    }
 
     var Http = new XMLHttpRequest();
     var url = 'https://t17ah9d6hf.execute-api.us-east-1.amazonaws.com/dev/kmeans/' + hparams.clusters;

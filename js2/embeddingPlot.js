@@ -1,13 +1,13 @@
 var embeddingPlot = ( function() {
 
-  var data, embedding, color,
+  var data, features, color,
     onHighlighting;
 
   var margin = { top: 10, right: 10, bottom: 10, left: 10 },
     width, height, iWidth, iHeight,
     xScale = d3.scaleLinear(),
     yScale = d3.scaleLinear(),
-    zScale = d3.scaleOrdinal( d3.schemeCategory10 );
+    zScale;
 
   var svg, g,
     points, brush,
@@ -52,8 +52,9 @@ var embeddingPlot = ( function() {
       .domain( [ d3.min( data, d => d.__y ), d3.max( data, d => d.__y ) ] );   
 
     if( color !== undefined )
-      zScale
-        .domain( d3.map( data, f => f[ color ] ) );
+      zScale = features.find( f => f.name === color ).scale;
+      /*zScale
+        .domain( d3.map( data, f => f[ color ] ) );*/
 
     points = g.selectAll( '.embedding-circle' )
       .data( data )
@@ -142,9 +143,8 @@ var embeddingPlot = ( function() {
   function changeColor() {
 
     if( points !== undefined && color !== undefined ) {
-      zScale
-        .domain( d3.map( data, f => f[ color ] ) );
-
+      zScale = features.find( f => f.name === color ).scale;
+      
       points
         .attr( 'fill', ( d, i ) => zScale( data[ i ][ color ] ) );
 
@@ -180,8 +180,8 @@ var embeddingPlot = ( function() {
     set data( d ) {
       data = d;
     },
-    set embedding( e ) {
-      embedding = e;
+    set features( f ) {
+      features = f;//.filter( f => ![ '__seqId', '__x', '__y', '__cluster' ].includes( f.name ) );
     },
     set color( c ) {
       color = c;

@@ -3,7 +3,8 @@ var cluster = ( function() {
   var data, clusters, features,
     hparams = {
       clusters: 3,
-      embedded_space: false
+      embedded_space: false,
+      scale_features: true
     };
 
   const worker = new Worker( './js2/workers/clusterWorker.js' );
@@ -26,11 +27,11 @@ var cluster = ( function() {
         hparams.embedded_space = d3.select( '#runClusteringOnProjection' ).property( 'checked' );
       } );
 
-    /*d3.select( '#scaleFeatures' )
+    d3.select( '#scale-clustering-features' )
       .property( 'checked', hparams.scale_features )
       .on( 'input', function() {
-        hparams.scale_features = d3.select( '#scaleFeatures' ).property( 'checked' );
-      } );*/
+        hparams.scale_features = d3.select( '#scale-clustering-features' ).property( 'checked' );
+      } );
 
   }
 

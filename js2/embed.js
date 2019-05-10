@@ -42,10 +42,10 @@ var embed = ( function() {
     d3.select( '#hparam-epsilon-span' )
       .html( hparams.epsilon );
 
-    d3.select( '#scaleFeatures' )
+    d3.select( '#scale-dr-features' )
       .property( 'checked', hparams.scale_features )
       .on( 'input', function() {
-        hparams.scale_features = d3.select( '#scaleFeatures' ).property( 'checked' );
+        hparams.scale_features = d3.select( '#scale-dr-features' ).property( 'checked' );
       } );
 
   }

@@ -58,7 +58,10 @@ function loadDataset( name ) {
     cluster.onStop = clusterOnStop;
     cluster.init();
 
+    embeddingPlot.features = dataset.config.features;
     embeddingPlot.onHighlighting = embeddingOnHighlighting;
+
+    miniEmbeddingPlot.features = dataset.config.features;
 
     // Initialize table
     tableDetails.data = dataset.visibleData;
@@ -249,6 +252,12 @@ function embedOnStop( embedding, hparams ) {
   /*miniEmbeddingPlot.data = dataset.visibleData;
   miniEmbeddingPlot.color = dataset.config.roles.color;
   miniEmbeddingPlot.draw();*/
+
+  // Update the domain of the embedding axes scales
+  dataset.config.features.find( f => f.name === '__x' ).scale
+    .domain( [ d3.min( dataset.data, d => d.__x ), d3.max( dataset.data, d => d.__x ) ] );
+  dataset.config.features.find( f => f.name === '__y' ).scale
+    .domain( [ d3.min( dataset.data, d => d.__y ), d3.max( dataset.data, d => d.__y ) ] );
 
   nv.update();
 }

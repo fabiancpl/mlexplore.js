@@ -95,9 +95,9 @@
 
                         <div id="hparams-tuning" class="col-md-12 border-bottom text-center">
 
-                          <input id="scaleFeatures" type="checkbox"> Scale attributes
+                          <input id="scale-dr-features" type="checkbox"> Scale attributes
                           <!--Iterations: <input id="hparam-iterations" type="range" min="1" max="2000" step="10"><span id="hparam-iterations-span"></span>-->
-                          Perplexity: <i class="fas fa-info-circle" data-toggle="tooltip" title="The perplexity is related to the number of nearest neighbors that is used in other manifold learning algorithms. Larger datasets usually require a larger perplexity."></i> <input id="hparam-perplexity" type="range" class="slider" min="5" max="50" step="5"><span id="hparam-perplexity-span"></span>
+                          Perplexity: <i class="fas fa-info-circle" data-toggle="tooltip" title="The perplexity is related to the number of nearest neighbors that is used in other manifold learning algorithms. Larger datasets usually require a larger perplexity."></i> <input id="hparam-perplexity" type="range" class="slider" step="5"><span id="hparam-perplexity-span"></span>
                           Learning Rate: <i class="fas fa-info-circle" data-toggle="tooltip" title="If the learning rate is too high, the data may look like a ‘ball’ with any point approximately equidistant from its nearest neighbours. If the learning rate is too low, most points may look compressed in a dense cloud with few outliers. If the cost function gets stuck in a bad local minimum increasing the learning rate may help."></i> <input id="hparam-epsilon" type="range" min="10" max="1000" step="10"><span id="hparam-epsilon-span"></span>
                           <button id="run-embed-btn" type="button" class="btn btn-success btn-sm" onclick="embedRun()" disabled>Run t-SNE</button>
                           <!--<button id="restart-embed-btn" type="button" class="btn btn-secondary btn-sm" onclick="embedRestart()" disabled>Restart</button>-->
@@ -110,6 +110,7 @@
 
                         <div id="hparams-tuning" class="col-md-12 border-bottom text-center">
 
+                          <input id="scale-clustering-features" type="checkbox"> Scale attributes
                           Number of clusters: <i class="fas fa-info-circle" data-toggle="tooltip" title="The number of clusters to form as well as the number of centroids to generate."></i> <input id="hparam-clusters" type="range" min="2" max="10" step="1"><span id="hparam-clusters-span"></span>
                           <input id="runClusteringOnProjection" type="checkbox"> Run on projected data
                           <button id="run-cluster-btn" type="button" class="btn btn-success btn-sm" onclick="clusterRun()" disabled>Run K-Means</button>
@@ -285,17 +286,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tsne"></script>
 
     <!-- Scripts -->
-    <!-- <script type="text/javascript" src="./js/components/non-visual/project.js"></script> -->
-    <!--<script type="text/javascript" src="./js/components/non-visual/cluster.js"></script>
-    <script type="text/javascript" src="./js/components/visual/projectionChart.js"></script>
-    <script type="text/javascript" src="./js/featureSelection.js"></script>
-    <script type="text/javascript" src="./js/encodeColor.js"></script>
-    <script type="text/javascript" src="./js/navio.js"></script>
-    <script type="text/javascript" src="./js/tableDetails.js"></script>
-    <script type="text/javascript" src="./js/ticks.js"></script>
-    <script type="text/javascript" src="./js/export.js"></script>
-    <script type="text/javascript" src="./js/main.js"></script>-->
-
     <script type="text/javascript" src="./js2/dataset.js"></script>
     <script type="text/javascript" src="./js2/featureSelection.js"></script>
     <script type="text/javascript" src="./js2/nv.js"></script>
