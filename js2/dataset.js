@@ -107,7 +107,7 @@ var dataset = ( function() {
     // Defines candidates features for embedding
     config.roles = {};
     config.roles.embed = config.features
-      .filter( f => f.type === 'sequential' || f.type === 'diverging' || f.type ===  'boolean' )
+      .filter( f => f.type === 'numerical' )
       .filter( f => ( !f.name.toLowerCase().startsWith( 'id' ) ) || ( !f.name.toLowerCase().endsWith( 'id' ) ) ).map( f => f.name );
     
     // Try to select an appropiate feature for color encoding
@@ -118,12 +118,14 @@ var dataset = ( function() {
     // Add features for model results
     config.features.push( {
       'name': '__x',
-      'type': 'diverging'
+      //'type': 'diverging'
+      'type': 'numerical'
     } );
 
     config.features.push( {
       'name': '__y',
-      'type': 'diverging'
+      //'type': 'diverging'
+      'type': 'numerical'
     } );
 
     config.features.push( {
@@ -142,7 +144,7 @@ var dataset = ( function() {
     if( typeof data[ 0 ][ f ] === 'number' ) { 
       
       // If attribute contains only 0 and 1 values, it is understood as boolean
-      var values = d3.map( data, d => d[ f ] ).keys();
+      /*var values = d3.map( data, d => d[ f ] ).keys();
       if( values.length === 2 && ( values.includes( '0' ) && values.includes( '1' ) ) ) {
         return { 
           type: 'boolean', 
@@ -158,7 +160,12 @@ var dataset = ( function() {
           type: 'sequential', 
           //scale: d3.scaleSequential( d3.interpolateBlues ).domain( [ 0, d3.max( data, d => d[ f ] ) ] )
         };
-      }
+      }*/
+
+      return { 
+        type: 'numerical', 
+        //scale: d3.scaleOrdinal( d3.schemeCategory10 ).domain( d3.map( data, d => d[ f ] ) )
+      };      
 
     } else {
       return { 

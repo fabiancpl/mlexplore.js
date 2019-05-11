@@ -49,6 +49,26 @@ var featureSelection = ( function() {
           .property( 'selected', f => ( f.name === roles.color ) ? true : false )
           .html( f => f.name );
 
+    // Control to hide features by user filter
+    d3.select( '#feature-filter' )
+      .on( 'input', function() {
+        
+        featButtons.classed( 'feature-hide', true );
+        
+        if( this.value !== '' ) {
+          features.map( f => {
+            if( f.name.toLowerCase().includes( this.value.toLowerCase() ) ) {
+              d3.select( '#' + f.name + '-feature' )
+                .classed( 'feature-hide', false );            
+            }
+
+          } );
+        } else {
+          featButtons.classed( 'feature-hide', false );
+        }
+
+      } );
+
   }
 
   // Clean panel
@@ -81,7 +101,7 @@ var featureSelection = ( function() {
     clean: clean,
     addClusterFeature: addClusterFeature, 
     set features( f ) {
-      features = f.filter( f => ![ '__seqId', '__x', '__y' ].includes( f.name ) );
+      features = f.filter( f => ![ '__seqId', '__x', '__y', '__cluster' ].includes( f.name ) );
     },
     set roles( r ) {
       roles = r;

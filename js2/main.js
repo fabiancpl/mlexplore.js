@@ -143,6 +143,8 @@ function featureOnColorChange( feature_name ) {
   // Update embedding plot
   embeddingPlot.color = dataset.config.roles.color;
   embeddingPlot.changeColor();
+  
+
   miniEmbeddingPlot.color = dataset.config.roles.color;
   miniEmbeddingPlot.changeColor();
 
@@ -157,10 +159,16 @@ function navioFiltering() {
   console.log( dataset.visibleData );
 
   // Restart the execution of a new embedding
-  embed.data = dataset.visibleData;
-  embed.features = dataset.config.roles.embed;
+  //embed.data = dataset.visibleData;
+  //embed.features = dataset.config.roles.embed;
   //embed.stop();
   //embed.start();
+
+  embeddingPlot.data = dataset.visibleData;
+  embeddingPlot.draw();
+  
+  miniEmbeddingPlot.data = dataset.visibleData;
+  miniEmbeddingPlot.draw();
 
   // Update table details
   tableDetails.data = dataset.visibleData;
@@ -180,9 +188,9 @@ function embedRun() {
       embed.stop();
     } else {
         
-      miniEmbeddingPlot.data = dataset.visibleData;
-      miniEmbeddingPlot.color = dataset.config.roles.color;
-      miniEmbeddingPlot.draw();
+      //miniEmbeddingPlot.data = dataset.visibleData;
+      //miniEmbeddingPlot.color = dataset.config.roles.color;
+      //miniEmbeddingPlot.draw();
 
       embed.data = dataset.visibleData;
       embed.features = dataset.config.roles.embed;
@@ -234,6 +242,12 @@ function embedOnStop( embedding, hparams ) {
 
   console.log(  'Embedding finished!' );
 
+  // Clear previos embedding
+  dataset.data.map( ( d, i ) => {
+    d.__x = undefined;
+    d.__y = undefined;
+  } );
+
   dataset.visibleData = dataset.visibleData.map( ( d, i ) => {
     d.__x = embedding.solution[ i ][ 0 ];
     d.__y = embedding.solution[ i ][ 1 ];
@@ -266,11 +280,17 @@ function clusterOnStop( clusters, hparams ) {
 
   console.log(  'Clustering finished!' );
 
+  // Clear previos cluster
+  dataset.data.map( ( d, i ) => {
+    d.__cluster = undefined;
+  } );
+
   dataset.visibleData = dataset.visibleData.map( ( d, i ) => {
     d.__cluster = +clusters[ i ];
   } );
 
   dataset.config.roles.color = '__cluster';
+  dataset.config.features.find( f => f.name === '__cluster' ).scale.domain( d3.map( dataset.visibleData, f => f[ '__cluster' ] ) );
 
   if( dataset.config.models === undefined ) dataset.config.models = {};
   dataset.config.models.clustering = hparams;
@@ -289,19 +309,22 @@ function embeddingOnHighlighting( selection ) {
   miniEmbeddingPlot.highlight( selection );
 }
 
+function updateMiniEmbedding() {
+  miniEmbeddingPlot.data = dataset.visibleData;
+  miniEmbeddingPlot.color = dataset.config.roles.color;
+  miniEmbeddingPlot.draw();
+}
+
 function tableRowSelection( row, $element ) {
   console.log( row );
   embeddingPlot.onItemClick( row );
 }
 
 function exportData() {
-  //exportResults.exportData();
+  exportResults.data = dataset.visibleData;
+  exportResults.exportData();
 }
 
-
-function exportEmbedding() {
-  exportResults.exportEmbedding();
-}
 
 function exportEmbedding() {
   exportResults.exportEmbedding();

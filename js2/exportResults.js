@@ -13,18 +13,20 @@ var exportResults = ( function() {
     var option2 = d3.select( '#exportDataOption2' ).property( 'checked' );
     var option3 = d3.select( '#exportDataOption3' ).property( 'checked' );
 
-    var features = [ '__seqId' ];
+    var features = [];
     if( option1 ) {
+      features.push( '__seqId' );
       features.push( '__x' );
       features.push( '__y' );
-      if( colorFeature !== undefined ) features.push( colorFeature );
+      if( config.models.clustering !== undefined ) features.push( '__cluster' );
     } else if( option2 ) {
-      config.features.forEach( feature => features.push( feature.name ) );
+      features = config.features.map( f => f.name );
     } else if( option3 ) {
-      features = getProjectionFeatures();
-      features.push( 'x' );
-      features.push( 'y' );
-      if( colorFeature !== undefined ) features.push( colorFeature );
+      features = config.features.filter( f => config.roles.embed.includes( f.name ) ).map( f => f.name );
+      features = [ '__seqId' ].concat( features );
+      features.push( '__x' );
+      features.push( '__y' );
+      if( config.models.clustering !== undefined ) features.push( '__cluster' );
     }
 
     // Add the header of the CSV
@@ -33,20 +35,16 @@ var exportResults = ( function() {
     string += '\n';
 
     // Add the content of the CSV
-    visibleData.forEach( row => {
+    string += data.map( row => {
+      return features.map( feature => {
+        return row[ feature ];
+      } ).join( ',' );
+    } ).join( '\n' );
 
-      var row_array = [];
-      features.forEach( feature => {
-        row_array.push( row[ feature ] );
-      } );
-      string += row_array.toString() + '\n';
-
-    } );
-
-    downloadPlain( string, datasetName + '.csv', 'text/plain' );
+    downloadPlain( string, name + '.csv', 'text/plain' );
 
     // Hide the export data modal
-    $( '#export-results-modal' ).modal( 'hide' );
+    $( '#export-data-modal' ).modal( 'hide' );
 
   }
 

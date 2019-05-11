@@ -2,8 +2,8 @@ var embed = ( function() {
 
   var data, embedding, features, running = false,
     hparams = {
-      epsilon: 200,
-      perplexity: 25,
+      epsilon: 5,
+      perplexity: 10,
       scale_features: true
     },
     onStep, onStop;

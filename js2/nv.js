@@ -51,9 +51,7 @@ var nv = ( function() {
 
     nav.getAttribs()
       .map( f => {
-        console.log( f );
         if( features.map( g => g.name ).includes( f ) ) {
-          console.log( nav.getColorScale( f ) );
           features.find( g => g.name === f ).scale = nav.getColorScale( f );
         }
       } );

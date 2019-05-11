@@ -79,6 +79,10 @@
   min-width: 7rem;
 }
 
+.feature-hide {
+  display: none;
+}
+
 /* Embedding panel */
 
 #hparams-tuning {

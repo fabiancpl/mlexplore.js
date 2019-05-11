@@ -25,7 +25,7 @@
         <div id="load-data" class="col-md-3 border text-center">
 
           <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#load-data-modal">Load Dataset</button>
-          <span id="load-config-btn" class="btn btn-success btn-sm btn-file disabled">Load Config<input id="load-config-input" type="file" disabled></span>
+          <!--<span id="load-config-btn" class="btn btn-success btn-sm btn-file disabled">Load Config<input id="load-config-input" type="file" disabled></span>-->
           &nbsp;&nbsp;&nbsp;<span id="dataset-name-main"></span>
 
         </div>
@@ -38,8 +38,8 @@
         <div id="export-data" class="col-md-3 border text-center">
 
           <!-- Export Data panel -->
-          <button id="export-results-btn" type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#export-results-modal" disabled>Export Results</button>
-          <button id="export-embedding-btn" type="button" class="btn btn-success btn-sm" onclick="exportEmbedding()" disabled>Export Embedding</button>
+          <button id="export-results-btn" type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#export-data-modal" disabled>Export Data</button>
+          <button id="export-embedding-btn" type="button" class="btn btn-success btn-sm" onclick="exportEmbedding()" disabled>Export Embedding PNG</button>
           <button id="export-config-btn" type="button" class="btn btn-success btn-sm" onclick="exportConfiguration()" disabled>Export Config</button>
 
         </div>
@@ -48,6 +48,12 @@
         <div class="col-md-3">
 
           <div class="row">
+
+            <div class="col-md-12" style="overflow-x: scroll;">
+
+              <div id="navio"></div>
+
+            </div>
 
             <div id="feature-selection" class="col-md-12 border-right border-bottom text-center">
 
@@ -62,17 +68,11 @@
                 </div>
                 <div style="clear: left;"></div>
               </div>
+              <input type="text" id="feature-filter" placeholder="Filter..." />
               <button id="select-unselect-all-btn" type="button" class="btn btn-success btn-sm" onclick="featureOnCheckAll()">Check / Uncheck All</button>
               <div id="feature-container"></div>
 
             </div>
-
-            <div class="col-md-12" style="overflow-x: scroll;">
-
-              <div id="navio"></div>
-
-            </div>
-
 
           </div>
 
@@ -97,8 +97,8 @@
 
                           <input id="scale-dr-features" type="checkbox"> Scale attributes
                           <!--Iterations: <input id="hparam-iterations" type="range" min="1" max="2000" step="10"><span id="hparam-iterations-span"></span>-->
-                          Perplexity: <i class="fas fa-info-circle" data-toggle="tooltip" title="The perplexity is related to the number of nearest neighbors that is used in other manifold learning algorithms. Larger datasets usually require a larger perplexity."></i> <input id="hparam-perplexity" type="range" class="slider" step="5"><span id="hparam-perplexity-span"></span>
-                          Learning Rate: <i class="fas fa-info-circle" data-toggle="tooltip" title="If the learning rate is too high, the data may look like a ‘ball’ with any point approximately equidistant from its nearest neighbours. If the learning rate is too low, most points may look compressed in a dense cloud with few outliers. If the cost function gets stuck in a bad local minimum increasing the learning rate may help."></i> <input id="hparam-epsilon" type="range" min="10" max="1000" step="10"><span id="hparam-epsilon-span"></span>
+                          Perplexity: <i class="fas fa-info-circle" data-toggle="tooltip" title="The perplexity is related to the number of nearest neighbors that is used in other manifold learning algorithms. Larger datasets usually require a larger perplexity."></i> <input id="hparam-perplexity" type="range" class="slider" min="2" max="100" step="1"><span id="hparam-perplexity-span"></span>
+                          Learning Rate: <i class="fas fa-info-circle" data-toggle="tooltip" title="If the learning rate is too high, the data may look like a ‘ball’ with any point approximately equidistant from its nearest neighbours. If the learning rate is too low, most points may look compressed in a dense cloud with few outliers. If the cost function gets stuck in a bad local minimum increasing the learning rate may help."></i> <input id="hparam-epsilon" type="range" min="1" max="20" step="1"><span id="hparam-epsilon-span"></span>
                           <button id="run-embed-btn" type="button" class="btn btn-success btn-sm" onclick="embedRun()" disabled>Run t-SNE</button>
                           <!--<button id="restart-embed-btn" type="button" class="btn btn-secondary btn-sm" onclick="embedRestart()" disabled>Restart</button>-->
                           <span>Step: <span id="embed-step-span">0</span></span>
@@ -125,6 +125,7 @@
 
                 </div>
                 <div class="col-md-3 border-left border-bottom text-center">
+                  <button id="update-mini-embedding" type="button" class="btn btn-success btn-sm" onclick="updateMiniEmbedding()" style="position: absolute; right: 0;"><i class="fas fa-sync-alt"></i></button>
                   <div id="mini-embedding"></div>
                 </div>
 
@@ -195,11 +196,11 @@
     </div>
 
     <!-- Export Data Modal -->
-    <div class="modal fade" id="export-results-modal" tabindex="-1" role="dialog" aria-labelledby="export-results-modal" aria-hidden="true">
+    <div class="modal fade" id="export-data-modal" tabindex="-1" role="dialog" aria-labelledby="export-data-modal" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Export Data</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Export</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -209,19 +210,19 @@
             <div class="form-check">
               <input class="form-check-input" type="radio" name="exampleRadios" id="exportDataOption1" value="option1" checked>
               <label class="form-check-label" for="exportDataOption1">
-                Export embedding space and color attribute
+                Export model results
               </label>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="radio" name="exampleRadios" id="exportDataOption2" value="option2">
               <label class="form-check-label" for="exportDataOption2">
-                Export original attributes, embedding space and color attribute
+                Export all attributes and model results
               </label>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="radio" name="exampleRadios" id="exportDataOption3" value="option3">
               <label class="form-check-label" for="exportDataOption3">
-                Export selected attributes, embedding space and color attribute
+                Export selected attributes and model results
               </label>
             </div>
 

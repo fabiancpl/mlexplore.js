@@ -53,15 +53,17 @@ var miniEmbeddingPlot = ( function() {
 
   function changeColor() {
 
-    if( points !== undefined && color !== undefined ) {
-      zScale = features.find( f => f.name === color ).scale;
+    if( points !== undefined ) {
+      if( color !== undefined ) {
+        zScale = features.find( f => f.name === color ).scale;
 
-      points
-        .attr( 'fill', ( d, i ) => zScale( data[ i ][ color ] ) );
+        points
+          .attr( 'fill', ( d, i ) => zScale( data[ i ][ color ] ) );
 
-    } else {
-      points
-        .attr( 'fill', 'steelblue' );
+      } else {
+        points
+          .attr( 'fill', 'steelblue' );
+      }
     }
 
   }

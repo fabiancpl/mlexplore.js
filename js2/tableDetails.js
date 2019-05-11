@@ -10,7 +10,7 @@ var tableDetails = ( function() {
     var table = d3.select( '#table-details' ).append( 'table' );
 
     var columns = features.map( c => { return { field: c.name, title: c.name, sortable: true }; } );
-    console.log( columns );
+    //console.log( columns );
     var structure = {
       data: data,
       columns: columns,
