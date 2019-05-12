@@ -58,8 +58,9 @@ function loadDataset( name ) {
     cluster.onStop = clusterOnStop;
     cluster.init();
 
-    embeddingPlot.features = dataset.config.features;
+    embeddingPlot.config = dataset.config;
     embeddingPlot.onHighlighting = embeddingOnHighlighting;
+    embeddingPlot.onCleaning = embeddingOnCleaning;
 
     miniEmbeddingPlot.features = dataset.config.features;
 
@@ -305,8 +306,29 @@ function clusterOnStop( clusters, hparams ) {
 }
 
 function embeddingOnHighlighting( selection ) {
-  console.log( selection.length );
+  console.log( 'Elements highlighted: ', selection.length );
+
+  // Update the dataset
+  dataset.data.map( d => {
+    var match = selection.find( k => d.__seqId === k.__seqId );
+    if( match !== undefined ) d.__highlighted = true;
+    else d.__highlighted = false;
+  } );
+
+  nv.update();
+
   miniEmbeddingPlot.highlight( selection );
+}
+
+function embeddingOnCleaning() {
+  console.log( 'Cleaning highlighting!' );
+
+  // Update the dataset
+  dataset.data.map( d => d.__highlighted = true );
+
+  nv.update();
+
+  miniEmbeddingPlot.clean();
 }
 
 function updateMiniEmbedding() {

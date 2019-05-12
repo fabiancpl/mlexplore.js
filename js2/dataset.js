@@ -81,6 +81,11 @@ var dataset = ( function() {
 
       data = d;
 
+      data = data.map( d => {
+        d.__highlighted = true;
+        return d;
+      } );
+
       // Create the configuration object by default
       config = createConfig();
 
@@ -132,6 +137,11 @@ var dataset = ( function() {
       'name': '__cluster',
       'type': 'categorical'
     } );
+
+    /*config.features.push( {
+      'name': '__highlighted',
+      'type': 'boolean'
+    } );*/
 
     console.log( 'By default configuration created!' );
 

@@ -18,6 +18,8 @@ var nv = ( function() {
     //nav.addAttrib( '__x', d3.scaleSequential( d3.interpolateRdBu ).domain( [ -20, 20 ] ) );
     //nav.addAttrib( '__y', d3.scaleSequential( d3.interpolateRdBu ).domain( [ -20, 20 ] ) );
 
+    nav.addBooleanAttrib( '__highlighted' );
+
     var clusterScale = d3.scaleOrdinal( d3.schemeCategory10 );
     nav.addAttrib( '__cluster', clusterScale );
     //features.find( g => g.name === '__cluster' ).scale = clusterScale;

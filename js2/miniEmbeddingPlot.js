@@ -70,22 +70,35 @@ var miniEmbeddingPlot = ( function() {
 
   function highlight( selection ) {
 
-    console.log( selection );
+    if( points !== undefined ) {
 
-    points.classed( 'brushed', false );
-    points.classed( 'non_brushed', true );
+      points
+        .classed( 'brushed', false )
+        .classed( 'non_brushed', true );
 
-    selection.map( sel => {
-      var point = g.select( '[id="' + sel.__seqId + '"]' );
-      point.classed( 'non_brushed', false );
-      point.classed( 'brushed', true );
-    } );
+      selection.map( sel => {
+        var point = g.select( '[id="' + sel.__seqId + '"]' );
+        point.classed( 'non_brushed', false );
+        point.classed( 'brushed', true );
+      } );
+
+    }
+    
+  }
+
+  function clean() {
+    if( points !== undefined ) {
+      points
+        .classed( 'brushed', true )
+        .classed( 'non_brushed', false );    
+    }
   }
 
   return {
     draw: draw,
     changeColor: changeColor,
     highlight: highlight,
+    clean: clean,
     set data( d ) {
       data = d;
     },

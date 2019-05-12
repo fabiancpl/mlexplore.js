@@ -1,7 +1,7 @@
 var embeddingPlot = ( function() {
 
-  var data, features, color,
-    onHighlighting;
+  var data, config, color,
+    onHighlighting, onCleaning;
 
   var margin = { top: 10, right: 10, bottom: 10, left: 10 },
     width, height, iWidth, iHeight,
@@ -15,29 +15,32 @@ var embeddingPlot = ( function() {
 
   function draw() {
     
-    // Cleaning the component
+    // Clean the component
     d3.select( '#embedding' ).html( '' );
     d3.selectAll( '.tooltip' ).remove();
 
+    // Create the tooltip instance
     tooltip = d3.select( 'body' ).append( 'div' )
       .attr( 'class', 'tooltip' )
       .style( 'opacity', 0 );
 
+    // Select de DIV element
     width = d3.select( '#embedding' ).node().getBoundingClientRect().width - 20,
     height = width * 2 / 3,
     iWidth = width - margin.left - margin.right,
     iHeight = height - margin.top - margin.bottom;
 
+    // Create the SVG element
     svg = d3.select( '#embedding' ).append( 'svg' )
       .attr( 'width', width )
       .attr( 'height', height );
 
+    // Create the brush element and set the functions for brushing and updating
     brush = d3.brush()
       .on( 'brush', highlightBrushedCircles )
-      .on( 'end', displayTable ); 
+      .on( 'end', getBrushedElements );
 
-    svg.append( 'g' )
-      .on( 'click', cleanHighlight )
+    var brushg = svg.append( 'g' )
       .call( brush );
 
     g = svg.append( 'g' )
@@ -52,7 +55,7 @@ var embeddingPlot = ( function() {
       .domain( [ d3.min( data, d => d.__y ), d3.max( data, d => d.__y ) ] );   
 
     if( color !== undefined )
-      zScale = features.find( f => f.name === color ).scale;
+      zScale = config.features.find( f => f.name === color ).scale;
       /*zScale
         .domain( d3.map( data, f => f[ color ] ) );*/
 
@@ -86,49 +89,36 @@ var embeddingPlot = ( function() {
 
   }
 
+  // Update the style of brushed points
   function highlightBrushedCircles() {
+
     if( d3.event.selection != null ) {
-      // revert circles to initial style
-      points.attr( 'class', 'non_brushed' );
+
+      // Revert circles to initial style
+      points
+        .classed( 'brushed', false )
+        .classed( 'non_brushed', true );
       
+      // Get the brushed coordinates
       var brush_coords = d3.brushSelection( this );
       
-      // style brushed circles
+      // Style brushed circles
       points.filter( function(){
         var cx = d3.select( this ).attr( 'cx' ),
           cy = d3.select( this ).attr( 'cy' );
         return isBrushed( brush_coords, cx, cy );
-      } ).attr( 'class', 'brushed' );
+      } ).classed( 'brushed', true ).classed( 'non_brushed', false );
+
     }
+
   }
 
   function cleanHighlight() {
-    points
-      .classed( 'non_brushed', false )
-      .classed( 'brushed', true );
-  }
-
-  function displayTable() {
-    // disregard brushes w/o selections  
-    // ref: http://bl.ocks.org/mbostock/6232537
-    if ( !d3.event.selection ) return;
-
-    // programmed clearing of brush after mouse-up
-    // ref: https://github.com/d3/d3-brush/issues/10
-    d3.select( this ).call( brush.move, null );
-
-    var d_brushed = g.selectAll( ".brushed" ).data();
-
-    onHighlighting( d_brushed );
-
-    // populate table if one or more elements is brushed
-    if( d_brushed.length > 0 ) {
-      //clearTableRows();
-      //d_brushed.forEach(d_row => populateTableRow(d_row));
-      //console.log( d_brushed.length );
-    } else {
-      //console.log( 'No selection' );
-      cleanHighlight();
+    if( points !== undefined ) {
+      points
+        .classed( 'non_brushed', false )
+        .classed( 'brushed', true );
+      onCleaning();
     }
   }
 
@@ -137,13 +127,31 @@ var embeddingPlot = ( function() {
       x1 = brush_coords[ 1 ][ 0 ],
       y0 = brush_coords[ 0 ][ 1 ],
       y1 = brush_coords[ 1 ][ 1 ];
-    return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
+    return ( x0 - 10 ) <= cx && cx <= ( x1 - 10 ) && ( y0 - 10 ) <= cy && cy <= ( y1 - 10 );
+  }
+
+  // Get highlighted points
+  function getBrushedElements() {
+    
+    // If not selection, return null
+    if ( !d3.event.selection ) return;
+
+    // Select all bruseh points
+    var d_brushed = g.selectAll( ".brushed" ).data();
+
+    if( d_brushed.length ) {
+      // Send points to main script
+      onHighlighting( d_brushed );
+    } else {
+      cleanHighlight(); 
+    }
+
   }
 
   function changeColor() {
 
     if( points !== undefined && color !== undefined ) {
-      zScale = features.find( f => f.name === color ).scale;
+      zScale = config.features.find( f => f.name === color ).scale;
       
       points
         .attr( 'fill', ( d, i ) => zScale( data[ i ][ color ] ) );
@@ -169,8 +177,11 @@ var embeddingPlot = ( function() {
 
   }
 
+  // Draw tooltip using data element attributes
   function drawTooltip( d ) {
-    return Object.keys( d ).filter( f => ![ 'visible', '__seqId', '__i', '__x', '__y' ].includes( f ) ).map( f => '<b>' + f + ':</b> ' + d[ f ] ).join( "<br />" );
+    return [ color ].concat( config.roles.embed )
+      .map( f => '<b>' + f + ':</b> ' + d[ f ] )
+      .join( '<br />' );
   }
 
   return {
@@ -180,14 +191,17 @@ var embeddingPlot = ( function() {
     set data( d ) {
       data = d;
     },
-    set features( f ) {
-      features = f;//.filter( f => ![ '__seqId', '__x', '__y', '__cluster' ].includes( f.name ) );
+    set config( c ) {
+      config = c;
     },
     set color( c ) {
       color = c;
     },
     set onHighlighting( f ) {
       onHighlighting = f;
+    },
+    set onCleaning( f ) {
+      onCleaning = f;
     }
   }
 } )();
