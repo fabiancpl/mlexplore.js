@@ -363,25 +363,7 @@ function updateMiniEmbedding() {
 }
 
 function tableRowSelection( row, $element ) {
-
-  // Calculate Euclidian Distance
-  // var a = x1 - x2;
-  // var b = y1 - y2;
-  // var c = Math.sqrt( a*a + b*b );
-  var distances = dataset.visibleData.filter( d => row.__seqId !== d.__seqId )
-    .map( d => {
-      var distance = Math.sqrt( dataset.config.roles.embed
-        .map( f => Math.pow( d[ f ] - row[ f ], 2 ) )
-        .reduce( ( a, b ) => a + b, 0 ) );
-      return {
-        '__seqId': d.__seqId,
-        'distance': distance
-      }
-    } ).sort( ( a, b ) => {
-      return ( ( a.distance < b.distance ) ? -1 : ( ( a.distance > b.distance ) ? 1 : 0 ) );
-    } );
-
-  embeddingPlot.onItemClick( row, distances.slice( 0, 10 ) );
+  embeddingPlot.onItemClick( row );
 }
 
 function assignCluster() {

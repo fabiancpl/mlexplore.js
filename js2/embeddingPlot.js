@@ -115,6 +115,9 @@ var embeddingPlot = ( function() {
   }
 
   function cleanHighlight() {
+
+    changeColor();
+
     if( points !== undefined ) {
       points
         .classed( 'non_brushed', false )
@@ -164,10 +167,31 @@ var embeddingPlot = ( function() {
 
   }
 
-  function onItemClick( item, distances ) {
-    console.log( 'Item clicked' );
+  function onItemClick( item ) {
+    
+    console.log( 'Item clicked!' );
     console.log( item );
 
+    // Calculate Euclidian Distance
+    // var a = x1 - x2;
+    // var b = y1 - y2;
+    // var c = Math.sqrt( a*a + b*b );
+    var distances = data//.filter( d => item.__seqId !== d.__seqId )
+      .map( d => {
+        var distance = Math.sqrt( config.roles.embed
+          .map( f => Math.pow( d[ f ] - item[ f ], 2 ) )
+          .reduce( ( a, b ) => a + b, 0 ) );
+        return {
+          '__seqId': d.__seqId,
+          'distance': distance
+        }
+      } ).sort( ( a, b ) => {
+        return ( ( a.distance < b.distance ) ? -1 : ( ( a.distance > b.distance ) ? 1 : 0 ) );
+      } ).slice( 0, 21 );
+
+    var neighborhoodScale = d3.scaleSequential( d3.interpolateReds )
+      .domain( [ d3.max( distances, d => d.distance ), d3.min( distances, d => d.distance ) ] );
+    
     points
       .classed( 'non_brushed', true );
 
@@ -175,7 +199,13 @@ var embeddingPlot = ( function() {
       return ( d3.select( this ).attr( 'id' ) === item.__seqId.toString() ) || 
         ( distances.map( d => d.__seqId ).includes( +d3.select( this ).attr( 'id' ) ) )
     } ).classed( 'non_brushed', false )
-      .classed( 'brushed', true );
+      .classed( 'brushed', true )
+      .attr( 'fill', ( d ) => {
+        var neighbor = distances.find( n => n.__seqId === d.__seqId );
+        if( neighbor !== undefined ) {
+          return neighborhoodScale( neighbor.distance );
+        }
+      } );
 
   }
 
