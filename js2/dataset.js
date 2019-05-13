@@ -89,7 +89,7 @@ var dataset = ( function() {
       // Create the configuration object by default
       config = createConfig();
 
-    } ).catch( error => console.log( 'Error loading the dataset!' ) );
+    } ).catch( error => alert( 'Error loading the dataset!' ) );
 
   }
 
