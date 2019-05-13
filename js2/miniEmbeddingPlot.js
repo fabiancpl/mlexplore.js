@@ -47,7 +47,8 @@ var miniEmbeddingPlot = ( function() {
         .attr( 'cx', d => xScale( d.__x ) )
         .attr( 'cy', d => yScale( d.__y ) )
         .attr( 'r', 1 )
-        .attr( 'fill', ( d, i ) => ( color !== undefined ) ? zScale( data[ i ][ color ] ) : 'steelblue' );
+        .attr( 'fill', ( d, i ) => ( color !== undefined ) ? zScale( data[ i ][ color ] ) : 'steelblue' )
+        //.attr( 'stroke', 'gray' );
 
   }
 
@@ -83,7 +84,7 @@ var miniEmbeddingPlot = ( function() {
       } );
 
     }
-    
+
   }
 
   function clean() {

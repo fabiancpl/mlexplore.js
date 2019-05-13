@@ -19,59 +19,77 @@ var featureDistribution = ( function() {
       if( colorFeature.type === 'categorical' ) {
 
         yScale = { 'field': roles.color, 'type': 'nominal' };
-        colorScale = { 'field': roles.color, 'type': 'nominal', 'scale': { 'domain': colorFeature.scale.domain(), 'range': colorFeature.scale.range() } };
+        colorScale = {
+          'condition': { 
+            "selection": "brush", 
+            'field': roles.color, 
+            'type': 'nominal', 'scale': { 'domain': colorFeature.scale.domain(), 'range': colorFeature.scale.range() },
+            'legend': false
+          },
+          "value": "silver" 
+        };
 
       } else {
 
-        yScale = { 'field': roles.color, 'type': 'quantitative' };
-        colorScale = { 'field': roles.color, 'type': 'quantitative', 'scale': { 'scheme': 'blues' } };
         mark = 'circle';
+
+        yScale = { 'field': roles.color, 'type': 'quantitative' };
+        colorScale = {
+          'condition': { 
+            "selection": "brush", 
+            'field': roles.color, 
+            'type': 'quantitative', 
+            'scale': { 'scheme': 'blues' },
+            'legend': false
+          },
+          "value": "silver" 
+        };
         
       }
 
     }
 
+    var vconcats = [];
     features.filter( f => ( f.name !== roles.color ) && ( roles.embed.includes( f.name ) ) ).map( f => {
+      vconcats.push( buildSpec( f ) );
+    } );
 
-      var featDistSelection = featDistSelections.append( 'div' )
-        .attr( 'id', f.name + '-distribution' );
+    var spec = {
+      '$schema': 'https://vega.github.io/schema/vega-lite/v3.json',
+      'width': +featDistSelections.node().getBoundingClientRect().width,
+      'data': { 'values': data.filter( d => d.__highlighted ) },
+      'vconcat': vconcats
+    };
 
-      vegaEmbed( ( '#' + f.name + '-distribution' ), buildSpec( f, +featDistSelection.node().getBoundingClientRect().width - 150 ), { 'actions' : false } );
+    vegaEmbed( ( '#feature-distribution' ), spec, { 'actions' : false } ).then( ( { spec, view } ) => {
+      view.addEventListener( 'click', function ( event, item ) {
 
+      } )
     } );
 
   }
 
-  function buildSpec( f, width ) {
+  function buildSpec( f ) {
 
     var sequentialSpec = {
-      '$schema': 'https://vega.github.io/schema/vega-lite/v3.json',
-      'width': width,
-      'data': { 'values': data },
-      'mark': mark,
+      
+      'selection': {
+        'brush': {
+          'type': 'interval',
+        }
+      },
+      'mark': {
+        'type': mark,
+        'opacity': 1,
+        //'stroke': ( mark === 'circle' ) ? 'gray' : undefined
+      },
       'encoding': {
         'x': { 'field': f.name, 'type': 'quantitative', "scale": { "domain": [ d3.min( data, d => d[ f.name ] ), d3.max( data, d => d[ f.name ] ) ] } },
-        'y': yScale,
-        'color': colorScale
+        'y': ( yScale !== undefined ) ? yScale : undefined,
+        'color': ( colorScale !== undefined ) ? colorScale : undefined
       }
     };
 
-    /*var booleanSpec = {
-      '$schema': 'https://vega.github.io/schema/vega-lite/v3.json',
-      'width': width,
-      'data': { 'values': data },
-      'mark': 'bar',
-      'encoding': {
-        "x": {
-          "aggregate": "sum", "field": f.name, "type": "quantitative",
-          "axis": {"title": f.name } 
-        },
-        'y': { 'field': roles.color, 'type': 'nominal' },
-        'color': { 'field': roles.color, 'type': 'nominal' }
-      }
-    };*/
-
-    //return ( f.type === 'boolean' ) ? booleanSpec : sequentialSpec;
     return sequentialSpec;
 
   }

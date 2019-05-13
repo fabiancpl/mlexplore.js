@@ -50,7 +50,7 @@ function loadDataset( name ) {
     embed.onStep = embedStep;
     embed.onStop = embedOnStop;
     embed.init();
-    //embed.start();
+    embed.start();
 
     // Initialize cluster panel
     //cluster.data = dataset.visibleData;
@@ -318,6 +318,9 @@ function embeddingOnHighlighting( selection ) {
   nv.update();
 
   miniEmbeddingPlot.highlight( selection );
+
+  featureDistribution.init();
+
 }
 
 function embeddingOnCleaning() {
@@ -329,6 +332,8 @@ function embeddingOnCleaning() {
   nv.update();
 
   miniEmbeddingPlot.clean();
+
+  featureDistribution.init();
 }
 
 function updateMiniEmbedding() {

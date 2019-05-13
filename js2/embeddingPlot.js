@@ -69,6 +69,7 @@ var embeddingPlot = ( function() {
         .attr( 'cy', d => yScale( d.__y ) )
         .attr( 'r', 3 )
         .attr( 'fill', ( d, i ) => ( color !== undefined && data !== undefined ) ? zScale( data[ i ][ color ] ) : 'steelblue' )
+        .attr( 'stroke', 'gray' )
         .on( 'click', ( d, i ) => onItemClick( data[ i ] ) )
         .on( 'mouseover', ( d, i ) => {
 

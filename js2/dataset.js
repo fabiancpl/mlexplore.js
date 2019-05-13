@@ -101,11 +101,9 @@ var dataset = ( function() {
     // Identify the type for each attribute
     keys = Object.keys( data[ 0 ] );
     config.features = keys.map( f => {
-      var props = identifyDataType( f );
       return {
         name: f,
-        type: props.type,
-        //scale: props.scale
+        type: identifyDataType( f )
       }
     } );
 
@@ -115,10 +113,18 @@ var dataset = ( function() {
       .filter( f => f.type === 'numerical' )
       .filter( f => ( !f.name.toLowerCase().startsWith( 'id' ) ) || ( !f.name.toLowerCase().endsWith( 'id' ) ) ).map( f => f.name );
     
+
     // Try to select an appropiate feature for color encoding
-    var categFeatures = config.features.filter( f => f.type === 'categorical' );
-    var candidates = categFeatures.filter( f => d3.map( data, d => d[ f.name ] ).keys().length <= 5 );
-    config.roles.color = candidates[ 0 ].name;
+    var categFeatures = config.features
+      .filter( f => f.type === 'categorical' )
+      .filter( f => f.name !== '__highlighted' );
+
+    if( categFeatures.length > 0 ) {
+      var candidates = categFeatures.filter( f => d3.map( data, d => d[ f.name ] ).keys().length <= 5 );
+      if( candidates.length > 0 ) config.roles.color = candidates[ 0 ].name;        
+    }    
+
+    console.log( config.features );
 
     // Add features for model results
     config.features.push( {
@@ -144,7 +150,7 @@ var dataset = ( function() {
     } );*/
 
     console.log( 'By default configuration created!' );
-
+    console.log( config.features );
     return config;
 
   }
@@ -152,36 +158,9 @@ var dataset = ( function() {
   // Identify the type of an attribute in the dataset from its values
   function identifyDataType( f ) {
     if( typeof data[ 0 ][ f ] === 'number' ) { 
-      
-      // If attribute contains only 0 and 1 values, it is understood as boolean
-      /*var values = d3.map( data, d => d[ f ] ).keys();
-      if( values.length === 2 && ( values.includes( '0' ) && values.includes( '1' ) ) ) {
-        return { 
-          type: 'boolean', 
-          //scale: d3.scaleOrdinal( d3.schemeSet2 ).domain( [ 0, 1 ] )
-        };
-      } else if( d3.min( data, d => d[ f ] ) < 0 ) {
-        return { 
-          type: 'diverging', 
-          //scale: d3.scaleSequential( d3.interpolatePRGn ).domain( [ d3.min( data, d => d[ f ] ), d3.max( data, d => d[ f ] ) ] )
-        };        
-      } else {
-        return { 
-          type: 'sequential', 
-          //scale: d3.scaleSequential( d3.interpolateBlues ).domain( [ 0, d3.max( data, d => d[ f ] ) ] )
-        };
-      }*/
-
-      return { 
-        type: 'numerical', 
-        //scale: d3.scaleOrdinal( d3.schemeCategory10 ).domain( d3.map( data, d => d[ f ] ) )
-      };      
-
+      return 'numerical';
     } else {
-      return { 
-        type: 'categorical', 
-        //scale: d3.scaleOrdinal( d3.schemeCategory10 ).domain( d3.map( data, d => d[ f ] ) )
-      };
+      return 'categorical';
     } 
   }
 
