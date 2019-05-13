@@ -95,6 +95,10 @@ var embed = ( function() {
 
   }
 
+  /*function pause() {
+
+  }*/
+
   function stop() {
     worker.postMessage( { stop: true } );
     running = false;
@@ -105,6 +109,7 @@ var embed = ( function() {
   return {
     init: init,
     start: start,
+    //pause: pause,
     stop: stop,
     set data( d ) {
       data = d;

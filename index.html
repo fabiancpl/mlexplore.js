@@ -22,20 +22,20 @@
       <div class="row">
 
         <!-- Load Data panel -->
-        <div id="load-data" class="col-md-3 border text-center">
+        <div id="load-data" class="col-md-2 border text-center">
 
-          <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#load-data-modal">Load Dataset</button>
+          <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#load-data-modal"><i class="fas fa-upload"></i></button>
           <!--<span id="load-config-btn" class="btn btn-success btn-sm btn-file disabled">Load Config<input id="load-config-input" type="file" disabled></span>-->
           &nbsp;&nbsp;&nbsp;<span id="dataset-name-main"></span>
 
         </div>
-        <div class="col-md-6 border-top border-bottom text-center">
+        <div class="col-md-8 border-top border-bottom text-center">
 
-          <h5>Exploring High-Dimensional Data by Interacting and Interpreting t-SNE and K-Means</h5>
+          <h5>MLExplore.js: Exploring High-Dimensional Data by Interacting and Interpreting t-SNE and K-Means</h5>
           By: Fabian C. Peña, Universidad de los Andes
 
         </div>
-        <div id="export-data" class="col-md-3 border text-center">
+        <div id="export-data" class="col-md-2 border text-center">
 
           <!-- Export Data panel -->
           <button id="export-results-btn" type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#export-data-modal" disabled><i class="fas fa-download"></i></button>
@@ -100,7 +100,7 @@
                           Perplexity: <i class="fas fa-info-circle" data-toggle="tooltip" title="The perplexity is related to the number of nearest neighbors that is used in other manifold learning algorithms. Larger datasets usually require a larger perplexity."></i> <input id="hparam-perplexity" type="range" class="slider" min="2" max="100" step="1"><span id="hparam-perplexity-span"></span>
                           Learning Rate: <i class="fas fa-info-circle" data-toggle="tooltip" title="If the learning rate is too high, the data may look like a ‘ball’ with any point approximately equidistant from its nearest neighbours. If the learning rate is too low, most points may look compressed in a dense cloud with few outliers. If the cost function gets stuck in a bad local minimum increasing the learning rate may help."></i> <input id="hparam-epsilon" type="range" min="1" max="20" step="1"><span id="hparam-epsilon-span"></span>
                           <button id="run-embed-btn" type="button" class="btn btn-success btn-sm" onclick="embedRun()" disabled>Run t-SNE</button>
-                          <!--<button id="restart-embed-btn" type="button" class="btn btn-secondary btn-sm" onclick="embedRestart()" disabled>Restart</button>-->
+                          <!--<button id="stop-embed-btn" type="button" class="btn btn-secondary btn-sm" onclick="embedStop()" disabled>Stop</button>-->
                           <span>Step: <span id="embed-step-span">0</span></span>
 
                         </div>
@@ -114,6 +114,7 @@
                           Number of clusters: <i class="fas fa-info-circle" data-toggle="tooltip" title="The number of clusters to form as well as the number of centroids to generate."></i> <input id="hparam-clusters" type="range" min="2" max="10" step="1"><span id="hparam-clusters-span"></span>
                           <input id="runClusteringOnProjection" type="checkbox"> Run on projected data
                           <button id="run-cluster-btn" type="button" class="btn btn-success btn-sm" onclick="clusterRun()" disabled>Run K-Means</button>
+                          <button id="assign-cluster" type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#assign-cluster-modal" disabled><i class="fas fa-edit"></i></button>
 
                         </div>
 
@@ -133,9 +134,7 @@
               <div class="row">
 
                 <div class="col-md-12 text-center">
-
                   <div id="embedding"></div>
-
                 </div>
 
               </div>
@@ -235,12 +234,12 @@
       </div>
     </div>
 
-    <!-- New Feature Group Modal -->
-    <!--<div class="modal fade" id="new-feature-group-modal" tabindex="-1" role="dialog" aria-labelledby="new-feature-group-modal" aria-hidden="true">
+    <!-- Assign Cluster Modal -->
+    <div class="modal fade" id="assign-cluster-modal" tabindex="-1" role="dialog" aria-labelledby="assign-cluster-modal" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">New Feature Group</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Assign to Cluster</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -248,18 +247,19 @@
           <div class="modal-body">
             <form>
               <div class="form-group">
-                <label for="recipient-name" class="col-form-label">Group name:</label>
-                <input type="text" class="form-control" id="group-name" required>
+                <label class="col-form-label">Cluster:</label>
+                <select id="new-cluster">
+                </select>
               </div>
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" onclick="createFeatureGroup()" class="btn btn-success">Create</button>
+            <button type="button" onclick="assignCluster()" class="btn btn-success">Assign</button>
           </div>
         </div>
       </div>
-    </div>-->
+    </div>
 
     <!-- Third-party libraries -->
     <!-- Generics -->
@@ -283,8 +283,8 @@
 
     <!-- Machine Learning -->
     <!-- <script src="./libs/tsne.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tsne"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tsne"></script>-->
 
     <!-- Scripts -->
     <script type="text/javascript" src="./js2/dataset.js"></script>

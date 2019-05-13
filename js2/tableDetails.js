@@ -31,7 +31,7 @@ var tableDetails = ( function() {
       data = d;
     },
     set features( f ) {
-      features = f.filter( f => ![ '__seqId', '__x', '__y', '__cluster' ].includes( f.name ) );
+      features = f.filter( f => ![ '__seqId', '__x', '__y', '__cluster', '__highlighted' ].includes( f.name ) );
     },
     set onRowSelection( f ) {
       onRowSelection = f;

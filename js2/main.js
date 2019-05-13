@@ -21,7 +21,7 @@ function loadDataset( name ) {
 
     // Enable buttons for interact with models and export results
     d3.select( '#run-embed-btn' ).property( 'disabled', false );
-    //d3.select( '#restart-embed-btn' ).property( 'disabled', false );
+    d3.select( '#stop-embed-btn' ).property( 'disabled', false );
     d3.select( '#run-cluster-btn' ).property( 'disabled', false );
     d3.select( '#export-results-btn' ).property( 'disabled', false );
     d3.select( '#export-embedding-btn' ).property( 'disabled', false );
@@ -47,7 +47,7 @@ function loadDataset( name ) {
     // Initialize embedding panel
     embed.data = dataset.visibleData;
     embed.features = dataset.config.roles.embed;
-    embed.onStep = embedStep;
+    embed.onStep = embedOnStep;
     embed.onStop = embedOnStop;
     embed.init();
     embed.start();
@@ -188,11 +188,6 @@ function embedRun() {
     if( embed.running ) {
       embed.stop();
     } else {
-        
-      //miniEmbeddingPlot.data = dataset.visibleData;
-      //miniEmbeddingPlot.color = dataset.config.roles.color;
-      //miniEmbeddingPlot.draw();
-
       embed.data = dataset.visibleData;
       embed.features = dataset.config.roles.embed;
       embed.start();
@@ -205,26 +200,7 @@ function embedRun() {
 
 }
 
-function clusterRun() {
-
-  cluster.data = dataset.visibleData;
-
-   if( dataset.config.models === undefined ) dataset.config.models = {};
-  if( dataset.config.models.clustering === undefined ) {
-    cluster.features = dataset.config.roles.embed;
-  } else {
-    if( !dataset.config.models.clustering.embedded_space ) {
-      cluster.features = dataset.config.roles.embed;
-    } else {
-      cluster.features = [ '__x', '__y' ];
-    }
-  }
-  
-  cluster.start();
-
-}
-
-function embedStep( embedding ) {
+function embedOnStep( embedding ) {
 
   dataset.visibleData = dataset.visibleData.map( ( d, i ) => {
     d.__x = embedding.solution[ i ][ 0 ];
@@ -277,6 +253,29 @@ function embedOnStop( embedding, hparams ) {
   nv.update();
 }
 
+/*function embedStop() {
+  embed.stop();  
+}*/
+
+function clusterRun() {
+
+  cluster.data = dataset.visibleData;
+
+   if( dataset.config.models === undefined ) dataset.config.models = {};
+  if( dataset.config.models.clustering === undefined ) {
+    cluster.features = dataset.config.roles.embed;
+  } else {
+    if( !dataset.config.models.clustering.embedded_space ) {
+      cluster.features = dataset.config.roles.embed;
+    } else {
+      cluster.features = [ '__x', '__y' ];
+    }
+  }
+  
+  cluster.start();
+
+}
+
 function clusterOnStop( clusters, hparams ) {
 
   console.log(  'Clustering finished!' );
@@ -303,6 +302,16 @@ function clusterOnStop( clusters, hparams ) {
   featureDistribution.init();
 
   nv.update();
+
+
+  // TODO: Move to component
+  d3.select( "#new-cluster" ).selectAll( 'option' )
+    .data( d3.map( dataset.data, d => d.__cluster ).keys() )
+    .enter()
+    .append( 'option' )
+      .attr( 'value', d => d )
+      .text( d => d );
+
 }
 
 function embeddingOnHighlighting( selection ) {
@@ -321,6 +330,12 @@ function embeddingOnHighlighting( selection ) {
 
   featureDistribution.init();
 
+  // TODO: Move to component
+  if( dataset.config.models.clustering !== undefined ) {
+    d3.select( "#assign-cluster" )
+      .property( 'disabled', false );
+  }
+
 }
 
 function embeddingOnCleaning() {
@@ -334,6 +349,11 @@ function embeddingOnCleaning() {
   miniEmbeddingPlot.clean();
 
   featureDistribution.init();
+
+  // TODO: Move to component
+  d3.select( "#assign-cluster" )
+    .property( 'disabled', true );
+
 }
 
 function updateMiniEmbedding() {
@@ -343,8 +363,53 @@ function updateMiniEmbedding() {
 }
 
 function tableRowSelection( row, $element ) {
-  console.log( row );
-  embeddingPlot.onItemClick( row );
+
+  // Calculate Euclidian Distance
+  // var a = x1 - x2;
+  // var b = y1 - y2;
+  // var c = Math.sqrt( a*a + b*b );
+  var distances = dataset.visibleData.filter( d => row.__seqId !== d.__seqId )
+    .map( d => {
+      var distance = Math.sqrt( dataset.config.roles.embed
+        .map( f => Math.pow( d[ f ] - row[ f ], 2 ) )
+        .reduce( ( a, b ) => a + b, 0 ) );
+      return {
+        '__seqId': d.__seqId,
+        'distance': distance
+      }
+    } ).sort( ( a, b ) => {
+      return ( ( a.distance < b.distance ) ? -1 : ( ( a.distance > b.distance ) ? 1 : 0 ) );
+    } );
+
+  embeddingPlot.onItemClick( row, distances.slice( 0, 10 ) );
+}
+
+function assignCluster() {
+
+  var newCluster = document.getElementById( "new-cluster" ).value;
+
+  dataset.data.filter( d => d.__highlighted )
+    .map( d => {
+      d.__cluster = newCluster;
+    } );
+
+  // Update the dataset
+  dataset.data.map( d => d.__highlighted = true );
+
+  embeddingPlot.draw();
+  miniEmbeddingPlot.draw();
+
+  nv.update();
+
+  featureDistribution.init();
+
+  // Hide the modal
+  $( "#assign-cluster-modal" ).modal( 'hide' );
+
+  // TODO: Move to component
+  d3.select( "#assign-cluster" )
+    .property( 'disabled', true );
+
 }
 
 function exportData() {

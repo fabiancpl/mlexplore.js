@@ -13,42 +13,46 @@ var miniEmbeddingPlot = ( function() {
 
   function draw() {
     
-    d3.select( '#mini-embedding' ).html( '' );
+    if( data !== undefined ) {
 
-    width = d3.select( '#mini-embedding' ).node().getBoundingClientRect().width - 10,
-    height = width * 2 / 3,
-    iWidth = width - margin.left - margin.right,
-    iHeight = height - margin.top - margin.bottom;
+      d3.select( '#mini-embedding' ).html( '' );
 
-    svg = d3.select( '#mini-embedding' ).append( 'svg' )
-      .attr( 'width', width )
-      .attr( 'height', height );
+      width = d3.select( '#mini-embedding' ).node().getBoundingClientRect().width - 10,
+      height = width * 2 / 3,
+      iWidth = width - margin.left - margin.right,
+      iHeight = height - margin.top - margin.bottom;
 
-    g = svg.append( 'g' )
-      .attr( 'transform', 'translate(' + margin.left + ',' + margin.top + ')');
+      svg = d3.select( '#mini-embedding' ).append( 'svg' )
+        .attr( 'width', width )
+        .attr( 'height', height );
 
-    xScale
-      .range( [ 0, iWidth ] )
-      .domain( [ d3.min( data, d => d.__x ), d3.max( data, d => d.__x ) ] );
+      g = svg.append( 'g' )
+        .attr( 'transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    yScale
-      .range( [ iHeight, 0 ] )
-      .domain( [ d3.min( data, d => d.__y ), d3.max( data, d => d.__y ) ] );   
+      xScale
+        .range( [ 0, iWidth ] )
+        .domain( [ d3.min( data, d => d.__x ), d3.max( data, d => d.__x ) ] );
 
-    if( color !== undefined )
-      zScale = features.find( f => f.name === color ).scale;
+      yScale
+        .range( [ iHeight, 0 ] )
+        .domain( [ d3.min( data, d => d.__y ), d3.max( data, d => d.__y ) ] );   
 
-    points = g.selectAll( '.mini-embedding-circle' )
-      .data( data )
-      .enter()
-      .append( 'circle' )
-        .attr( 'id', d => d.__seqId )
-        .attr( "class", "mini-embedding-circle" )
-        .attr( 'cx', d => xScale( d.__x ) )
-        .attr( 'cy', d => yScale( d.__y ) )
-        .attr( 'r', 1 )
-        .attr( 'fill', ( d, i ) => ( color !== undefined ) ? zScale( data[ i ][ color ] ) : 'steelblue' )
-        //.attr( 'stroke', 'gray' );
+      if( color !== undefined )
+        zScale = features.find( f => f.name === color ).scale;
+
+      points = g.selectAll( '.mini-embedding-circle' )
+        .data( data )
+        .enter()
+        .append( 'circle' )
+          .attr( 'id', d => d.__seqId )
+          .attr( "class", "mini-embedding-circle" )
+          .attr( 'cx', d => xScale( d.__x ) )
+          .attr( 'cy', d => yScale( d.__y ) )
+          .attr( 'r', 1 )
+          .attr( 'fill', ( d, i ) => ( color !== undefined ) ? zScale( data[ i ][ color ] ) : 'steelblue' )
+          //.attr( 'stroke', 'gray' );
+
+    }
 
   }
 

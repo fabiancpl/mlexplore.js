@@ -164,7 +164,7 @@ var embeddingPlot = ( function() {
 
   }
 
-  function onItemClick( item ) {
+  function onItemClick( item, distances ) {
     console.log( 'Item clicked' );
     console.log( item );
 
@@ -172,7 +172,8 @@ var embeddingPlot = ( function() {
       .classed( 'non_brushed', true );
 
     points.filter( function() {
-      return d3.select( this ).attr( 'id' ) === item.__seqId.toString()
+      return ( d3.select( this ).attr( 'id' ) === item.__seqId.toString() ) || 
+        ( distances.map( d => d.__seqId ).includes( +d3.select( this ).attr( 'id' ) ) )
     } ).classed( 'non_brushed', false )
       .classed( 'brushed', true );
 
