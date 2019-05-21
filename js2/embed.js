@@ -3,7 +3,7 @@ var embed = ( function() {
   var data, embedding, features, running = false,
     hparams = {
       epsilon: 5,
-      perplexity: 10,
+      perplexity: 20,
       scale_features: true
     },
     onStep, onStop;
