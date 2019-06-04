@@ -1,3 +1,5 @@
+/* global d3, navio */
+
 var nv = ( function() {
 
   var nav, height = 500,
@@ -24,11 +26,11 @@ var nv = ( function() {
     nav.addAttrib( '__cluster', clusterScale );
     //features.find( g => g.name === '__cluster' ).scale = clusterScale;
 
-    var xScale = d3.scaleSequential( d3.interpolateRdBu ).domain( [ -20, 20 ] )
+    var xScale = d3.scaleSequential( d3.interpolateRdBu ).domain( [ -20, 20 ] );
     nav.addAttrib( '__x', xScale );
     //features.find( g => g.name === '__x' ).scale = xScale;
-    
-    var yScale = d3.scaleSequential( d3.interpolateRdBu ).domain( [ -20, 20 ] )
+
+    var yScale = d3.scaleSequential( d3.interpolateRdBu ).domain( [ -20, 20 ] );
     nav.addAttrib( '__y', yScale );
     //features.find( g => g.name === '__y' ).scale = yScale;
 
@@ -57,6 +59,8 @@ var nv = ( function() {
           features.find( g => g.name === f ).scale = nav.getColorScale( f );
         }
       } );
+
+    nav.hardUpdate();
 
     nav.updateCallback( onFiltering );
 
