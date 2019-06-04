@@ -1,3 +1,5 @@
+/* global d3 */
+
 var featureSelection = ( function() {
 
   var features, roles,
@@ -14,7 +16,7 @@ var featureSelection = ( function() {
           .attr( 'id', f => f.name + '-feature' )
           .attr( 'class', f => 'btn btn-' + ( ( f.type === 'categorical' ) ? 'light' : 'secondary' ) );
 
-    // Create checks for enable / disable features  
+    // Create checks for enable / disable features
     featButtons
       .append( 'input' )
         .attr( 'id', d => d.name + '-chk' )
@@ -38,8 +40,8 @@ var featureSelection = ( function() {
 
     // Set event for handling combobox change
     var colorSelection = d3.select( '#color-selection' )
-      .on( 'change', _ => onColorChange( colorSelection.property( 'value' ) ) );
-    
+      .on( 'change', () => onColorChange( colorSelection.property( 'value' ) ) );
+
     selectOptions = [ { 'name': '' } ].concat( features );
     colorSelection.selectAll( 'option' )
         .data( selectOptions )
@@ -52,14 +54,14 @@ var featureSelection = ( function() {
     // Control to hide features by user filter
     d3.select( '#feature-filter' )
       .on( 'input', function() {
-        
+
         featButtons.classed( 'feature-hide', true );
-        
+
         if( this.value !== '' ) {
           features.map( f => {
             if( f.name.toLowerCase().includes( this.value.toLowerCase() ) ) {
               d3.select( '#' + f.name + '-feature' )
-                .classed( 'feature-hide', false );            
+                .classed( 'feature-hide', false );
             }
 
           } );
@@ -99,7 +101,7 @@ var featureSelection = ( function() {
   return {
     init: init,
     clean: clean,
-    addClusterFeature: addClusterFeature, 
+    addClusterFeature: addClusterFeature,
     set features( f ) {
       features = f.filter( f => ![ '__seqId', '__x', '__y', '__cluster', '__highlighted' ].includes( f.name ) );
     },
@@ -112,5 +114,5 @@ var featureSelection = ( function() {
     set onColorChange( f ) {
       onColorChange = f;
     }
-  }
+  };
 } )();

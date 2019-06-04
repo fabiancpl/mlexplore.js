@@ -101,6 +101,12 @@ function featureOnCheck( feature ) {
     dataset.config.roles.embed = dataset.config.roles.embed.filter( f => f !== feature.name );
   }
 
+  restartEmbedding();
+}
+
+// var allChecked = false;
+
+function restartEmbedding() {
   // Restart the execution of a new embedding
   embed.data = dataset.visibleData;
   embed.features = dataset.config.roles.embed;
@@ -115,27 +121,44 @@ function featureOnCheck( feature ) {
   updateNavioFeatures();
 }
 
-var allChecked = false;
-
 function featureOnCheckAll() {
 
-  if( allChecked ) {
-    d3.selectAll( '.custom-control-input' ).property( 'checked', false );
-    dataset.config.roles.embed = [];
-    allChecked = false;
-  } else {
+  // Switch checboxes not hidden
+  d3.selectAll( ':not(.feature-hide) > .custom-control-input' )
+    .property( 'checked', function() {
+      return !this.checked;
+    });
 
-    dataset.config.roles.embed = dataset.config.features
-      .filter( f => ( f.type !== 'categorical' ) )
-      .map( f => {
-        d3.select( '#' + f.name + '-chk' ).property( 'checked', true );
-        return f.name;
-      } );
 
-    allChecked = true;
-  }
+  // Get the features from the checkboxes
+  dataset.config.roles.embed = [];
+  d3.selectAll( '.custom-control-input' )
+    .filter(function (d) {
+      return d.type!=='categorical' &&
+        d3.select(this).property('checked');
+    }) // Only select checked ones
+    .each((feature) => {
+      dataset.config.roles.embed.push(feature.name);
+    });
 
+  restartEmbedding();
   updateNavioFeatures();
+
+  // if( allChecked ) {
+  //   d3.selectAll( '.custom-control-input' ).property( 'checked', false );
+  //   dataset.config.roles.embed = [];
+  //   allChecked = false;
+  // } else {
+
+  //   dataset.config.roles.embed = dataset.config.features
+  //     .filter( f => ( f.type !== 'categorical' ) )
+  //     .map( f => {
+  //       d3.select( '#' + f.name + '-chk' ).property( 'checked', true );
+  //       return f.name;
+  //     } );
+
+  //   allChecked = true;
+  // }
 }
 
 function featureOnColorChange( feature_name ) {
