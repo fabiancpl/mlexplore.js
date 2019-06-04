@@ -1,4 +1,4 @@
-/* global d3, dataset, featureSelection, navio, nv, embed, cluster, embeddingPlot, miniEmbeddingPlot, tableDetails, featureDistribution, exportResults, $ */
+/* global d3, dataset, featureSelection, nv, embed, cluster, embeddingPlot, miniEmbeddingPlot, tableDetails, featureDistribution, exportResults, $ */
 
 // Prepares the interface for load a dataset
 dataset.init();
@@ -26,8 +26,8 @@ function loadDataset( name ) {
     d3.select( '#export-results-btn' ).property( 'disabled', false );
     d3.select( '#export-embedding-btn' ).property( 'disabled', false );
     d3.select( '#export-config-btn' ).property( 'disabled', false );
-    
-    // Update the name of the selected dataset 
+
+    // Update the name of the selected dataset
     d3.select( '#dataset-name-main' ).html( ' ' + dataset.name + ' dataset' );
 
     // Initialize feature selection panel
@@ -122,7 +122,7 @@ function featureOnCheckAll() {
     dataset.config.roles.embed = [];
     allChecked = false;
   } else {
-    
+
     dataset.config.roles.embed = dataset.config.features
       .filter( f => ( f.type !== 'categorical' ) )
       .map( f => {
@@ -144,7 +144,7 @@ function featureOnColorChange( feature_name ) {
   // Update embedding plot
   embeddingPlot.color = dataset.config.roles.color;
   embeddingPlot.changeColor();
-  
+
 
   miniEmbeddingPlot.color = dataset.config.roles.color;
   miniEmbeddingPlot.changeColor();
@@ -167,7 +167,7 @@ function navioFiltering() {
 
   embeddingPlot.data = dataset.visibleData;
   embeddingPlot.draw();
-  
+
   miniEmbeddingPlot.data = dataset.visibleData;
   miniEmbeddingPlot.draw();
 
@@ -254,14 +254,14 @@ function embedOnStop( embedding, hparams ) {
 }
 
 /*function embedStop() {
-  embed.stop();  
+  embed.stop();
 }*/
 
 function clusterRun() {
 
   cluster.data = dataset.visibleData;
 
-   if( dataset.config.models === undefined ) dataset.config.models = {};
+  if( dataset.config.models === undefined ) dataset.config.models = {};
   if( dataset.config.models.clustering === undefined ) {
     cluster.features = dataset.config.roles.embed;
   } else {
@@ -271,7 +271,7 @@ function clusterRun() {
       cluster.features = [ '__x', '__y' ];
     }
   }
-  
+
   cluster.start();
 
 }
@@ -305,7 +305,7 @@ function clusterOnStop( clusters, hparams ) {
 
 
   // TODO: Move to component
-  d3.select( "#new-cluster" ).selectAll( 'option' )
+  d3.select( '#new-cluster' ).selectAll( 'option' )
     .data( d3.map( dataset.data, d => d.__cluster ).keys() )
     .enter()
     .append( 'option' )
@@ -332,7 +332,7 @@ function embeddingOnHighlighting( selection ) {
 
   // TODO: Move to component
   if( dataset.config.models.clustering !== undefined ) {
-    d3.select( "#assign-cluster" )
+    d3.select( '#assign-cluster' )
       .property( 'disabled', false );
   }
 
@@ -351,7 +351,7 @@ function embeddingOnCleaning() {
   featureDistribution.init();
 
   // TODO: Move to component
-  d3.select( "#assign-cluster" )
+  d3.select( '#assign-cluster' )
     .property( 'disabled', true );
 
 }
@@ -368,7 +368,7 @@ function tableRowSelection( row, $element ) {
 
 function assignCluster() {
 
-  var newCluster = document.getElementById( "new-cluster" ).value;
+  var newCluster = document.getElementById( 'new-cluster' ).value;
 
   dataset.data.filter( d => d.__highlighted )
     .map( d => {
@@ -386,10 +386,10 @@ function assignCluster() {
   featureDistribution.init();
 
   // Hide the modal
-  $( "#assign-cluster-modal" ).modal( 'hide' );
+  $( '#assign-cluster-modal' ).modal( 'hide' );
 
   // TODO: Move to component
-  d3.select( "#assign-cluster" )
+  d3.select( '#assign-cluster' )
     .property( 'disabled', true );
 
 }
