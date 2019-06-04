@@ -1,11 +1,12 @@
+/* global d3, $ */
 // TODO: Build groups from config
 // TODO: Sparklines??
 // TODO: Feature type change
 
 // Define the div for the tooltip
 var featureGlyph = d3.select( 'body' )
-  .append( 'div' ) 
-    .attr( 'class', 'feature-glyph' )       
+  .append( 'div' )
+    .attr( 'class', 'feature-glyph' )
     .style( 'opacity', 0 );
 
 
@@ -39,7 +40,7 @@ function initFeatureSelection() {
         .attr( 'draggable', true )
         .attr( 'ondragstart', 'drag(event)' );
 
-  // Create checks for enable / disable features  
+  // Create checks for enable / disable features
   featButtons
     .append( 'input' )
       .attr( 'id', d => d.name + '-chk' )
@@ -47,7 +48,7 @@ function initFeatureSelection() {
       .attr( 'class', 'custom-control-input' )
       .property( 'checked', d => d.project )
       .on( 'change', ( feature ) => {
-        
+
         // Verify new checkbox status and update project attribute
         chk = d3.select( '#' + feature.name + '-chk' ).property( 'checked' );
         feature.project = chk;
@@ -65,7 +66,7 @@ function initFeatureSelection() {
 
         // Update the projection
         updateProjection();
-        
+
       } );
 
   // Add feature name to element
@@ -108,9 +109,9 @@ function createFeatureGroup() {
 
           // Verify new checkbox status
           chk = d3.select( '#' + this.id ).property( 'checked' );
-          
+
           group = config.featureGroups.find( x => x.groupId === this.id.replace( '-chk', '' ) );
-          
+
           group.features.forEach( feature => {
             config.features.find( x => x.name === feature ).project = chk;
 
@@ -128,7 +129,7 @@ function createFeatureGroup() {
 
           // Update the projection
           updateProjection();
-          
+
 
         } );
 
@@ -170,7 +171,7 @@ function buildFeatureGlyph( feature ) {
 
   featureGlyph
     .html( '' )
-    .style( 'left', ( d3.event.pageX + 20 ) + 'px' )   
+    .style( 'left', ( d3.event.pageX + 20 ) + 'px' )
     .style( 'top', ( d3.event.pageY + 20 ) + 'px' );
 
   var nestedFeature = d3.nest()
@@ -190,7 +191,7 @@ function buildFeatureGlyph( feature ) {
   var xScale = d3.scaleBand().rangeRound( [ 0, 130 ] ).padding( 0.1 ),
     yScale = d3.scaleLinear().rangeRound( [ 130, 0 ] )
     colorScale = d3.scaleOrdinal( d3.schemeCategory10 );
-  
+
   xScale.domain( nestedFeature.map( ( d ) => d.key ) );
   yScale.domain( [ 0, d3.max( nestedFeature, ( d ) => d.value ) ] );
 
@@ -234,7 +235,7 @@ function drop( event ) {
     config.featureGroups.forEach( group => {
       if( group.groupId === event.target.id ) {
         if( !group.features.includes( elementId ) )
-          group.features.push( elementId );  
+          group.features.push( elementId );
       } else {
         if( group.features.includes( elementId ) ) {
           var index = group.features.indexOf( elementId );
@@ -243,5 +244,5 @@ function drop( event ) {
       }
     } );
   }
-  
+
 }

@@ -1,11 +1,14 @@
+/* global d3, vegaEmbed */
+
 var featureDistribution = ( function() {
 
   var data, features, roles,
     yScale, colorScale, mark;
+  var featDistSelections;
 
   function init() {
 
-    var featDistSelections = d3.select( '#feature-distribution' );
+    featDistSelections = d3.select( '#feature-distribution' );
     featDistSelections.html( '' );
 
     yScale = {};
@@ -18,55 +21,55 @@ var featureDistribution = ( function() {
 
       if( colorFeature.type === 'categorical' ) {
 
-        yScale = { 
-          'field': roles.color, 
+        yScale = {
+          'field': roles.color,
           'type': 'nominal',
           'scale': { 'domain': colorFeature.scale.domain() }
         };
 
         colorScale = {
-          "condition": {
-            "test": { "field": "__highlighted", "equal": true },
-            'field': roles.color, 
-            'type': 'nominal', 
+          'condition': {
+            'test': { 'field': '__highlighted', 'equal': true },
+            'field': roles.color,
+            'type': 'nominal',
             'scale': { 'domain': colorFeature.scale.domain(), 'range': colorFeature.scale.range() },
             'legend': false
           },
-          "value": "silver"
+          'value': 'silver'
         };
 
       } else {
 
         mark = 'circle';
         console.log( colorFeature.scale.domain() );
-        yScale = { 
-          'field': roles.color, 
-          'type': 'quantitative', 
-          'scale': { 'domain': colorFeature.scale.domain() } 
+        yScale = {
+          'field': roles.color,
+          'type': 'quantitative',
+          'scale': { 'domain': colorFeature.scale.domain() }
         };
 
         colorScale = {
-          "condition": {
-            "test": { "field": "__highlighted", "equal": true },
-            'field': roles.color, 
-            'type': 'quantitative', 
+          'condition': {
+            'test': { 'field': '__highlighted', 'equal': true },
+            'field': roles.color,
+            'type': 'quantitative',
             'scale': { 'scheme': 'blues' },
             'legend': false
           },
-          "value": "silver"
+          'value': 'silver'
         };
-        
+
       }
 
     } else {
 
       colorScale = {
-        "condition": {
-          "test": { "field": "__highlighted", "equal": true },
-          'value': 'steelblue', 
+        'condition': {
+          'test': { 'field': '__highlighted', 'equal': true },
+          'value': 'steelblue',
           'legend': false
         },
-        "value": "silver"
+        'value': 'silver'
       };
 
     }
@@ -78,15 +81,16 @@ var featureDistribution = ( function() {
 
     var spec = {
       '$schema': 'https://vega.github.io/schema/vega-lite/v3.json',
-      'width': +featDistSelections.node().getBoundingClientRect().width,
+      // 'width': +featDistSelections.node().parentNode.getBoundingClientRect().width,
       'data': { 'values': data/*.filter( d => d.__highlighted )*/ },
+      'columns': 2,
       'vconcat': vconcats
     };
 
     vegaEmbed( ( '#feature-distribution' ), spec, { 'actions' : false } ).then( ( { spec, view } ) => {
       view.addEventListener( 'click', function ( event, item ) {
 
-      } )
+      } );
     } );
 
   }
@@ -94,15 +98,16 @@ var featureDistribution = ( function() {
   function buildSpec( f ) {
 
     var sequentialSpec = {
-      "layer": [
+      'layer': [
 
         {
           'mark': {
             'type': mark,
             'opacity': 1
           },
+          'width': +featDistSelections.node().parentNode.getBoundingClientRect().width/3,
           'encoding': {
-            'x': { 'field': f.name, 'type': 'quantitative', "scale": { "domain": [ d3.min( data, d => d[ f.name ] ), d3.max( data, d => d[ f.name ] ) ] } },
+            'x': { 'field': f.name, 'type': 'quantitative', 'scale': { 'domain': [ d3.min( data, d => d[ f.name ] ), d3.max( data, d => d[ f.name ] ) ] } },
             'y': ( yScale !== undefined ) ? yScale : undefined,
             'color': ( colorScale !== undefined ) ? colorScale : undefined
           }
@@ -126,5 +131,5 @@ var featureDistribution = ( function() {
     set roles( r ) {
       roles = r;
     }
-  }
+  };
 } )();
