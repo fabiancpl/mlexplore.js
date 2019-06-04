@@ -111,6 +111,8 @@ function featureOnCheck( feature ) {
   featureDistribution.roles = dataset.config.roles;
   featureDistribution.init();
 
+  // Change navio's features
+  updateNavioFeatures();
 }
 
 var allChecked = false;
@@ -133,6 +135,7 @@ function featureOnCheckAll() {
     allChecked = true;
   }
 
+  updateNavioFeatures();
 }
 
 function featureOnColorChange( feature_name ) {
@@ -179,6 +182,14 @@ function navioFiltering() {
   featureDistribution.data = dataset.visibleData;
   featureDistribution.init();
 
+}
+
+function updateNavioFeatures() {
+  nv.features = dataset.config.features.filter( f =>
+    f.type==='categorical' ||
+    dataset.config.roles.embed.indexOf(f.name)!==-1
+  );
+  nv.init();
 }
 
 function embedRun() {
