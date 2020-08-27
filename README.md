@@ -1,17 +1,17 @@
 # MLExplore.js: Exploring High-Dimensional Data by Interacting and Interpreting t-SNE and K-Means
 
 <p align="center">
-  <a href="https://fabiancpl.github.io/MLExplore.js/">Open Viz</a></a>
+  <a href="https://fabiancpl.github.io/MLExplore.js/">Open Tool</a></a>
 </p>
 
 ## Authors
 
-[Fabian C. Peña](https://fabiancpl.github.io) - School of Engineering
+[Fabian C. Peña](https://fabiancpl.github.io)
 <br />
-[John A. Guerra](http://johnguerra.co/) - School of Engineering
+[John A. Guerra](http://johnguerra.co/)
 <br />
-Universidad de los Andes - Bogota, Colombia
+[Jose T. Hernández](https://profesores.virtual.uniandes.edu.co/jhernand/en/inicio-en/)
 <br />
-[Jose T. Hernández](https://profesores.virtual.uniandes.edu.co/jhernand/en/inicio-en/) - School of Engineering
+School of Engineering, Universidad de los Andes
 <br />
-Universidad de los Andes - Bogota, Colombia
+Bogota, Colombia
