@@ -1,7 +1,7 @@
 # MLExplore.js: Exploring High-Dimensional Data by Interacting and Interpreting t-SNE and K-Means
 
 <p align="center">
-  <a href="https://fabiancpl.github.io/MLExplore.js/">Open Tool</a></a>
+  <a href="https://fabiancpl.github.io/MLExplore.js/" target="_blank">Open Tool</a></a>
 </p>
 
 ## Authors
